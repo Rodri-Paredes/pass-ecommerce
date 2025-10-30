@@ -25,6 +25,7 @@ export interface Product {
   category: string;
   price: number;
   image_url: string;
+  images: string[];
   drop_id: string | null;
   created_at: string;
 }
@@ -32,7 +33,7 @@ export interface Product {
 export interface ProductVariant {
   id: string;
   product_id: string;
-  size: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
+  size: string; // Puede ser 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | '28' | '30' | '32' | '34' | '36' | '38'
   created_at: string;
 }
 
@@ -72,13 +73,10 @@ export interface CartItem {
 
 export const CATEGORIES = [
   'Hoodies',
-  'Camisas',
+  'Poleras',
   'Pantalones',
   'Shorts',
-  'Accesorios',
-  'Poleras',
   'Gorras',
-  'Tops',
   'TrackSuit Basic'
 ] as const;
 
@@ -95,3 +93,8 @@ export const CITIES = [
 ] as const;
 
 export const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'] as const;
+
+export const PANT_SIZES = ['28', '30', '32', '34', '36', '38'] as const;
+
+// Categorías que usan tallas numéricas (pantalones)
+export const NUMERIC_SIZE_CATEGORIES = ['Pantalones', 'Shorts'] as const;

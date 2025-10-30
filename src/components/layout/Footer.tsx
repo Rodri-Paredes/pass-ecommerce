@@ -1,4 +1,6 @@
 import { Instagram, Facebook, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import Logo from '../common/Logo';
 
 export default function Footer() {
   return (
@@ -6,7 +8,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">PASS CLOTHING</h3>
+            <div className="mb-4">
+              <Logo className="h-10" />
+            </div>
             <p className="text-gray-400 text-sm">
               Ropa urbana de calidad premium para expresar tu estilo único.
             </p>
@@ -16,24 +20,29 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-sm tracking-wide">COMPRAR</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a href="/drops" className="hover:text-white transition-colors">
+                <Link to="/drops" className="hover:text-white transition-colors">
                   Drops
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/shop" className="hover:text-white transition-colors">
+                <Link to="/shop" className="hover:text-white transition-colors">
                   Todas las Prendas
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/shop?category=Hoodies" className="hover:text-white transition-colors">
+                <Link to="/shop?category=Hoodies" className="hover:text-white transition-colors">
                   Hoodies
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/shop?category=Accesorios" className="hover:text-white transition-colors">
-                  Accesorios
-                </a>
+                <Link to="/shop?category=Poleras" className="hover:text-white transition-colors">
+                  Poleras
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop?category=Pantalones" className="hover:text-white transition-colors">
+                  Pantalones
+                </Link>
               </li>
             </ul>
           </div>
@@ -42,24 +51,24 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-sm tracking-wide">AYUDA</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/shipping" className="hover:text-white transition-colors">
                   Envíos
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/returns" className="hover:text-white transition-colors">
                   Devoluciones
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/size-guide" className="hover:text-white transition-colors">
                   Guía de Tallas
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/contact" className="hover:text-white transition-colors">
                   Contacto
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

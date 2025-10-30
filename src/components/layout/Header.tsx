@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Search, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useState } from 'react';
 import { CATEGORIES } from '../../types';
+import SearchBar from './SearchBar';
+import Logo from '../common/Logo';
 
 export default function Header() {
   const { openCart, getItemCount } = useCartStore();
@@ -15,9 +17,9 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           <Link
             to="/"
-            className="text-2xl font-bold tracking-tight hover:opacity-70 transition-opacity"
+            className="hover:opacity-70 transition-opacity"
           >
-            PASS CLOTHING
+            <Logo className="h-8 sm:h-10" />
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
@@ -39,12 +41,7 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <button
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors hidden md:block"
-              aria-label="Search"
-            >
-              <Search className="w-5 h-5" />
-            </button>
+            <SearchBar />
 
             <button
               onClick={() => openCart()}

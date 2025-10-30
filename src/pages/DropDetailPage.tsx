@@ -11,6 +11,9 @@ export default function DropDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Scroll to top when drop detail page loads
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     if (id) {
       loadDrop();
     }

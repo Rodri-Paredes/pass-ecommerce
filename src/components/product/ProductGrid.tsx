@@ -8,15 +8,17 @@ interface ProductGridProps {
   category?: string;
   dropId?: string;
   searchQuery?: string;
+  priceRange?: { min: number; max: number };
+  sortBy?: string;
 }
 
-export default function ProductGrid({ category, dropId, searchQuery }: ProductGridProps) {
+export default function ProductGrid({ category, dropId, searchQuery, priceRange, sortBy }: ProductGridProps) {
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadProducts();
-  }, [category, dropId, searchQuery]);
+  }, [category, dropId, searchQuery, priceRange, sortBy]);
 
   const loadProducts = async () => {
     setLoading(true);
@@ -34,8 +36,7 @@ export default function ProductGrid({ category, dropId, searchQuery }: ProductGr
             )
           ),
           drop:drops(*)
-        `)
-        .order('created_at', { ascending: false });
+        `);
 
       if (category) {
         query = query.eq('category', category);
@@ -49,10 +50,34 @@ export default function ProductGrid({ category, dropId, searchQuery }: ProductGr
         query = query.ilike('name', `%${searchQuery}%`);
       }
 
+      // Ordenamiento por defecto
+      if (!sortBy || sortBy === 'newest') {
+        query = query.order('created_at', { ascending: false });
+      }
+
       const { data, error } = await query;
 
       if (error) throw error;
-      setProducts(data || []);
+      
+      let filteredProducts = data || [];
+
+      // Filtro de precio
+      if (priceRange && (priceRange.min > 0 || priceRange.max < 10000)) {
+        filteredProducts = filteredProducts.filter(
+          (p) => p.price >= priceRange.min && p.price <= priceRange.max
+        );
+      }
+
+      // Ordenamiento
+      if (sortBy === 'price-asc') {
+        filteredProducts.sort((a, b) => a.price - b.price);
+      } else if (sortBy === 'price-desc') {
+        filteredProducts.sort((a, b) => b.price - a.price);
+      } else if (sortBy === 'name-asc') {
+        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      setProducts(filteredProducts);
     } catch (error) {
       console.error('Error loading products:', error);
     } finally {

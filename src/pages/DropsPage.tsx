@@ -9,6 +9,8 @@ export default function DropsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Scroll to top when drops page loads
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     loadDrops();
   }, []);
 

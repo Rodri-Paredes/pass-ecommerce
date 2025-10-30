@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useCartStore } from '../store/cartStore';
 import type { ProductWithVariants, ProductVariant } from '../types';
 import SizeSelector from '../components/product/SizeSelector';
+import SizeGuideModal from '../components/product/SizeGuideModal';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -14,10 +15,14 @@ export default function ProductPage() {
   const [availableStock, setAvailableStock] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const { addItem, openCart } = useCartStore();
 
   useEffect(() => {
+    // Scroll to top when product page loads
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     if (id) {
       loadProduct();
     }
@@ -93,8 +98,10 @@ export default function ProductPage() {
     );
   }
 
-  // Solo usamos la imagen principal ya que no hay array de imágenes en la BD
-  const allImages = [product.image_url];
+  // Combinar imagen principal con el array de imágenes adicionales
+  const allImages = product.images && product.images.length > 0 
+    ? [product.image_url, ...product.images]
+    : [product.image_url];
 
   return (
     <div className="min-h-screen pt-16">
@@ -109,12 +116,31 @@ export default function ProductPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="space-y-4">
-            <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden">
+            <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden rounded-lg">
               <img
                 src={allImages[currentImage]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-all duration-300"
               />
+              
+              {allImages.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setCurrentImage((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all"
+                    aria-label="Imagen anterior"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentImage((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all"
+                    aria-label="Imagen siguiente"
+                  >
+                    <ChevronLeft className="w-5 h-5 rotate-180" />
+                  </button>
+                </>
+              )}
             </div>
 
             {allImages.length > 1 && (
@@ -123,11 +149,15 @@ export default function ProductPage() {
                   <button
                     key={index}
                     onClick={() => setCurrentImage(index)}
-                    className={`aspect-square bg-gray-100 overflow-hidden border-2 transition-all ${
+                    className={`aspect-square bg-gray-100 overflow-hidden border-2 transition-all rounded-md hover:opacity-75 ${
                       currentImage === index ? 'border-black' : 'border-transparent'
                     }`}
                   >
-                    <img src={image} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
+                    <img 
+                      src={image} 
+                      alt={`${product.name} ${index + 1}`} 
+                      className="w-full h-full object-cover" 
+                    />
                   </button>
                 ))}
               </div>
@@ -159,6 +189,8 @@ export default function ProductPage() {
                   variants={product.variants}
                   selectedSize={selectedVariant?.size || null}
                   onSizeSelect={handleSizeSelect}
+                  productCategory={product.category}
+                  onShowSizeGuide={() => setIsGuideOpen(true)}
                 />
               )}
             </div>
@@ -201,6 +233,13 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {/* Size Guide Modal */}
+      <SizeGuideModal
+        isOpen={isGuideOpen}
+        onClose={() => setIsGuideOpen(false)}
+        category={product?.category}
+      />
     </div>
   );
 }

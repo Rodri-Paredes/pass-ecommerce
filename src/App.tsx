@@ -7,6 +7,10 @@ import Shop from './pages/Shop';
 import ProductPage from './pages/ProductPage';
 import DropsPage from './pages/DropsPage';
 import DropDetailPage from './pages/DropDetailPage';
+import ShippingPage from './pages/ShippingPage';
+import ReturnsPage from './pages/ReturnsPage';
+import SizeGuidePage from './pages/SizeGuidePage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   return (
@@ -21,6 +25,10 @@ function App() {
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/drops" element={<DropsPage />} />
             <Route path="/drops/:id" element={<DropDetailPage />} />
+            <Route path="/shipping" element={<ShippingPage />} />
+            <Route path="/returns" element={<ReturnsPage />} />
+            <Route path="/size-guide" element={<SizeGuidePage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Routes>
         </main>
         <Footer />

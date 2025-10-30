@@ -2,8 +2,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { CITIES } from '../../types';
+import { useState } from 'react';
 
-const WHATSAPP_NUMBER = '59175767850';
+const WHATSAPP_STORES = [
+  { name: 'Tienda Secundaria', number: '59175767850', location: 'Sucursal Cocha' },
+  { name: 'Tienda Principal', number: '59175131474', location: 'Sucursal Tarija' },
+];
 
 export default function Cart() {
   const {
@@ -16,6 +20,8 @@ export default function Cart() {
     setCity,
     getTotal,
   } = useCartStore();
+  
+  const [selectedStore, setSelectedStore] = useState(WHATSAPP_STORES[0].number);
 
   const generateWhatsAppMessage = () => {
     const productsText = items
@@ -51,7 +57,7 @@ ${productsText}
     }
 
     const message = encodeURIComponent(generateWhatsAppMessage());
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+    const whatsappUrl = `https://wa.me/${selectedStore}?text=${message}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -100,22 +106,27 @@ ${productsText}
                 ) : (
                   <div className="space-y-6">
                     {items.map((item) => (
-                      <div key={item.variant.id} className="flex gap-4">
-                        <img
-                          src={item.product.image_url}
-                          alt={item.product.name}
-                          className="w-24 h-24 object-cover bg-gray-100"
-                        />
+                      <div key={item.variant.id} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0">
+                          <img
+                            src={item.product.image_url}
+                            alt={item.product.name}
+                            className="w-full h-full object-cover bg-gray-100 rounded-md"
+                          />
+                        </div>
 
-                        <div className="flex-1 space-y-2">
-                          <div className="flex justify-between">
-                            <div>
-                              <h3 className="font-medium text-sm">{item.product.name}</h3>
+                        <div className="flex-1 min-w-0 space-y-2">
+                          <div className="flex justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-medium text-sm truncate">{item.product.name}</h3>
                               <p className="text-xs text-gray-600">Talla: {item.variant.size}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Stock: {item.availableStock} unidades
+                              </p>
                             </div>
                             <button
                               onClick={() => removeItem(item.variant.id)}
-                              className="text-gray-400 hover:text-red-500 transition-colors"
+                              className="text-gray-400 hover:text-red-500 transition-colors h-fit"
                               aria-label="Remove item"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -128,10 +139,10 @@ ${productsText}
                                 onClick={() =>
                                   updateQuantity(item.variant.id, Math.max(1, item.quantity - 1))
                                 }
-                                className="p-1 hover:bg-gray-100 rounded transition-colors"
+                                className="p-1.5 hover:bg-gray-100 rounded transition-colors border border-gray-300"
                                 aria-label="Decrease quantity"
                               >
-                                <Minus className="w-4 h-4" />
+                                <Minus className="w-3 h-3" />
                               </button>
                               <span className="text-sm font-medium w-8 text-center">
                                 {item.quantity}
@@ -143,10 +154,11 @@ ${productsText}
                                     Math.min(item.availableStock, item.quantity + 1)
                                   )
                                 }
-                                className="p-1 hover:bg-gray-100 rounded transition-colors"
+                                disabled={item.quantity >= item.availableStock}
+                                className="p-1.5 hover:bg-gray-100 rounded transition-colors border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                 aria-label="Increase quantity"
                               >
-                                <Plus className="w-4 h-4" />
+                                <Plus className="w-3 h-3" />
                               </button>
                             </div>
                             <p className="font-semibold text-sm">
@@ -165,6 +177,23 @@ ${productsText}
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Subtotal:</span>
                     <span>Bs. {getTotal().toFixed(2)}</span>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 tracking-wide">
+                      SUCURSAL DE ATENCIÓN
+                    </label>
+                    <select
+                      value={selectedStore}
+                      onChange={(e) => setSelectedStore(e.target.value)}
+                      className="w-full p-3 border border-gray-300 focus:outline-none focus:border-black transition-colors"
+                    >
+                      {WHATSAPP_STORES.map((store) => (
+                        <option key={store.number} value={store.number}>
+                          {store.name} - {store.location}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>

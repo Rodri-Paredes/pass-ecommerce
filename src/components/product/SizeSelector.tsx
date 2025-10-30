@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ProductVariant, Stock, Branch } from '../../types';
+import { SIZES, PANT_SIZES, NUMERIC_SIZE_CATEGORIES } from '../../types';
+import { Ruler } from 'lucide-react';
 
 interface SizeSelectorProps {
   variants: (ProductVariant & {
@@ -8,6 +10,8 @@ interface SizeSelectorProps {
   selectedSize: string | null;
   onSizeSelect: (variant: ProductVariant, totalStock: number) => void;
   selectedCity?: string;
+  productCategory?: string;
+  onShowSizeGuide?: () => void;
 }
 
 export default function SizeSelector({
@@ -15,10 +19,17 @@ export default function SizeSelector({
   selectedSize,
   onSizeSelect,
   selectedCity,
+  productCategory,
+  onShowSizeGuide,
 }: SizeSelectorProps) {
   const [availableSizes, setAvailableSizes] = useState<
     Map<string, { variant: ProductVariant; stock: number }>
   >(new Map());
+
+  // Determinar qué tallas mostrar según la categoría
+  const isNumericSize = productCategory && 
+    (NUMERIC_SIZE_CATEGORIES as readonly string[]).includes(productCategory);
+  const allSizes = isNumericSize ? [...PANT_SIZES] : [...SIZES];
 
   useEffect(() => {
     const sizeMap = new Map();
@@ -26,7 +37,7 @@ export default function SizeSelector({
     variants.forEach((variant) => {
       let totalStock = 0;
 
-      if (variant.stock) {
+      if (variant.stock && variant.stock.length > 0) {
         if (selectedCity) {
           // Filtramos por nombre de sucursal que contenga la ciudad
           totalStock = variant.stock
@@ -37,29 +48,40 @@ export default function SizeSelector({
         }
       }
 
-      if (totalStock > 0) {
-        sizeMap.set(variant.size, { variant, stock: totalStock });
-      }
+      // Incluir todas las variantes, incluso sin stock, para mostrarlas como no disponibles
+      sizeMap.set(variant.size, { variant, stock: totalStock });
     });
 
     setAvailableSizes(sizeMap);
   }, [variants, selectedCity]);
 
-  const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium tracking-wide">TALLA</label>
-        {selectedCity && (
-          <span className="text-xs text-gray-500">Stock en {selectedCity}</span>
-        )}
+        <label className="block text-sm font-medium tracking-wide">
+          {isNumericSize ? 'TALLA (CINTURA)' : 'TALLA'}
+        </label>
+        <div className="flex items-center gap-3">
+          {selectedCity && (
+            <span className="text-xs text-gray-500">Stock en {selectedCity}</span>
+          )}
+          {onShowSizeGuide && (
+            <button
+              type="button"
+              onClick={onShowSizeGuide}
+              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <Ruler className="w-3 h-3" />
+              Ver guía
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-2">
+      <div className={`grid gap-2 ${isNumericSize ? 'grid-cols-4' : 'grid-cols-6'}`}>
         {allSizes.map((size) => {
           const sizeData = availableSizes.get(size);
-          const isAvailable = !!sizeData;
+          const isAvailable = sizeData && sizeData.stock > 0;
           const isSelected = selectedSize === size;
 
           return (
@@ -90,6 +112,12 @@ export default function SizeSelector({
       {selectedSize && availableSizes.get(selectedSize) && (
         <p className="text-sm text-gray-600">
           Stock disponible: {availableSizes.get(selectedSize)!.stock} unidades
+        </p>
+      )}
+
+      {variants.length === 0 && (
+        <p className="text-sm text-red-500">
+          No hay variantes disponibles para este producto
         </p>
       )}
     </div>
