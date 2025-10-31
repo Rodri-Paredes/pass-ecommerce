@@ -19,7 +19,8 @@ export default function DropsSection() {
         .select('*')
         .eq('status', 'ACTIVO')
         .order('is_featured', { ascending: false })
-        .order('launch_date', { ascending: false });
+        .order('launch_date', { ascending: false })
+        .limit(1); // Solo obtener el último drop activo
 
       if (error) throw error;
       setDrops(data || []);
@@ -45,8 +46,8 @@ export default function DropsSection() {
   return (
     <section className="py-16">
       <div className="mb-10">
-        <h2 className="text-3xl font-bold mb-3 tracking-tight">DROPS ACTIVOS</h2>
-        <p className="text-gray-600">Colecciones limitadas disponibles ahora</p>
+        <h2 className="text-3xl font-bold mb-3 tracking-tight">ÚLTIMO DROP</h2>
+        <p className="text-gray-600">Nuestra colección más reciente</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

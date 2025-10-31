@@ -9,10 +9,10 @@ interface SizeGuideModalProps {
 
 const SIZE_GUIDE_IMAGES: Record<string, string> = {
   'Pantalones': 'https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops/guia-size/guia-pant.jpeg',
-  'Shorts': 'https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops/guia-size/guia-pant.jpeg',
   // Puedes agregar más guías aquí cuando las tengas
+  // 'Shorts': 'url_de_guia_shorts',
   // 'Hoodies': 'url_de_guia_hoodies',
-  // 'Camisas': 'url_de_guia_camisas',
+  // 'Poleras': 'url_de_guia_poleras',
 };
 
 export default function SizeGuideModal({ isOpen, onClose, category }: SizeGuideModalProps) {

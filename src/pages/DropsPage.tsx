@@ -20,7 +20,8 @@ export default function DropsPage() {
         .from('drops')
         .select('*')
         .order('is_featured', { ascending: false })
-        .order('launch_date', { ascending: false });
+        .order('launch_date', { ascending: false })
+        .limit(1); // Solo obtener el último drop
 
       if (error) throw error;
       setDrops(data || []);
@@ -43,8 +44,8 @@ export default function DropsPage() {
     <div className="min-h-screen pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-10">
-          <h1 className="text-4xl font-bold mb-3 tracking-tight">DROPS</h1>
-          <p className="text-gray-600">Colecciones exclusivas y limitadas</p>
+          <h1 className="text-4xl font-bold mb-3 tracking-tight">ÚLTIMO DROP</h1>
+          <p className="text-gray-600">Nuestra colección más reciente</p>
         </div>
 
         {drops.length === 0 ? (

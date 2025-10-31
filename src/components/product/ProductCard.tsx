@@ -46,18 +46,17 @@ export default function ProductCard({ product, index }: ProductCardProps) {
               {product.drop.name}
             </div>
           )}
-
-          {totalStock === 0 && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="text-white font-medium tracking-wide">AGOTADO</span>
-            </div>
-          )}
         </div>
 
         <div className="space-y-1">
-          <h3 className="font-medium tracking-wide group-hover:opacity-70 transition-opacity">
-            {product.name}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium tracking-wide group-hover:opacity-70 transition-opacity">
+              {product.name}
+            </h3>
+            {totalStock === 0 && (
+              <span className="text-red-600 font-bold text-xs tracking-wide">SOLD OUT</span>
+            )}
+          </div>
           <p className="text-sm text-gray-600">{product.category}</p>
           <p className="font-semibold">Bs. {product.price.toFixed(2)}</p>
         </div>

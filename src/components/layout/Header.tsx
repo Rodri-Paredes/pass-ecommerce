@@ -27,7 +27,7 @@ export default function Header() {
               to="/drops"
               className="text-sm font-medium tracking-wide hover:opacity-70 transition-opacity"
             >
-              DROPS
+              ÚLTIMO DROP
             </Link>
             {CATEGORIES.slice(0, 4).map((category) => (
               <Link
@@ -67,25 +67,44 @@ export default function Header() {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <nav className="flex flex-col space-y-4">
+          <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <nav className="flex flex-col p-3">
               <Link
                 to="/drops"
-                className="text-sm font-medium tracking-wide hover:opacity-70 transition-opacity"
+                className="group relative py-3 px-3 text-sm font-medium tracking-wide transition-all hover:bg-gray-50 rounded-lg active:scale-98"
                 onClick={() => setIsMenuOpen(false)}
               >
-                DROPS
+                <div className="flex items-center justify-between">
+                  <span className="group-hover:translate-x-1 transition-transform">ÚLTIMO DROP</span>
+                  <span className="text-gray-400 group-hover:text-black transition-colors text-xs">→</span>
+                </div>
               </Link>
+              
+              <div className="h-px bg-gray-100 my-1"></div>
+              
               {CATEGORIES.map((category) => (
                 <Link
                   key={category}
                   to={`/shop?category=${encodeURIComponent(category)}`}
-                  className="text-sm font-medium tracking-wide hover:opacity-70 transition-opacity"
+                  className="group relative py-3 px-3 text-sm font-medium tracking-wide transition-all hover:bg-gray-50 rounded-lg active:scale-98"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {category.toUpperCase()}
+                  <div className="flex items-center justify-between">
+                    <span className="group-hover:translate-x-1 transition-transform">{category.toUpperCase()}</span>
+                    <span className="text-gray-400 group-hover:text-black transition-colors text-xs">→</span>
+                  </div>
                 </Link>
               ))}
+              
+              <div className="h-px bg-gray-100 my-1"></div>
+              
+              <Link
+                to="/shop"
+                className="mt-2 py-2.5 px-3 bg-black text-white text-center text-sm font-medium tracking-wide rounded-lg hover:bg-gray-800 active:scale-98 transition-all"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                VER TODO
+              </Link>
             </nav>
           </div>
         )}

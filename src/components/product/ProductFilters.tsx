@@ -26,70 +26,82 @@ export default function ProductFilters({ onPriceRangeChange, onSortChange }: Fil
   ];
 
   return (
-    <div className="flex flex-wrap gap-4 mb-6">
-      {/* Price Filter */}
-      <div className="relative">
-        <button
-          onClick={() => setIsPriceOpen(!isPriceOpen)}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-black transition-colors bg-white"
-        >
-          <span className="text-sm font-medium">Precio</span>
-          <ChevronDown className={`w-4 h-4 transition-transform ${isPriceOpen ? 'rotate-180' : ''}`} />
-        </button>
-        
-        {isPriceOpen && (
-          <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-300 shadow-lg z-10 p-4">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium mb-1">Mínimo (Bs.)</label>
-                <input
-                  type="number"
-                  value={priceRange.min}
-                  onChange={(e) => handlePriceChange('min', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
-                  min="0"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium mb-1">Máximo (Bs.)</label>
-                <input
-                  type="number"
-                  value={priceRange.max}
-                  onChange={(e) => handlePriceChange('max', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
-                  min="0"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Sort Filter */}
+    <div className="flex items-center gap-3">
+      {/* Sort Filter - Minimalist */}
       <div className="relative">
         <button
           onClick={() => setIsSortOpen(!isSortOpen)}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-black transition-colors bg-white"
+          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium tracking-wider uppercase text-gray-700 hover:text-black transition-colors"
         >
-          <span className="text-sm font-medium">Ordenar</span>
-          <ChevronDown className={`w-4 h-4 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+          <span>Ordenar</span>
+          <ChevronDown className={`w-3 h-3 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
         </button>
         
         {isSortOpen && (
-          <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-300 shadow-lg z-10">
-            {sortOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => {
-                  onSortChange(option.value);
-                  setIsSortOpen(false);
-                }}
-                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          <>
+            <div 
+              className="fixed inset-0 z-10" 
+              onClick={() => setIsSortOpen(false)}
+            />
+            <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-56 bg-white border border-gray-200 shadow-lg z-20 max-h-64 overflow-y-auto">
+              {sortOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    onSortChange(option.value);
+                    setIsSortOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Price Filter - Minimalist */}
+      <div className="relative">
+        <button
+          onClick={() => setIsPriceOpen(!isPriceOpen)}
+          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium tracking-wider uppercase text-gray-700 hover:text-black transition-colors"
+        >
+          <span>Precio</span>
+          <ChevronDown className={`w-3 h-3 transition-transform ${isPriceOpen ? 'rotate-180' : ''}`} />
+        </button>
+        
+        {isPriceOpen && (
+          <>
+            <div 
+              className="fixed inset-0 z-10" 
+              onClick={() => setIsPriceOpen(false)}
+            />
+            <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-64 bg-white border border-gray-200 shadow-lg z-20 p-4">
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium mb-1.5 text-gray-700">Mínimo (Bs.)</label>
+                  <input
+                    type="number"
+                    value={priceRange.min}
+                    onChange={(e) => handlePriceChange('min', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-black"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1.5 text-gray-700">Máximo (Bs.)</label>
+                  <input
+                    type="number"
+                    value={priceRange.max}
+                    onChange={(e) => handlePriceChange('max', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-black"
+                    min="0"
+                  />
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

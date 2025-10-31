@@ -43,57 +43,62 @@ export default function Shop() {
   };
 
   return (
-    <div className="min-h-screen pt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="mb-8 sm:mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 tracking-tight">
-            {searchQuery ? `Resultados para "${searchQuery}"` : 'TODAS LAS PRENDAS'}
-          </h1>
-          {searchQuery && (
-            <button
-              onClick={() => {
-                setSearchParams(selectedCategory ? { category: selectedCategory } : {});
-              }}
-              className="text-sm text-gray-600 hover:text-black mb-4 underline"
-            >
-              Limpiar búsqueda
-            </button>
-          )}
-
-          {/* Category Pills - Mobile Optimized */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 overflow-x-auto pb-3 scrollbar-hide snap-x snap-mandatory">
-              <button
-                onClick={() => handleCategoryChange('')}
-                className={`snap-start flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-medium tracking-wide transition-all shadow-sm ${
-                  !selectedCategory
-                    ? 'bg-black text-white shadow-md scale-105'
-                    : 'bg-white border-2 border-gray-200 hover:border-gray-400 active:scale-95'
-                }`}
-              >
-                TODOS
-              </button>
-              {CATEGORIES.map((category) => (
+    <div className="min-h-screen pt-16 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Header Section - Minimalist */}
+        <div className="mb-6 sm:mb-8 border-b border-gray-200 pb-4 sm:pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-light tracking-[0.2em] uppercase text-gray-900">
+                {searchQuery ? `"${searchQuery}"` : 'Colección'}
+              </h1>
+              {searchQuery && (
                 <button
-                  key={category}
-                  onClick={() => handleCategoryChange(category)}
-                  className={`snap-start flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-medium tracking-wide transition-all shadow-sm whitespace-nowrap ${
-                    selectedCategory === category
-                      ? 'bg-black text-white shadow-md scale-105'
-                      : 'bg-white border-2 border-gray-200 hover:border-gray-400 active:scale-95'
-                  }`}
+                  onClick={() => {
+                    setSearchParams(selectedCategory ? { category: selectedCategory } : {});
+                  }}
+                  className="text-xs text-gray-500 hover:text-black mt-2 underline underline-offset-2"
                 >
-                  {category.toUpperCase()}
+                  Limpiar búsqueda
                 </button>
-              ))}
+              )}
             </div>
+            
+            <ProductFilters
+              onPriceRangeChange={handlePriceRangeChange}
+              onSortChange={handleSortChange}
+            />
           </div>
         </div>
 
-        <ProductFilters
-          onPriceRangeChange={handlePriceRangeChange}
-          onSortChange={handleSortChange}
-        />
+        {/* Category Tabs - Luxury Style */}
+        <div className="mb-8 border-b border-gray-200">
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide -mb-px">
+            <button
+              onClick={() => handleCategoryChange('')}
+              className={`flex-shrink-0 px-4 py-3 text-xs font-medium tracking-[0.15em] uppercase transition-all whitespace-nowrap border-b-2 ${
+                !selectedCategory
+                  ? 'border-black text-black'
+                  : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+              }`}
+            >
+              Todo
+            </button>
+            {CATEGORIES.map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                className={`flex-shrink-0 px-4 py-3 text-xs font-medium tracking-[0.15em] uppercase transition-all whitespace-nowrap border-b-2 ${
+                  selectedCategory === category
+                    ? 'border-black text-black'
+                    : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <ProductGrid
           category={selectedCategory}

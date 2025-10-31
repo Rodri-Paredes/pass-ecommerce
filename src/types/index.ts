@@ -96,5 +96,5 @@ export const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'] as const;
 
 export const PANT_SIZES = ['28', '30', '32', '34', '36', '38'] as const;
 
-// Categorías que usan tallas numéricas (pantalones)
-export const NUMERIC_SIZE_CATEGORIES = ['Pantalones', 'Shorts'] as const;
+// Categorías que usan tallas numéricas (solo pantalones)
+export const NUMERIC_SIZE_CATEGORIES = ['Pantalones'] as const;
