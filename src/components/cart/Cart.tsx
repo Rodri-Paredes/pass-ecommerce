@@ -5,8 +5,8 @@ import { CITIES } from '../../types';
 import { useState } from 'react';
 
 const WHATSAPP_STORES = [
-  { name: 'Tienda Secundaria', number: '59175767850', location: 'Sucursal Cocha' },
-  { name: 'Tienda Principal', number: '59175131474', location: 'Sucursal Tarija' },
+  { name: 'Asesor Comercial Tarija 1', number: '59160279699', location: 'Sucursal Tarija' },
+  { name: 'Asesor Comercial Tarija 2', number: '59175131474', location: 'Sucursal Tarija' },
 ];
 
 export default function Cart() {

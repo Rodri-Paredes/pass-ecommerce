@@ -23,121 +23,172 @@ export default function SizeGuidePage() {
             </div>
             <div className="space-y-4 text-gray-700">
               <div>
-                <strong>Pecho:</strong> Mide alrededor de la parte más ancha del pecho,
-                manteniendo la cinta métrica horizontal.
+                <strong>Ancho/Pecho:</strong> Mide de un lado a otro del pecho, manteniendo la prenda plana.
               </div>
               <div>
-                <strong>Cintura:</strong> Mide alrededor de la parte más estrecha de tu cintura,
-                normalmente justo encima del ombligo.
+                <strong>Largo:</strong> Mide desde la parte superior del hombro hasta el borde inferior de la prenda.
               </div>
               <div>
-                <strong>Cadera:</strong> Mide alrededor de la parte más ancha de tus caderas.
+                <strong>Manga:</strong> Mide desde el hombro hasta el final de la manga.
+              </div>
+              <div>
+                <strong>Cintura:</strong> Mide la cintura del pantalón de lado a lado en la parte superior.
               </div>
             </div>
           </section>
 
+          {/* Poleras Boxy */}
           <section className="border-t border-gray-200 pt-8">
-            <h2 className="text-2xl font-semibold mb-6">Hoodies y Camisas</h2>
+            <h2 className="text-2xl font-semibold mb-6">Poleras Boxy</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b-2 border-gray-300">
                     <th className="py-3 px-4 font-semibold">Talla</th>
-                    <th className="py-3 px-4 font-semibold">Pecho (cm)</th>
+                    <th className="py-3 px-4 font-semibold">Ancho (cm)</th>
                     <th className="py-3 px-4 font-semibold">Largo (cm)</th>
                     <th className="py-3 px-4 font-semibold">Manga (cm)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">XS</td>
-                    <td className="py-3 px-4">88-92</td>
-                    <td className="py-3 px-4">66-68</td>
-                    <td className="py-3 px-4">58-60</td>
+                    <td className="py-3 px-4 font-medium">S</td>
+                    <td className="py-3 px-4">57</td>
+                    <td className="py-3 px-4">64</td>
+                    <td className="py-3 px-4">22</td>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">S</td>
-                    <td className="py-3 px-4">92-96</td>
-                    <td className="py-3 px-4">68-70</td>
-                    <td className="py-3 px-4">60-62</td>
+                    <td className="py-3 px-4 font-medium">M</td>
+                    <td className="py-3 px-4">60</td>
+                    <td className="py-3 px-4">66.5</td>
+                    <td className="py-3 px-4">23</td>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">M</td>
-                    <td className="py-3 px-4">96-100</td>
-                    <td className="py-3 px-4">70-72</td>
-                    <td className="py-3 px-4">62-64</td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">L</td>
-                    <td className="py-3 px-4">100-104</td>
-                    <td className="py-3 px-4">72-74</td>
-                    <td className="py-3 px-4">64-66</td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">XL</td>
-                    <td className="py-3 px-4">104-108</td>
-                    <td className="py-3 px-4">74-76</td>
-                    <td className="py-3 px-4">66-68</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 px-4">XXL</td>
-                    <td className="py-3 px-4">108-114</td>
-                    <td className="py-3 px-4">76-78</td>
-                    <td className="py-3 px-4">68-70</td>
+                    <td className="py-3 px-4 font-medium">L</td>
+                    <td className="py-3 px-4">63</td>
+                    <td className="py-3 px-4">69.5</td>
+                    <td className="py-3 px-4">24</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </section>
 
+          {/* Poleras Oversize */}
           <section className="border-t border-gray-200 pt-8">
-            <h2 className="text-2xl font-semibold mb-6">Pantalones y Shorts</h2>
+            <h2 className="text-2xl font-semibold mb-6">Poleras Oversize</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-gray-300">
+                    <th className="py-3 px-4 font-semibold">Talla</th>
+                    <th className="py-3 px-4 font-semibold">Ancho (cm)</th>
+                    <th className="py-3 px-4 font-semibold">Largo (cm)</th>
+                    <th className="py-3 px-4 font-semibold">Manga (cm)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">S</td>
+                    <td className="py-3 px-4">64</td>
+                    <td className="py-3 px-4">73</td>
+                    <td className="py-3 px-4">23</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">M</td>
+                    <td className="py-3 px-4">66</td>
+                    <td className="py-3 px-4">75</td>
+                    <td className="py-3 px-4">24</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">L</td>
+                    <td className="py-3 px-4">69</td>
+                    <td className="py-3 px-4">77</td>
+                    <td className="py-3 px-4">25</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* Hoodies */}
+          <section className="border-t border-gray-200 pt-8">
+            <h2 className="text-2xl font-semibold mb-6">Hoodies</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-gray-300">
+                    <th className="py-3 px-4 font-semibold">Talla</th>
+                    <th className="py-3 px-4 font-semibold">Ancho Espalda (cm)</th>
+                    <th className="py-3 px-4 font-semibold">Ancho Elástico (cm)</th>
+                    <th className="py-3 px-4 font-semibold">Largo (cm)</th>
+                    <th className="py-3 px-4 font-semibold">Manga (cm)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">S</td>
+                    <td className="py-3 px-4">71</td>
+                    <td className="py-3 px-4">46</td>
+                    <td className="py-3 px-4">61</td>
+                    <td className="py-3 px-4">53</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">M</td>
+                    <td className="py-3 px-4">73</td>
+                    <td className="py-3 px-4">48</td>
+                    <td className="py-3 px-4">63.5</td>
+                    <td className="py-3 px-4">55</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">L</td>
+                    <td className="py-3 px-4">76</td>
+                    <td className="py-3 px-4">48</td>
+                    <td className="py-3 px-4">66</td>
+                    <td className="py-3 px-4">55</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* Pantalones Super Baggy */}
+          <section className="border-t border-gray-200 pt-8">
+            <h2 className="text-2xl font-semibold mb-6">Pantalones Super Baggy</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b-2 border-gray-300">
                     <th className="py-3 px-4 font-semibold">Talla</th>
                     <th className="py-3 px-4 font-semibold">Cintura (cm)</th>
-                    <th className="py-3 px-4 font-semibold">Cadera (cm)</th>
-                    <th className="py-3 px-4 font-semibold">Largo (cm)</th>
+                    <th className="py-3 px-4 font-semibold">Botapié (cm)</th>
+                    <th className="py-3 px-4 font-semibold">Largo (m)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">XS</td>
-                    <td className="py-3 px-4">70-74</td>
-                    <td className="py-3 px-4">86-90</td>
-                    <td className="py-3 px-4">100-102</td>
+                    <td className="py-3 px-4 font-medium">28</td>
+                    <td className="py-3 px-4">38</td>
+                    <td className="py-3 px-4">26</td>
+                    <td className="py-3 px-4">1.03</td>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">S</td>
-                    <td className="py-3 px-4">74-78</td>
-                    <td className="py-3 px-4">90-94</td>
-                    <td className="py-3 px-4">102-104</td>
+                    <td className="py-3 px-4 font-medium">30</td>
+                    <td className="py-3 px-4">40.5</td>
+                    <td className="py-3 px-4">26</td>
+                    <td className="py-3 px-4">1.05</td>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">M</td>
-                    <td className="py-3 px-4">78-82</td>
-                    <td className="py-3 px-4">94-98</td>
-                    <td className="py-3 px-4">104-106</td>
+                    <td className="py-3 px-4 font-medium">32</td>
+                    <td className="py-3 px-4">43</td>
+                    <td className="py-3 px-4">26</td>
+                    <td className="py-3 px-4">1.06</td>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">L</td>
-                    <td className="py-3 px-4">82-86</td>
-                    <td className="py-3 px-4">98-102</td>
-                    <td className="py-3 px-4">106-108</td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">XL</td>
-                    <td className="py-3 px-4">86-92</td>
-                    <td className="py-3 px-4">102-106</td>
-                    <td className="py-3 px-4">108-110</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 px-4">XXL</td>
-                    <td className="py-3 px-4">92-98</td>
-                    <td className="py-3 px-4">106-112</td>
-                    <td className="py-3 px-4">110-112</td>
+                    <td className="py-3 px-4 font-medium">34</td>
+                    <td className="py-3 px-4">44</td>
+                    <td className="py-3 px-4">28</td>
+                    <td className="py-3 px-4">1.07</td>
                   </tr>
                 </tbody>
               </table>
@@ -147,7 +198,7 @@ export default function SizeGuidePage() {
           <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 mt-8">
             <p className="text-sm text-yellow-900">
               <strong>¿Tienes dudas sobre tu talla?</strong> Contáctanos por WhatsApp al
-              591 75767850 y te ayudaremos a elegir la talla perfecta para ti.
+              591 75131474 y te ayudaremos a elegir la talla perfecta para ti.
             </p>
           </div>
         </div>

@@ -25,12 +25,12 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold mb-1">WhatsApp / Teléfono</h3>
                   <a 
-                    href="https://wa.me/59175767850" 
+                    href="https://wa.me/59160279699" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline"
                   >
-                    +591 75767850
+                    +591 60279699
                   </a>
                 </div>
               </div>

@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://passstreetwear.com/sitemap.xml
+
+# Disallow cart and admin paths (if any)
+Disallow: /admin/

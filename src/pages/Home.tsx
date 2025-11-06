@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Truck, Shield, Sparkles, Instagram, MapPin } from 'lucide-react';
+import { ArrowRight, Truck, Shield, Sparkles, Instagram } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const fadeInUp = {

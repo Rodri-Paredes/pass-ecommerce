@@ -82,7 +82,7 @@ export default function ReturnsPage() {
           <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mt-8">
             <p className="text-sm text-blue-900">
               <strong>¿Necesitas ayuda?</strong> Estamos aquí para ayudarte. Contáctanos por
-              WhatsApp al 591 75767850 o escríbenos a info@passclothing.com
+              WhatsApp al 591 60279699 
             </p>
           </div>
         </div>

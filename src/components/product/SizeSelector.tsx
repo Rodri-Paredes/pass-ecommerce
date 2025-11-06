@@ -65,7 +65,8 @@ export default function SizeSelector({
           {selectedCity && (
             <span className="text-xs text-gray-500">Stock en {selectedCity}</span>
           )}
-          {onShowSizeGuide && (
+          {/* Solo mostrar guía para Pantalones */}
+          {onShowSizeGuide && productCategory === 'Pantalones' && (
             <button
               type="button"
               onClick={onShowSizeGuide}
