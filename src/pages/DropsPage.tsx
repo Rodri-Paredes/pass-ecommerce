@@ -19,9 +19,10 @@ export default function DropsPage() {
       const { data, error } = await supabase
         .from('drops')
         .select('*')
+        .eq('status', 'ACTIVO')
         .order('is_featured', { ascending: false })
         .order('launch_date', { ascending: false })
-        .limit(1); // Solo obtener el último drop
+        .limit(1); // Solo obtener el último drop activo
 
       if (error) throw error;
       setDrops(data || []);

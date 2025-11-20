@@ -28,6 +28,17 @@
     <meta name="theme-color" content="#000000" />
     
     <title>PASS CLOTHING</title>
+    <!-- Google Analytics (gtag.js) -->
+    <!-- Measurement ID provided by user: G-TP0YCEZJ36 -->
+    <!-- Note: send_page_view is disabled so SPA navigation can be tracked manually from the app to avoid duplicate pageview events. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TP0YCEZJ36"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      // Disable automatic page_view so we can control SPA page views manually
+      gtag('config', 'G-TP0YCEZJ36', { send_page_view: false });
+    </script>
   </head>
   <body>
     <div id="root"></div>

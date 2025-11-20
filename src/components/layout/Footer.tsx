@@ -123,6 +123,12 @@ export default function Footer() {
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
             </div>
+            {/* Corporate phone for Cochabamba */}
+            <div className="mt-4 text-xs text-gray-400">
+              <a href="tel:+59174563943" className="block hover:text-white">
+                Cochabamba (Corporativo): +591 74563943
+              </a>
+            </div>
             {/* Mobile logo - shown only on mobile */}
             <div className="md:hidden mt-6">
               <Logo className="h-6 opacity-50" />

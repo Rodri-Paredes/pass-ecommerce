@@ -23,7 +23,7 @@ export default function SizeSelector({
   onShowSizeGuide,
 }: SizeSelectorProps) {
   const [availableSizes, setAvailableSizes] = useState<
-    Map<string, { variant: ProductVariant; stock: number }>
+    Map<string, { variant: ProductVariant; stock: number; cityStock?: number }>
   >(new Map());
 
   // Determinar qué tallas mostrar según la categoría
@@ -36,20 +36,26 @@ export default function SizeSelector({
 
     variants.forEach((variant) => {
       let totalStock = 0;
+      let cityStock: number | undefined = undefined;
 
       if (variant.stock && variant.stock.length > 0) {
+        // Siempre sumar stock de todas las sucursales para mostrar disponibilidad total
+        const totalStockAll = variant.stock.reduce((sum, s) => sum + s.quantity, 0);
+
+        // Guardamos el stock total como valor principal (suma de las sucursales)
+        totalStock = totalStockAll;
+
+        // Además computamos stock por ciudad (opcional) para mostrar dato puntual si el usuario filtró ciudad
         if (selectedCity) {
-          // Filtramos por nombre de sucursal que contenga la ciudad
-          totalStock = variant.stock
+          cityStock = variant.stock
             .filter((s) => s.branch?.name?.toLowerCase().includes(selectedCity.toLowerCase()))
             .reduce((sum, s) => sum + s.quantity, 0);
-        } else {
-          totalStock = variant.stock.reduce((sum, s) => sum + s.quantity, 0);
         }
       }
 
       // Incluir todas las variantes, incluso sin stock, para mostrarlas como no disponibles
-      sizeMap.set(variant.size, { variant, stock: totalStock });
+      // Almacenamos también cityStock opcional para mostrar desglose si el usuario seleccionó ciudad
+      sizeMap.set(variant.size, { variant, stock: totalStock, cityStock });
     });
 
     setAvailableSizes(sizeMap);
@@ -62,9 +68,7 @@ export default function SizeSelector({
           {isNumericSize ? 'TALLA (CINTURA)' : 'TALLA'}
         </label>
         <div className="flex items-center gap-3">
-          {selectedCity && (
-            <span className="text-xs text-gray-500">Stock en {selectedCity}</span>
-          )}
+          <span className="text-xs text-gray-500">Disponibilidad</span>
           {/* Solo mostrar guía para Pantalones */}
           {onShowSizeGuide && productCategory === 'Pantalones' && (
             <button
@@ -113,6 +117,9 @@ export default function SizeSelector({
       {selectedSize && availableSizes.get(selectedSize) && (
         <p className="text-sm text-gray-600">
           Stock disponible: {availableSizes.get(selectedSize)!.stock} unidades
+          {selectedCity && typeof availableSizes.get(selectedSize)!.cityStock === 'number' && (
+            <span className="text-xs text-gray-500 ml-2">({availableSizes.get(selectedSize)!.cityStock} en {selectedCity})</span>
+          )}
         </p>
       )}
 

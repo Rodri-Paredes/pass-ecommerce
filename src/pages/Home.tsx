@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { ArrowRight, Truck, Shield, Sparkles, Instagram } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { supabase } from '../lib/supabase';
+import type { Drop } from '../types';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -18,6 +21,30 @@ const staggerContainer = {
 };
 
 export default function Home() {
+  const [latestDrop, setLatestDrop] = useState<Drop | null>(null);
+
+  useEffect(() => {
+    // Load the most recent drop to link directly to its detail page from the hero
+    const loadLatestDrop = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('drops')
+          .select('*')
+          .eq('status', 'ACTIVO')
+          .order('is_featured', { ascending: false })
+          .order('launch_date', { ascending: false })
+          .limit(1);
+
+        if (error) throw error;
+        if (data && data.length > 0) setLatestDrop(data[0]);
+      } catch (err) {
+        console.error('Error loading latest drop:', err);
+      }
+    };
+
+    loadLatestDrop();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -54,7 +81,7 @@ export default function Home() {
               transition={{ delay: 0.2, duration: 0.6 }}
             >
               <Link
-                to="/drops"
+                to={latestDrop ? `/drops/${latestDrop.id}` : '/drops'}
                 className="inline-flex items-center gap-2 bg-white text-black px-6 sm:px-8 py-3 sm:py-4 font-medium tracking-wide hover:bg-gray-100 transition-all rounded-full"
               >
                 VER ÚLTIMO DROP

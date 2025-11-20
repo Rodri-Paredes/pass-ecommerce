@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { pageview } from './lib/analytics';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Cart from './components/cart/Cart';
@@ -18,6 +20,8 @@ function App() {
       <div className="min-h-screen bg-white">
         <Header />
         <Cart />
+        {/* Track SPA route changes and send pageviews to analytics */}
+        <RouteChangeTracker />
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -35,6 +39,17 @@ function App() {
       </div>
     </Router>
   );
+}
+
+function RouteChangeTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    // send pageview whenever location changes
+    pageview(location.pathname + location.search);
+  }, [location]);
+
+  return null;
 }
 
 export default App;
