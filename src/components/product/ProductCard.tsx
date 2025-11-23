@@ -1,23 +1,32 @@
-import { useState } from 'react';
+import { useState, useMemo, memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { ProductWithVariants } from '../../types';
+import LazyImage from '../common/LazyImage';
 
 interface ProductCardProps {
   product: ProductWithVariants;
   index: number;
 }
 
-export default function ProductCard({ product, index }: ProductCardProps) {
+// Memoizar ProductCard para evitar re-renders innecesarios
+const ProductCard = memo(function ProductCard({ product, index }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  // No hay segunda imagen en la base de datos actual
-  const secondImage = null;
-  const totalStock = product.variants?.reduce(
-    (sum, variant) =>
-      sum +
-      (variant.stock?.reduce((stockSum, s) => stockSum + s.quantity, 0) || 0),
-    0
-  ) || 0;
+  
+  // Memoizar cálculo de stock (operación costosa)
+  const totalStock = useMemo(() => 
+    product.variants?.reduce(
+      (sum, variant) =>
+        sum +
+        (variant.stock?.reduce((stockSum, s) => stockSum + s.quantity, 0) || 0),
+      0
+    ) || 0,
+    [product.variants]
+  );
+
+  // Memoizar handlers
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
     <motion.div
@@ -29,17 +38,21 @@ export default function ProductCard({ product, index }: ProductCardProps) {
       <Link to={`/product/${product.id}`}>
         <div
           className="relative aspect-[3/4] bg-gray-100 overflow-hidden mb-3"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          <motion.img
-            src={isHovered && secondImage ? secondImage : product.image_url}
-            alt={product.name}
-            className="w-full h-full object-cover"
+          <motion.div
             initial={false}
             animate={{ scale: isHovered ? 1.05 : 1 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-          />
+            className="w-full h-full"
+          >
+            <LazyImage
+              src={product.image_url}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
 
           {product.drop && (
             <div className="absolute top-3 left-3 bg-black text-white px-3 py-1 text-xs font-medium tracking-wide">
@@ -63,4 +76,6 @@ export default function ProductCard({ product, index }: ProductCardProps) {
       </Link>
     </motion.div>
   );
-}
+});
+
+export default ProductCard;

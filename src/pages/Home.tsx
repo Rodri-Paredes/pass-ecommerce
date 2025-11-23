@@ -48,44 +48,57 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative h-[75svh] md:h-[85vh] bg-gray-900 overflow-hidden">
+      <section className="relative h-[80svh] md:h-[90vh] bg-black overflow-hidden">
         <motion.div
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
-          className="absolute inset-0 bg-cover bg-center lg:bg-fixed"
+          initial={{ scale: 1.05, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
               'url(https://firebasestorage.googleapis.com/v0/b/texnoexpert-a1b93.appspot.com/o/passweb%2Fpasscrisis2.jpg?alt=media&token=9d67a8b4-093f-43d5-a75a-1ad7cc4468b8)',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
 
         <div className="relative h-full flex items-center justify-center text-center text-white px-4">
-          <div className="max-w-3xl">
-            <motion.h1
-              {...fadeInUp}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 tracking-tight"
+          <div className="max-w-4xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="mb-6"
             >
-              PASS CLOTHING
+              <span className="inline-block text-xs sm:text-sm tracking-[0.3em] uppercase text-gray-400 font-medium">Streetwear Premium</span>
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-[0.9]"
+            >
+              PASS
+              <span className="block mt-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">CLOTHING</span>
             </motion.h1>
             <motion.p
-              {...fadeInUp}
-              transition={{ delay: 0.1, duration: 0.6 }}
-              className="text-sm sm:text-base md:text-lg mb-8 text-gray-200 font-light tracking-wide"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="text-base sm:text-lg md:text-xl mb-10 text-gray-300 font-light tracking-wide max-w-2xl mx-auto"
             >
-              Ropa urbana que define tu estilo
+              Diseños únicos que definen tu identidad urbana
             </motion.p>
             <motion.div
-              {...fadeInUp}
-              transition={{ delay: 0.2, duration: 0.6 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               <Link
                 to={latestDrop ? `/drops/${latestDrop.id}` : '/drops'}
-                className="inline-flex items-center gap-2 bg-white text-black px-6 sm:px-8 py-3 sm:py-4 font-medium tracking-wide hover:bg-gray-100 transition-all rounded-full"
+                className="group inline-flex items-center gap-3 bg-white text-black px-8 sm:px-10 py-4 sm:py-5 font-semibold tracking-wide hover:bg-gray-900 hover:text-white transition-all duration-300 text-sm sm:text-base uppercase border-2 border-white hover:border-white"
               >
-                VER ÚLTIMO DROP
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                Ver Último Drop
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
           </div>
@@ -101,47 +114,56 @@ export default function Home() {
           transition={{ duration: 0.6 }}
           className="py-16 sm:py-20 md:py-28 lg:py-32"
         >
-          <div className="text-center mb-12 sm:mb-16 md:mb-20">
-            <span className="text-xs sm:text-sm tracking-[0.25em] sm:tracking-[0.3em] uppercase text-gray-400 mb-4 sm:mb-6 block font-medium">Explora por Categoría</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight">Encuentra tu <span className="font-bold">estilo</span></h2>
+          <div className="text-center mb-16 sm:mb-20 md:mb-24">
+            <motion.span 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="inline-block text-xs sm:text-sm tracking-[0.3em] uppercase text-gray-500 mb-6 font-medium"
+            >
+              Colecciones
+            </motion.span>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight leading-tight">
+              Encuentra tu <span className="font-bold italic">estilo</span>
+            </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 md:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
             <Link
               to="/shop?category=Hoodies"
-              className="relative aspect-[4/3] overflow-hidden group shadow-xl hover:shadow-2xl transition-shadow duration-500"
+              className="relative aspect-[4/3] overflow-hidden group"
             >
               <motion.img
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
+                whileHover={{ scale: 1.08 }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 src="https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/1760802011775-Photoroom_20251018_110704.jpeg"
                 alt="Hoodies"
                 loading="lazy"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover brightness-90"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-end p-6 sm:p-8 md:p-10">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/100 transition-all duration-500">
                 <div>
-                  <h3 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide mb-2 sm:mb-3">HOODIES</h3>
-                  <p className="text-gray-200 text-sm sm:text-base tracking-wider">Comodidad y estilo urbano</p>
+                  <h3 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 group-hover:tracking-wide transition-all duration-300">HOODIES</h3>
+                  <p className="text-gray-300 text-sm sm:text-base tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Explorar colección</p>
                 </div>
               </div>
             </Link>
 
             <Link
               to="/shop?category=Poleras"
-              className="relative aspect-[4/3] overflow-hidden group shadow-xl hover:shadow-2xl transition-shadow duration-500"
+              className="relative aspect-[4/3] overflow-hidden group"
             >
               <motion.img
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
+                whileHover={{ scale: 1.08 }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 src="https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/1754948116239-Photoroom_20250417_140556.jpeg"
                 alt="Poleras"
                 loading="lazy"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover brightness-90"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-end p-6 sm:p-8 md:p-10">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/100 transition-all duration-500">
                 <div>
-                  <h3 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide mb-2 sm:mb-3">POLERAS</h3>
-                  <p className="text-gray-200 text-sm sm:text-base tracking-wider">Esenciales versátiles</p>
+                  <h3 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 group-hover:tracking-wide transition-all duration-300">POLERAS</h3>
+                  <p className="text-gray-300 text-sm sm:text-base tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Explorar colección</p>
                 </div>
               </div>
             </Link>
