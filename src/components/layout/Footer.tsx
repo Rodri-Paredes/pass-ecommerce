@@ -16,23 +16,23 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white mt-12 sm:mt-16 md:mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
+    <footer className="bg-gradient-to-b from-gray-900 to-black text-white mt-16 sm:mt-20 md:mt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-12 sm:mb-16">
           {/* Logo & Description - Hidden on mobile, shown on tablet+ */}
           <div className="hidden md:block">
-            <div className="mb-3">
-              <Logo className="h-8" />
+            <div className="mb-4">
+              <Logo className="h-10" />
             </div>
-            <p className="text-gray-400 text-xs leading-relaxed">
-              Ropa urbana de calidad premium.
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Streetwear premium que define tu identidad urbana.
             </p>
           </div>
 
           {/* Comprar */}
           <div>
-            <h4 className="font-medium mb-3 sm:mb-4 text-xs tracking-[0.2em] uppercase">Comprar</h4>
+            <h4 className="font-semibold mb-4 sm:mb-5 text-sm tracking-[0.15em] uppercase text-white">Comprar</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs text-gray-400">
               <li>
                 <Link to="/drops" className="hover:text-white transition-colors inline-block">
@@ -59,7 +59,7 @@ export default function Footer() {
 
           {/* Ayuda */}
           <div>
-            <h4 className="font-medium mb-3 sm:mb-4 text-xs tracking-[0.2em] uppercase">Ayuda</h4>
+            <h4 className="font-semibold mb-4 sm:mb-5 text-sm tracking-[0.15em] uppercase text-white">Ayuda</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs text-gray-400">
               <li>
                 <Link to="/shipping" className="hover:text-white transition-colors inline-block">
@@ -86,7 +86,7 @@ export default function Footer() {
 
           {/* Síguenos */}
           <div>
-            <h4 className="font-medium mb-3 sm:mb-4 text-xs tracking-[0.2em] uppercase">Síguenos</h4>
+            <h4 className="font-semibold mb-4 sm:mb-5 text-sm tracking-[0.15em] uppercase text-white">Síguenos</h4>
             <div className="flex gap-3 sm:gap-4">
               <a
                 href="https://instagram.com/pass.clothing"
@@ -137,8 +137,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 pt-6 sm:pt-8">
-          <p className="text-center text-[10px] sm:text-xs text-gray-500 tracking-wide">
+        <div className="border-t border-gray-800 pt-8 sm:pt-10">
+          <p className="text-center text-xs sm:text-sm text-gray-500 tracking-wider">
             &copy; {new Date().getFullYear()} PASS CLOTHING. Todos los derechos reservados.
           </p>
         </div>

@@ -12,30 +12,32 @@ export default function Header() {
   const itemCount = getItemCount();
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-40">
+    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-40 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           <Link
             to="/"
-            className="hover:opacity-70 transition-opacity"
+            className="hover:opacity-80 transition-all duration-300 transform hover:scale-105"
           >
-            <Logo className="h-8 sm:h-10" />
+            <Logo className="h-10 sm:h-12" />
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-10">
             <Link
               to="/drops"
-              className="text-sm font-medium tracking-wide hover:opacity-70 transition-opacity"
+              className="group relative text-sm font-semibold tracking-[0.1em] uppercase text-gray-900 transition-colors"
             >
-              ÚLTIMO DROP
+              <span className="relative z-10">Último Drop</span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
             </Link>
             {CATEGORIES.slice(0, 4).map((category) => (
               <Link
                 key={category}
                 to={`/shop?category=${encodeURIComponent(category)}`}
-                className="text-sm font-medium tracking-wide hover:opacity-70 transition-opacity"
+                className="group relative text-sm font-medium tracking-[0.05em] text-gray-700 hover:text-black transition-colors"
               >
-                {category.toUpperCase()}
+                <span className="relative z-10">{category}</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
               </Link>
             ))}
           </nav>
