@@ -59,46 +59,59 @@ export default function Home() {
               'url(https://firebasestorage.googleapis.com/v0/b/texnoexpert-a1b93.appspot.com/o/passweb%2Fpasscrisis2.jpg?alt=media&token=9d67a8b4-093f-43d5-a75a-1ad7cc4468b8)',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/95" />
+        
+        {/* Decorative gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-700" />
 
         <div className="relative h-full flex items-center justify-center text-center text-white px-4">
-          <div className="max-w-4xl">
+          <div className="max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-6"
+              className="mb-8"
             >
-              <span className="inline-block text-xs sm:text-sm tracking-[0.3em] uppercase text-gray-400 font-medium">Streetwear Premium</span>
+              <div className="inline-block px-6 py-2 border border-white/20 backdrop-blur-sm bg-white/5 rounded-full">
+                <span className="text-xs sm:text-sm tracking-[0.35em] uppercase text-gray-300 font-light">Streetwear Premium</span>
+              </div>
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-[0.9]"
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-6 sm:mb-8 tracking-tighter leading-[0.85] drop-shadow-2xl"
             >
-              PASS
-              <span className="block mt-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">CLOTHING</span>
+              <span className="inline-block hover:scale-105 transition-transform duration-300">PASS</span>
+              <span className="block mt-2 sm:mt-3 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">CLOTHING</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="text-base sm:text-lg md:text-xl mb-10 text-gray-300 font-light tracking-wide max-w-2xl mx-auto"
+              className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 text-gray-200 font-light tracking-wide max-w-3xl mx-auto leading-relaxed"
             >
-              Diseños únicos que definen tu identidad urbana
+              Diseños únicos que definen tu identidad urbana.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               <Link
                 to={latestDrop ? `/drops/${latestDrop.id}` : '/drops'}
-                className="group inline-flex items-center gap-3 bg-white text-black px-10 sm:px-12 py-4 sm:py-5 font-light tracking-[0.2em] hover:bg-black hover:text-white transition-all duration-500 text-xs sm:text-sm uppercase border border-white hover:border-white hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-1"
+                className="group inline-flex items-center gap-2 sm:gap-3 bg-white text-black px-6 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 font-semibold tracking-[0.1em] sm:tracking-[0.15em] hover:bg-black hover:text-white transition-all duration-500 text-xs sm:text-sm uppercase border-2 border-white hover:shadow-2xl hover:shadow-white/30 hover:scale-105 rounded-sm"
               >
                 Ver Último Drop
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all duration-300" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-all duration-300" />
+              </Link>
+              <Link
+                to="/shop"
+                className="group inline-flex items-center gap-2 sm:gap-3 bg-transparent text-white px-6 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 font-light tracking-[0.1em] sm:tracking-[0.15em] hover:bg-white/10 transition-all duration-500 text-xs sm:text-sm uppercase border-2 border-white/50 hover:border-white backdrop-blur-sm"
+              >
+                Explorar Tienda
               </Link>
             </motion.div>
           </div>
@@ -115,17 +128,24 @@ export default function Home() {
           className="py-16 sm:py-20 md:py-28 lg:py-32"
         >
           <div className="text-center mb-16 sm:mb-20 md:mb-24">
-            <motion.span 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-block text-xs sm:text-sm tracking-[0.3em] uppercase text-gray-500 mb-6 font-medium"
+              transition={{ duration: 0.6 }}
+              className="inline-block px-5 py-2 border border-gray-200 bg-gray-50 mb-8"
             >
-              Colecciones
-            </motion.span>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight leading-tight">
-              Encuentra tu <span className="font-bold italic">estilo</span>
-            </h2>
+              <span className="text-xs sm:text-sm tracking-[0.35em] uppercase text-gray-600 font-light">Colecciones</span>
+            </motion.div>
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight leading-tight"
+            >
+              Encuentra tu <span className="font-black italic bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">estilo</span>
+            </motion.h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
             <Link
@@ -140,10 +160,13 @@ export default function Home() {
                 loading="lazy"
                 className="w-full h-full object-cover brightness-90"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/100 transition-all duration-500">
-                <div>
-                  <h3 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 group-hover:tracking-wider transition-all duration-500">HOODIES</h3>
-                  <p className="text-gray-300 text-sm sm:text-base tracking-[0.25em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">Explorar colección</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/95 transition-all duration-700">
+                <div className="transform group-hover:translate-y-[-10px] transition-transform duration-500">
+                  <div className="w-16 h-1 bg-white mb-4 group-hover:w-24 transition-all duration-500" />
+                  <h3 className="text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-3 sm:mb-4 group-hover:tracking-wide transition-all duration-500 drop-shadow-lg">HOODIES</h3>
+                  <p className="text-gray-200 text-sm sm:text-base md:text-lg tracking-[0.15em] sm:tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2">
+                    Explorar colección <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </p>
                 </div>
               </div>
             </Link>
@@ -160,10 +183,13 @@ export default function Home() {
                 loading="lazy"
                 className="w-full h-full object-cover brightness-90"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/100 transition-all duration-500">
-                <div>
-                  <h3 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 group-hover:tracking-wider transition-all duration-500">POLERAS</h3>
-                  <p className="text-gray-300 text-sm sm:text-base tracking-[0.25em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">Explorar colección</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/95 transition-all duration-700">
+                <div className="transform group-hover:translate-y-[-10px] transition-transform duration-500">
+                  <div className="w-16 h-1 bg-white mb-4 group-hover:w-24 transition-all duration-500" />
+                  <h3 className="text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-3 sm:mb-4 group-hover:tracking-wide transition-all duration-500 drop-shadow-lg">POLERAS</h3>
+                  <p className="text-gray-200 text-sm sm:text-base md:text-lg tracking-[0.15em] sm:tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2">
+                    Explorar colección <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </p>
                 </div>
               </div>
             </Link>
@@ -185,23 +211,26 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <span className="text-xs sm:text-sm tracking-[0.25em] sm:tracking-[0.3em] uppercase text-gray-400 mb-4 sm:mb-6 block font-medium">Nuestra Historia</span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-6 sm:mb-8 leading-tight">
-                Diseñamos el <span className="font-bold">futuro</span> del streetwear boliviano
+              <div className="inline-block px-5 py-2 border border-gray-300 bg-gray-100 mb-6">
+                <span className="text-xs tracking-[0.35em] uppercase text-gray-600 font-light">Nuestra Historia</span>
+              </div>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-6 sm:mb-8 md:mb-10 leading-[1.1]">
+                Diseñamos el <span className="font-black bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">futuro</span> del streetwear boliviano
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed mb-5 sm:mb-6">
+              <div className="w-16 sm:w-20 h-1 bg-black mb-6 sm:mb-8" />
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 leading-relaxed mb-4 sm:mb-6">
                 PASS nació de la pasión por la moda urbana y el deseo de crear prendas que 
                 representen la identidad de nuestra generación.
               </p>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed mb-8 sm:mb-10">
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed mb-8 sm:mb-10">
                 Creemos que la ropa es más que tela: es una forma de expresión y una actitud.
               </p>
               <Link
                 to="/shop"
-                className="inline-flex items-center gap-2 text-xs sm:text-sm tracking-[0.2em] uppercase hover:gap-4 transition-all duration-300 group font-light hover:text-gray-600"
+                className="inline-flex items-center gap-2 sm:gap-3 bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm tracking-[0.1em] sm:tracking-[0.15em] uppercase hover:bg-gray-900 transition-all duration-300 group font-semibold hover:shadow-xl hover:scale-105"
               >
                 Conoce nuestra colección
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-300" />
               </Link>
             </motion.div>
             <motion.div
@@ -211,16 +240,19 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="relative mt-10 md:mt-0"
             >
-              <div className="aspect-[3/4] bg-gray-100 overflow-hidden shadow-2xl">
+              <div className="aspect-[3/4] bg-gray-100 overflow-hidden shadow-2xl group/img relative">
                 <img
                   src="https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/home.jpeg"
                   alt="Pass Clothing"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-1000"
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/10 transition-colors duration-500" />
               </div>
-              <div className="absolute -bottom-6 -left-6 sm:-bottom-8 sm:-left-8 bg-black text-white p-6 sm:p-8 md:p-10 max-w-[220px] sm:max-w-sm shadow-2xl">
-                <p className="text-sm sm:text-base tracking-wide leading-relaxed font-light italic">
-                  "Cada prenda cuenta una historia, cada diseño rompe esquemas"
+              <div className="absolute -bottom-8 -left-8 sm:-bottom-10 sm:-left-10 bg-black text-white p-8 sm:p-10 md:p-12 max-w-[240px] sm:max-w-md shadow-2xl border-l-4 border-white">
+                <p className="text-base sm:text-lg tracking-wide leading-relaxed font-light">
+                  <span className="text-2xl font-bold mb-2 block">“</span>
+                  Cada prenda cuenta una historia, cada diseño rompe esquemas
+                  <span className="text-2xl font-bold mt-2 block text-right">”</span>
                 </p>
               </div>
             </motion.div>
@@ -236,30 +268,30 @@ export default function Home() {
           className="py-16 sm:py-20 md:py-24 border-y border-gray-200"
         >
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-14 md:gap-16">
-            <motion.div variants={fadeInUp} className="text-center px-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 bg-black text-white mb-6 sm:mb-8 rounded-sm shadow-lg">
-                <Truck className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9" />
+            <motion.div variants={fadeInUp} className="text-center px-4 group">
+              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-black text-white mb-6 sm:mb-8 shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500">
+                <Truck className="w-9 h-9 sm:w-11 sm:h-11 group-hover:rotate-6 transition-transform duration-300" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold tracking-wide mb-3 sm:mb-4">Envíos a Todo Bolivia</h3>
-              <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-xs mx-auto">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight mb-3 sm:mb-4 group-hover:text-gray-700 transition-colors">Envíos a Todo Bolivia</h3>
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-xs mx-auto">
                 Llegamos a todo el país con envíos rápidos y seguros.
               </p>
             </motion.div>
-            <motion.div variants={fadeInUp} className="text-center px-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 bg-black text-white mb-6 sm:mb-8 rounded-sm shadow-lg">
-                <Shield className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9" />
+            <motion.div variants={fadeInUp} className="text-center px-4 group">
+              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-black text-white mb-6 sm:mb-8 shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500">
+                <Shield className="w-9 h-9 sm:w-11 sm:h-11 group-hover:rotate-6 transition-transform duration-300" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold tracking-wide mb-3 sm:mb-4">Calidad Garantizada</h3>
-              <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-xs mx-auto">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight mb-3 sm:mb-4 group-hover:text-gray-700 transition-colors">Calidad Garantizada</h3>
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-xs mx-auto">
                 Materiales premium y acabados impecables.
               </p>
             </motion.div>
-            <motion.div variants={fadeInUp} className="text-center px-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 bg-black text-white mb-6 sm:mb-8 rounded-sm shadow-lg">
-                <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9" />
+            <motion.div variants={fadeInUp} className="text-center px-4 group">
+              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-black text-white mb-6 sm:mb-8 shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500">
+                <Sparkles className="w-9 h-9 sm:w-11 sm:h-11 group-hover:rotate-6 transition-transform duration-300" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold tracking-wide mb-3 sm:mb-4">Drops Exclusivos</h3>
-              <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-xs mx-auto">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight mb-3 sm:mb-4 group-hover:text-gray-700 transition-colors">Drops Exclusivos</h3>
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-xs mx-auto">
                 Colecciones limitadas que solo podrás encontrar aquí.
               </p>
             </motion.div>
@@ -300,17 +332,17 @@ export default function Home() {
                 </div>
 
                 {/* Title */}
-                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight mb-5 sm:mb-6 leading-tight">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-4 sm:mb-5 md:mb-6 leading-tight">
                   Únete a la <span className="font-bold">comunidad</span>
                 </h2>
                 
                 {/* Hashtag */}
-                <p className="text-sm sm:text-base md:text-lg tracking-[0.3em] uppercase text-gray-500 mb-10 sm:mb-12 md:mb-14">
+                <p className="text-xs sm:text-sm md:text-base tracking-[0.25em] sm:tracking-[0.3em] uppercase text-gray-500 mb-8 sm:mb-10 md:mb-12">
                   #PassClothing
                 </p>
                 
                 {/* Description */}
-                <p className="text-lg sm:text-xl md:text-2xl text-gray-400 mb-12 sm:mb-14 md:mb-16 max-w-2xl mx-auto leading-relaxed font-light">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 mb-10 sm:mb-12 md:mb-14 max-w-2xl mx-auto leading-relaxed font-light">
                   Forma parte del movimiento streetwear boliviano. Comparte tu estilo y conecta con la comunidad.
                 </p>
                 
@@ -319,11 +351,11 @@ export default function Home() {
                   href="https://www.instagram.com/pass________________________?igsh=ZmpxaGs5cnFteGFz"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-3 sm:gap-4 bg-white text-black px-10 sm:px-12 md:px-14 py-5 sm:py-6 font-semibold tracking-wide hover:bg-gray-100 transition-all text-base sm:text-lg md:text-xl rounded-full shadow-2xl hover:shadow-white/20 hover:scale-105"
+                  className="group inline-flex items-center gap-2 sm:gap-3 md:gap-4 bg-white text-black px-8 sm:px-12 md:px-14 lg:px-16 py-4 sm:py-5 md:py-6 lg:py-7 font-bold tracking-[0.05em] sm:tracking-[0.1em] hover:bg-gray-100 transition-all text-sm sm:text-base md:text-lg uppercase shadow-2xl hover:shadow-white/30 hover:scale-110 duration-500"
                 >
-                  <Instagram className="w-6 h-6 sm:w-7 sm:h-7 group-hover:rotate-12 transition-transform" />
+                  <Instagram className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:rotate-12 transition-transform duration-300" />
                   <span>Seguir en Instagram</span>
-                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 group-hover:translate-x-2 transition-transform duration-300" />
                 </a>
               </motion.div>
             </div>

@@ -123,12 +123,6 @@ export default function Footer() {
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
             </div>
-            {/* Corporate phone for Cochabamba */}
-            <div className="mt-4 text-xs text-gray-400">
-              <a href="tel:+59174563943" className="block hover:text-white">
-                Cochabamba (Corporativo): +591 74563943
-              </a>
-            </div>
             {/* Mobile logo - shown only on mobile */}
             <div className="md:hidden mt-6">
               <Logo className="h-6 opacity-50" />
@@ -137,9 +131,12 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 pt-6 sm:pt-8">
+        <div className="border-t border-gray-800 pt-6 sm:pt-8 space-y-2">
           <p className="text-center text-[10px] sm:text-xs text-gray-500 tracking-wide">
             &copy; {new Date().getFullYear()} PASS CLOTHING. Todos los derechos reservados.
+          </p>
+          <p className="text-center text-[10px] sm:text-xs text-gray-600">
+            Desarrollado por <a href="https://wa.me/59175767850" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Rodrigo Paredes</a>
           </p>
         </div>
       </div>

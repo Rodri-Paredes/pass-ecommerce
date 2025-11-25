@@ -38,4 +38,21 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .animate-shimmer {
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .delay-700 {
+    animation-delay: 700ms;
+  }
 }
