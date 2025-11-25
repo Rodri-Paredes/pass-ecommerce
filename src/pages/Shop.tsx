@@ -72,14 +72,14 @@ export default function Shop() {
         </div>
 
         {/* Category Tabs - Luxury Style */}
-        <div className="mb-8 border-b border-gray-200">
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide -mb-px">
+        <div className="mb-8 border-b border-gray-100">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mb-px">
             <button
               onClick={() => handleCategoryChange('')}
-              className={`flex-shrink-0 px-4 py-3 text-xs font-medium tracking-[0.15em] uppercase transition-all whitespace-nowrap border-b-2 ${
+              className={`group flex-shrink-0 px-5 py-3.5 text-xs font-light tracking-[0.2em] uppercase transition-all duration-300 whitespace-nowrap border-b-2 ${
                 !selectedCategory
                   ? 'border-black text-black'
-                  : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-black hover:border-gray-300'
               }`}
             >
               Todo
@@ -88,10 +88,10 @@ export default function Shop() {
               <button
                 key={category}
                 onClick={() => handleCategoryChange(category)}
-                className={`flex-shrink-0 px-4 py-3 text-xs font-medium tracking-[0.15em] uppercase transition-all whitespace-nowrap border-b-2 ${
+                className={`group flex-shrink-0 px-5 py-3.5 text-xs font-light tracking-[0.2em] uppercase transition-all duration-300 whitespace-nowrap border-b-2 ${
                   selectedCategory === category
                     ? 'border-black text-black'
-                    : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+                    : 'border-transparent text-gray-500 hover:text-black hover:border-gray-300'
                 }`}
               >
                 {category}

@@ -31,10 +31,10 @@ export default function ProductFilters({ onPriceRangeChange, onSortChange }: Fil
       <div className="relative">
         <button
           onClick={() => setIsSortOpen(!isSortOpen)}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium tracking-wider uppercase text-gray-700 hover:text-black transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-xs font-light tracking-[0.2em] uppercase text-gray-600 hover:text-black transition-all duration-300 border border-gray-200 hover:border-gray-400"
         >
           <span>Ordenar</span>
-          <ChevronDown className={`w-3 h-3 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isSortOpen ? 'rotate-180' : ''}`} />
         </button>
         
         {isSortOpen && (
@@ -43,7 +43,7 @@ export default function ProductFilters({ onPriceRangeChange, onSortChange }: Fil
               className="fixed inset-0 z-10" 
               onClick={() => setIsSortOpen(false)}
             />
-            <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-56 bg-white border border-gray-200 shadow-lg z-20 max-h-64 overflow-y-auto">
+            <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-56 bg-white border border-gray-200 shadow-xl z-20 max-h-64 overflow-y-auto">
               {sortOptions.map((option) => (
                 <button
                   key={option.value}
@@ -51,7 +51,7 @@ export default function ProductFilters({ onPriceRangeChange, onSortChange }: Fil
                     onSortChange(option.value);
                     setIsSortOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
+                  className="w-full text-left px-4 py-3 text-xs font-light hover:bg-gray-50 transition-all duration-200 border-b border-gray-100 last:border-0 hover:pl-5"
                 >
                   {option.label}
                 </button>
@@ -65,10 +65,10 @@ export default function ProductFilters({ onPriceRangeChange, onSortChange }: Fil
       <div className="relative">
         <button
           onClick={() => setIsPriceOpen(!isPriceOpen)}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium tracking-wider uppercase text-gray-700 hover:text-black transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-xs font-light tracking-[0.2em] uppercase text-gray-600 hover:text-black transition-all duration-300 border border-gray-200 hover:border-gray-400"
         >
           <span>Precio</span>
-          <ChevronDown className={`w-3 h-3 transition-transform ${isPriceOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isPriceOpen ? 'rotate-180' : ''}`} />
         </button>
         
         {isPriceOpen && (
@@ -77,25 +77,25 @@ export default function ProductFilters({ onPriceRangeChange, onSortChange }: Fil
               className="fixed inset-0 z-10" 
               onClick={() => setIsPriceOpen(false)}
             />
-            <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-64 bg-white border border-gray-200 shadow-lg z-20 p-4">
-              <div className="space-y-3">
+            <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-64 bg-white border border-gray-200 shadow-xl z-20 p-5">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium mb-1.5 text-gray-700">Mínimo (Bs.)</label>
+                  <label className="block text-xs font-light mb-2 tracking-wider uppercase text-gray-600">Mínimo (Bs.)</label>
                   <input
                     type="number"
                     value={priceRange.min}
                     onChange={(e) => handlePriceChange('min', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-black"
+                    className="w-full px-3 py-2.5 border border-gray-200 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                     min="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium mb-1.5 text-gray-700">Máximo (Bs.)</label>
+                  <label className="block text-xs font-light mb-2 tracking-wider uppercase text-gray-600">Máximo (Bs.)</label>
                   <input
                     type="number"
                     value={priceRange.max}
                     onChange={(e) => handlePriceChange('max', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-black"
+                    className="w-full px-3 py-2.5 border border-gray-200 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                     min="0"
                   />
                 </div>

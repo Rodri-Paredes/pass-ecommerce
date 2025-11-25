@@ -18,12 +18,12 @@ import ContactPage from './pages/ContactPage';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-x-hidden">
         <Header />
         <Cart />
         {/* Track SPA route changes and send pageviews to analytics */}
         <RouteChangeTracker />
-        <main>
+        <main className="overflow-x-hidden">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<Shop />} />

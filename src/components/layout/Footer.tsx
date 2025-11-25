@@ -32,7 +32,7 @@ export default function Footer() {
 
           {/* Comprar */}
           <div>
-            <h4 className="font-medium mb-3 sm:mb-4 text-xs tracking-[0.2em] uppercase">Comprar</h4>
+            <h4 className="font-light mb-3 sm:mb-4 text-xs tracking-[0.25em] uppercase">Comprar</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs text-gray-400">
               <li>
                 <Link to="/drops" className="hover:text-white transition-colors inline-block">
@@ -59,7 +59,7 @@ export default function Footer() {
 
           {/* Ayuda */}
           <div>
-            <h4 className="font-medium mb-3 sm:mb-4 text-xs tracking-[0.2em] uppercase">Ayuda</h4>
+            <h4 className="font-light mb-3 sm:mb-4 text-xs tracking-[0.25em] uppercase">Ayuda</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs text-gray-400">
               <li>
                 <Link to="/shipping" className="hover:text-white transition-colors inline-block">
@@ -86,13 +86,13 @@ export default function Footer() {
 
           {/* Síguenos */}
           <div>
-            <h4 className="font-medium mb-3 sm:mb-4 text-xs tracking-[0.2em] uppercase">Síguenos</h4>
+            <h4 className="font-light mb-3 sm:mb-4 text-xs tracking-[0.25em] uppercase">Síguenos</h4>
             <div className="flex gap-3 sm:gap-4">
               <a
                 href="https://instagram.com/pass.clothing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-gray-400 transition-colors"
+                className="hover:text-gray-400 transition-all duration-300 hover:scale-110"
                 aria-label="Instagram"
               >
                 <Instagram className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -101,7 +101,7 @@ export default function Footer() {
                 href="https://www.tiktok.com/@pass.clothing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-gray-400 transition-colors"
+                className="hover:text-gray-400 transition-all duration-300 hover:scale-110"
                 aria-label="TikTok"
               >
                 <TikTokIcon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -110,14 +110,14 @@ export default function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-gray-400 transition-colors"
+                className="hover:text-gray-400 transition-all duration-300 hover:scale-110"
                 aria-label="Facebook"
               >
                 <Facebook className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
               <a
                 href="mailto:info@passclothing.com"
-                className="hover:text-gray-400 transition-colors"
+                className="hover:text-gray-400 transition-all duration-300 hover:scale-110"
                 aria-label="Email"
               >
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5" />

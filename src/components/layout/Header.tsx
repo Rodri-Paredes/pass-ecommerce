@@ -12,30 +12,32 @@ export default function Header() {
   const itemCount = getItemCount();
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-40">
+    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-40 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           <Link
             to="/"
-            className="hover:opacity-70 transition-opacity"
+            className="group flex items-center gap-3 hover:opacity-80 transition-all duration-300"
           >
-            <Logo className="h-8 sm:h-10" />
+            <Logo className="h-9 sm:h-11 group-hover:scale-105 transition-transform duration-300" />
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-10">
             <Link
               to="/drops"
-              className="text-sm font-medium tracking-wide hover:opacity-70 transition-opacity"
+              className="group relative text-sm font-medium tracking-[0.15em] text-gray-700 hover:text-black transition-colors duration-300"
             >
-              ÚLTIMO DROP
+              <span>ÚLTIMO DROP</span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300"></span>
             </Link>
             {CATEGORIES.slice(0, 4).map((category) => (
               <Link
                 key={category}
                 to={`/shop?category=${encodeURIComponent(category)}`}
-                className="text-sm font-medium tracking-wide hover:opacity-70 transition-opacity"
+                className="group relative text-sm font-medium tracking-[0.15em] text-gray-700 hover:text-black transition-colors duration-300"
               >
-                {category.toUpperCase()}
+                <span>{category.toUpperCase()}</span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
           </nav>
@@ -45,12 +47,12 @@ export default function Header() {
 
             <button
               onClick={() => openCart()}
-              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="group relative p-2.5 hover:bg-gray-50 rounded-full transition-all duration-300 hover:scale-110"
               aria-label="Cart"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className="w-5 h-5 group-hover:stroke-black transition-colors" />
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-medium">
+                <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-semibold animate-pulse">
                   {itemCount}
                 </span>
               )}

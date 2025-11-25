@@ -46,7 +46,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative h-[80svh] md:h-[90vh] bg-black overflow-hidden">
         <motion.div
@@ -95,10 +95,10 @@ export default function Home() {
             >
               <Link
                 to={latestDrop ? `/drops/${latestDrop.id}` : '/drops'}
-                className="group inline-flex items-center gap-3 bg-white text-black px-8 sm:px-10 py-4 sm:py-5 font-semibold tracking-wide hover:bg-gray-900 hover:text-white transition-all duration-300 text-sm sm:text-base uppercase border-2 border-white hover:border-white"
+                className="group inline-flex items-center gap-3 bg-white text-black px-10 sm:px-12 py-4 sm:py-5 font-light tracking-[0.2em] hover:bg-black hover:text-white transition-all duration-500 text-xs sm:text-sm uppercase border border-white hover:border-white hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-1"
               >
                 Ver Último Drop
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all duration-300" />
               </Link>
             </motion.div>
           </div>
@@ -142,8 +142,8 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/100 transition-all duration-500">
                 <div>
-                  <h3 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 group-hover:tracking-wide transition-all duration-300">HOODIES</h3>
-                  <p className="text-gray-300 text-sm sm:text-base tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Explorar colección</p>
+                  <h3 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 group-hover:tracking-wider transition-all duration-500">HOODIES</h3>
+                  <p className="text-gray-300 text-sm sm:text-base tracking-[0.25em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">Explorar colección</p>
                 </div>
               </div>
             </Link>
@@ -162,8 +162,8 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/100 transition-all duration-500">
                 <div>
-                  <h3 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 group-hover:tracking-wide transition-all duration-300">POLERAS</h3>
-                  <p className="text-gray-300 text-sm sm:text-base tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Explorar colección</p>
+                  <h3 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-3 group-hover:tracking-wider transition-all duration-500">POLERAS</h3>
+                  <p className="text-gray-300 text-sm sm:text-base tracking-[0.25em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">Explorar colección</p>
                 </div>
               </div>
             </Link>
@@ -198,10 +198,10 @@ export default function Home() {
               </p>
               <Link
                 to="/shop"
-                className="inline-flex items-center gap-2 text-sm sm:text-base tracking-[0.15em] sm:tracking-[0.2em] uppercase hover:gap-4 transition-all group font-medium"
+                className="inline-flex items-center gap-2 text-xs sm:text-sm tracking-[0.2em] uppercase hover:gap-4 transition-all duration-300 group font-light hover:text-gray-600"
               >
                 Conoce nuestra colección
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
             </motion.div>
             <motion.div

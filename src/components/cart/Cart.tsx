@@ -81,16 +81,17 @@ ${productsText}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
               className="fixed right-0 top-0 h-full w-full md:w-[400px] bg-white shadow-2xl z-50 flex flex-col"
             >
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <div className="flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold tracking-wide">
-                    TU CARRITO ({items.length})
+              <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <ShoppingBag className="w-6 h-6 text-gray-700" />
+                  <h2 className="text-xl font-light tracking-[0.2em] uppercase">
+                    Carrito
+                    <span className="text-sm text-gray-500 ml-2">({items.length})</span>
                   </h2>
                 </div>
                 <button
                   onClick={closeCart}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-50 rounded-full transition-all duration-200 hover:rotate-90"
                   aria-label="Close cart"
                 >
                   <X className="w-5 h-5" />
@@ -100,18 +101,21 @@ ${productsText}
               <div className="flex-1 overflow-y-auto p-6">
                 {items.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center">
-                    <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
-                    <p className="text-gray-500">Tu carrito está vacío</p>
+                    <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                      <ShoppingBag className="w-12 h-12 text-gray-300" />
+                    </div>
+                    <p className="text-gray-500 text-sm tracking-wide">Tu carrito está vacío</p>
+                    <p className="text-gray-400 text-xs mt-2">Agrega productos para comenzar</p>
                   </div>
                 ) : (
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     {items.map((item) => (
-                      <div key={item.variant.id} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0">
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0">
+                      <div key={item.variant.id} className="group flex gap-4 pb-6 border-b border-gray-100 last:border-0 hover:bg-gray-50/50 -mx-2 px-2 py-2 rounded-lg transition-colors">
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 overflow-hidden rounded-lg">
                           <img
                             src={item.product.image_url}
                             alt={item.product.name}
-                            className="w-full h-full object-cover bg-gray-100 rounded-md"
+                            className="w-full h-full object-cover bg-gray-100 group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
 
@@ -173,20 +177,20 @@ ${productsText}
               </div>
 
               {items.length > 0 && (
-                <div className="border-t border-gray-200 p-6 space-y-4">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Subtotal:</span>
-                    <span>Bs. {getTotal().toFixed(2)}</span>
+                <div className="border-t border-gray-100 p-6 space-y-5 bg-gray-50/50">
+                  <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                    <span className="text-sm tracking-wider uppercase text-gray-600">Subtotal</span>
+                    <span className="text-2xl font-light">Bs. {getTotal().toFixed(2)}</span>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 tracking-wide">
-                      SUCURSAL DE ATENCIÓN
+                    <label className="block text-xs font-medium mb-2 tracking-[0.15em] uppercase text-gray-600">
+                      Sucursal de Atención
                     </label>
                     <select
                       value={selectedStore}
                       onChange={(e) => setSelectedStore(e.target.value)}
-                      className="w-full p-3 border border-gray-300 focus:outline-none focus:border-black transition-colors"
+                      className="w-full p-3.5 border border-gray-200 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all bg-white text-sm"
                     >
                       {WHATSAPP_STORES.map((store) => (
                         <option key={store.number} value={store.number}>
@@ -197,13 +201,13 @@ ${productsText}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 tracking-wide">
-                      CIUDAD DE ENTREGA
+                    <label className="block text-xs font-medium mb-2 tracking-[0.15em] uppercase text-gray-600">
+                      Ciudad de Entrega
                     </label>
                     <select
                       value={selectedCity}
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-full p-3 border border-gray-300 focus:outline-none focus:border-black transition-colors"
+                      className="w-full p-3.5 border border-gray-200 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all bg-white text-sm"
                     >
                       <option value="">Seleccionar ciudad</option>
                       {CITIES.map((city) => (
@@ -217,12 +221,12 @@ ${productsText}
                   <button
                     onClick={handleCheckout}
                     disabled={!selectedCity}
-                    className="w-full bg-black text-white py-4 font-medium tracking-wide hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="w-full bg-black text-white py-4 font-light tracking-[0.2em] uppercase text-sm hover:bg-gray-900 transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed hover:shadow-lg transform hover:-translate-y-0.5 disabled:hover:transform-none disabled:hover:shadow-none"
                   >
-                    FINALIZAR COMPRA
+                    Finalizar Compra
                   </button>
 
-                  <p className="text-xs text-center text-gray-500">
+                  <p className="text-xs text-center text-gray-500 leading-relaxed">
                     Serás redirigido a WhatsApp para confirmar tu pedido
                   </p>
                 </div>
