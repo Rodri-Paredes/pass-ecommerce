@@ -33,7 +33,7 @@ export interface Product {
 export interface ProductVariant {
   id: string;
   product_id: string;
-  size: string; // Puede ser 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | '28' | '30' | '32' | '34' | '36' | '38'
+  size: string; // Puede ser 'S' | 'M' | 'L' (poleras/hoodies) | '28' | '30' | '32' | '34' | '36' | '38' (pantalones)
   created_at: string;
 }
 
@@ -92,7 +92,7 @@ export const CITIES = [
   'Beni'
 ] as const;
 
-export const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'] as const;
+export const SIZES = ['S', 'M', 'L'] as const;
 
 export const PANT_SIZES = ['28', '30', '32', '34', '36', '38'] as const;
 
