@@ -53,10 +53,11 @@ export default function Home() {
           initial={{ scale: 1.05, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center md:bg-top"
           style={{
             backgroundImage:
-              'url(https://firebasestorage.googleapis.com/v0/b/texnoexpert-a1b93.appspot.com/o/passweb%2Fpasscrisis2.jpg?alt=media&token=9d67a8b4-093f-43d5-a75a-1ad7cc4468b8)',
+              'url(https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops-banners/IMG_2995.JPG)',
+            backgroundPosition: 'center center',
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/95" />
