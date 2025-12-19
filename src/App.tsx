@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { pageview } from './lib/analytics';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import BranchSelectorModal from './components/layout/BranchSelectorModal';
 import Cart from './components/cart/Cart';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -21,6 +22,7 @@ function App() {
       <div className="min-h-screen bg-white overflow-x-hidden">
         <Header />
         <Cart />
+        <BranchSelectorModal />
         {/* Track SPA route changes and send pageviews to analytics */}
         <RouteChangeTracker />
         <main className="overflow-x-hidden">

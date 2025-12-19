@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { ProductWithVariants } from '../../types';
 import LazyImage from '../common/LazyImage';
+import { useBranchStore } from '../../store/branchStore';
 
 interface ProductCardProps {
   product: ProductWithVariants;
@@ -12,17 +13,70 @@ interface ProductCardProps {
 // Memoizar ProductCard para evitar re-renders innecesarios
 const ProductCard = memo(function ProductCard({ product, index }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { selectedBranch } = useBranchStore();
   
   // Memoizar cálculo de stock (operación costosa)
-  const totalStock = useMemo(() => 
-    product.variants?.reduce(
+  const totalStock = useMemo(() => {
+    if (selectedBranch) {
+      // Stock solo de la sucursal seleccionada
+      return product.variants?.reduce(
+        (sum, variant) =>
+          sum +
+          (variant.stock?.reduce((stockSum, s) => 
+            s.branch_id === selectedBranch ? stockSum + s.quantity : stockSum, 0) || 0),
+        0
+      ) || 0;
+    }
+    // Stock total de todas las sucursales
+    return product.variants?.reduce(
       (sum, variant) =>
         sum +
         (variant.stock?.reduce((stockSum, s) => stockSum + s.quantity, 0) || 0),
       0
-    ) || 0,
-    [product.variants]
-  );
+    ) || 0;
+  }, [product.variants, selectedBranch]);
+
+  // Stock por talla cuando hay sucursal seleccionada
+  const stockBySize = useMemo(() => {
+    if (!selectedBranch || !product.variants) return null;
+    
+    const sizeStock: { size: string; quantity: number }[] = [];
+    
+    product.variants.forEach(variant => {
+      const branchStockQty = variant.stock?.reduce((sum, s) => 
+        s.branch_id === selectedBranch ? sum + s.quantity : sum, 0) || 0;
+      
+      if (branchStockQty > 0) {
+        sizeStock.push({ size: variant.size, quantity: branchStockQty });
+      }
+    });
+    
+    return sizeStock.length > 0 ? sizeStock : null;
+  }, [product.variants, selectedBranch]);
+
+  // Obtener nombre de sucursal si está seleccionada
+  const branchName = useMemo(() => {
+    if (!selectedBranch || !product.variants) return null;
+    for (const variant of product.variants) {
+      if (variant.stock) {
+        const branchStock = variant.stock.find(s => s.branch_id === selectedBranch && s.quantity > 0);
+        if (branchStock?.branch) {
+          return branchStock.branch.name;
+        }
+      }
+    }
+    return null;
+  }, [product.variants, selectedBranch]);
+
+  // Obtener abreviación de la sucursal
+  const getBranchAbbreviation = (name: string): string => {
+    const cityName = name.replace(/^Sucursal\s+/i, '').trim().toLowerCase();
+    const abbreviations: { [key: string]: string } = {
+      'cochabamba': 'CBBA',
+      'tarija': 'TJA'
+    };
+    return abbreviations[cityName] || cityName.substring(0, 3).toUpperCase();
+  };
 
   // Memoizar handlers
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
@@ -71,7 +125,14 @@ const ProductCard = memo(function ProductCard({ product, index }: ProductCardPro
             )}
           </div>
           <p className="text-sm text-gray-600">{product.category}</p>
-          <p className="font-semibold">Bs. {product.price.toFixed(2)}</p>
+          <div className="flex items-center gap-2">
+            <p className="font-semibold">Bs. {product.price.toFixed(2)}</p>
+            {branchName && (
+              <span className="text-[10px] font-black tracking-wider text-white bg-gradient-to-r from-gray-900 to-black px-1.5 py-0.5 rounded">
+                {getBranchAbbreviation(branchName)}
+              </span>
+            )}
+          </div>
         </div>
       </Link>
     </motion.div>

@@ -1,15 +1,62 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
-import { useState } from 'react';
+import { useBranchStore } from '../../store/branchStore';
+import { useState, useEffect } from 'react';
 import { CATEGORIES } from '../../types';
 import SearchBar from './SearchBar';
 import Logo from '../common/Logo';
+import { supabase } from '../../lib/supabase';
+import type { Branch } from '../../types';
+import BranchSelectorModal from './BranchSelectorModal';
 
 export default function Header() {
   const { openCart, getItemCount } = useCartStore();
+  const { selectedBranch, setSelectedBranch } = useBranchStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [showBranchSelector, setShowBranchSelector] = useState(false);
+  const [showBranchModal, setShowBranchModal] = useState(false);
   const itemCount = getItemCount();
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      const { data } = await supabase.from('branches').select('*').order('name');
+      if (data) {
+        // Filtrar cualquier sucursal que contenga 'Sucre' en el nombre
+        const filtered = data.filter(branch => !branch.name.toLowerCase().includes('sucre'));
+        setBranches(filtered);
+        
+        // Si la sucursal seleccionada es Sucre, limpiar la selección
+        if (selectedBranch) {
+          const selectedBranchData = data.find(b => b.id === selectedBranch);
+          if (selectedBranchData && selectedBranchData.name.toLowerCase().includes('sucre')) {
+            setSelectedBranch(null);
+          }
+        }
+      }
+    };
+    fetchBranches();
+  }, [selectedBranch, setSelectedBranch]);
+
+  const getBranchAbbreviation = (branchName: string): string => {
+    if (branchName === 'Todas las sucursales') return 'ALL';
+    
+    // Si el nombre contiene "Sucursal", extraer solo el nombre de la ciudad
+    const cityName = branchName.replace(/^Sucursal\s+/i, '').trim().toLowerCase();
+    
+    // Abreviaciones específicas por ciudad
+    const abbreviations: { [key: string]: string } = {
+      'cochabamba': 'CBBA',
+      'tarija': 'TJA'
+    };
+    
+    return abbreviations[cityName] || cityName.substring(0, 3).toUpperCase();
+  };
+
+  const selectedBranchName = selectedBranch 
+    ? branches.find(b => b.id === selectedBranch)?.name || 'Todas las sucursales'
+    : 'Todas las sucursales';
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-40 shadow-sm">
@@ -44,6 +91,68 @@ export default function Header() {
 
           <div className="flex items-center gap-4">
             <SearchBar />
+
+            {/* Branch Selector - Mobile */}
+            <button
+              onClick={() => setShowBranchModal(true)}
+              className="sm:hidden flex items-center justify-center px-2 py-1 text-[10px] font-black tracking-[0.05em] text-white bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 shadow-sm hover:shadow-md transition-all duration-300 rounded"
+              aria-label="Cambiar sucursal"
+            >
+              {getBranchAbbreviation(selectedBranchName)}
+            </button>
+
+            {/* Branch Selector - Desktop */}
+            <div className="relative hidden sm:block">
+              <button
+                onClick={() => setShowBranchSelector(!showBranchSelector)}
+                className="flex items-center gap-2 px-3 py-2 text-xs font-medium tracking-wider uppercase text-gray-700 hover:text-black border border-gray-200 hover:border-gray-400 transition-all duration-300 rounded-sm"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                <span className="hidden lg:inline">{selectedBranchName}</span>
+              </button>
+              
+              {showBranchSelector && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowBranchSelector(false)}
+                  />
+                  <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-gray-200 shadow-xl z-50 rounded-sm">
+                    <button
+                      onClick={() => {
+                        setSelectedBranch(null);
+                        setShowBranchSelector(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors border-b border-gray-100 ${
+                        selectedBranch === null ? 'bg-gray-50 font-semibold' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        Todas las sucursales
+                      </div>
+                    </button>
+                    {branches.map((branch) => (
+                      <button
+                        key={branch.id}
+                        onClick={() => {
+                          setSelectedBranch(branch.id);
+                          setShowBranchSelector(false);
+                        }}
+                        className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 ${
+                          selectedBranch === branch.id ? 'bg-gray-50 font-semibold' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4" />
+                          {branch.name}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
 
             <button
               onClick={() => openCart()}
@@ -111,6 +220,12 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      {/* Branch Selector Modal */}
+      <BranchSelectorModal 
+        isOpen={showBranchModal} 
+        onClose={() => setShowBranchModal(false)} 
+      />
     </header>
   );
 }

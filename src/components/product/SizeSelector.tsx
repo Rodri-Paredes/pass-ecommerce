@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { ProductVariant, Stock, Branch } from '../../types';
 import { SIZES, PANT_SIZES, NUMERIC_SIZE_CATEGORIES } from '../../types';
 import { Ruler } from 'lucide-react';
+import { useBranchStore } from '../../store/branchStore';
 
 interface SizeSelectorProps {
   variants: (ProductVariant & {
@@ -22,6 +23,7 @@ export default function SizeSelector({
   productCategory,
   onShowSizeGuide,
 }: SizeSelectorProps) {
+  const { selectedBranch } = useBranchStore();
   const [availableSizes, setAvailableSizes] = useState<
     Map<string, { variant: ProductVariant; stock: number; cityStock?: number }>
   >(new Map());
@@ -39,11 +41,15 @@ export default function SizeSelector({
       let cityStock: number | undefined = undefined;
 
       if (variant.stock && variant.stock.length > 0) {
-        // Siempre sumar stock de todas las sucursales para mostrar disponibilidad total
-        const totalStockAll = variant.stock.reduce((sum, s) => sum + s.quantity, 0);
-
-        // Guardamos el stock total como valor principal (suma de las sucursales)
-        totalStock = totalStockAll;
+        if (selectedBranch) {
+          // Si hay sucursal seleccionada, mostrar solo stock de esa sucursal
+          totalStock = variant.stock
+            .filter((s) => s.branch_id === selectedBranch)
+            .reduce((sum, s) => sum + s.quantity, 0);
+        } else {
+          // Stock total de todas las sucursales
+          totalStock = variant.stock.reduce((sum, s) => sum + s.quantity, 0);
+        }
 
         // Además computamos stock por ciudad (opcional) para mostrar dato puntual si el usuario filtró ciudad
         if (selectedCity) {
@@ -59,7 +65,7 @@ export default function SizeSelector({
     });
 
     setAvailableSizes(sizeMap);
-  }, [variants, selectedCity]);
+  }, [variants, selectedCity, selectedBranch]);
 
   return (
     <div className="space-y-3">

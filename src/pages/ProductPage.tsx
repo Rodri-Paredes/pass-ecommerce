@@ -40,6 +40,7 @@ export default function ProductPage() {
             size,
             stock(
               quantity,
+              branch_id,
               branch:branches(name, address)
             )
           ),

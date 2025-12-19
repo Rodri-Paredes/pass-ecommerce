@@ -4,6 +4,7 @@ import type { ProductWithVariants } from '../../types';
 import ProductCard from './ProductCard';
 import { Loader2 } from 'lucide-react';
 import { useCachedQuery } from '../../hooks/useCachedQuery';
+import { useBranchStore } from '../../store/branchStore';
 
 interface ProductGridProps {
   category?: string;
@@ -22,6 +23,7 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const observerTarget = useRef<HTMLDivElement>(null);
+  const { selectedBranch } = useBranchStore();
 
   // Crear clave de caché única basada en los filtros
   const cacheKey = useMemo(() => {
@@ -30,8 +32,9 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
     if (dropId) parts.push(`drop:${dropId}`);
     if (searchQuery) parts.push(`q:${searchQuery}`);
     if (sortBy) parts.push(`sort:${sortBy}`);
+    if (selectedBranch) parts.push(`branch:${selectedBranch}`);
     return parts.join('|');
-  }, [category, dropId, searchQuery, sortBy]);
+  }, [category, dropId, searchQuery, sortBy, selectedBranch]);
 
   // Función de fetch memoizada
   const fetchProducts = useCallback(async () => {
@@ -44,6 +47,7 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
           size,
           stock(
             quantity,
+            branch_id,
             branch:branches(name, address)
           )
         ),
@@ -78,6 +82,19 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
 
     let filtered = [...rawProducts];
 
+    // Filtro por sucursal - solo mostrar productos con stock en la sucursal seleccionada
+    if (selectedBranch) {
+      filtered = filtered.filter((product) => {
+        if (!product.variants) return false;
+        return product.variants.some((variant) => {
+          if (!variant.stock) return false;
+          return variant.stock.some((stock) => 
+            stock.branch_id === selectedBranch && stock.quantity > 0
+          );
+        });
+      });
+    }
+
     // Filtro de precio
     if (priceRange && (priceRange.min > 0 || priceRange.max < 10000)) {
       filtered = filtered.filter(
@@ -95,7 +112,7 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
     }
 
     return filtered;
-  }, [rawProducts, priceRange, sortBy]);
+  }, [rawProducts, priceRange, sortBy, selectedBranch]);
 
   useEffect(() => {
     if (products.length > 0) {
