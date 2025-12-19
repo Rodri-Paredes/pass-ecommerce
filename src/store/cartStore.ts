@@ -5,11 +5,15 @@ import type { CartItem } from '../types';
 interface CartStore {
   items: CartItem[];
   selectedCity: string;
+  selectedStore: string;
+  comments: string;
   isOpen: boolean;
   addItem: (item: CartItem) => void;
   removeItem: (variantId: string) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
   setCity: (city: string) => void;
+  setSelectedStore: (store: string) => void;
+  setComments: (comments: string) => void;
   clearCart: () => void;
   toggleCart: () => void;
   openCart: () => void;
@@ -23,6 +27,8 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       selectedCity: '',
+      selectedStore: '',
+      comments: '',
       isOpen: false,
 
       addItem: (newItem) => {
@@ -69,8 +75,16 @@ export const useCartStore = create<CartStore>()(
         set({ selectedCity: city });
       },
 
+      setSelectedStore: (store) => {
+        set({ selectedStore: store });
+      },
+
+      setComments: (comments) => {
+        set({ comments });
+      },
+
       clearCart: () => {
-        set({ items: [], selectedCity: '' });
+        set({ items: [], selectedCity: '', comments: '' });
       },
 
       toggleCart: () => {

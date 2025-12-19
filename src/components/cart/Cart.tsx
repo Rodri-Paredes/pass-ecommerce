@@ -1,13 +1,28 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
+import { useBranchStore } from '../../store/branchStore';
 import { CITIES } from '../../types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
+import type { Branch } from '../../types';
 
-const WHATSAPP_STORES = [
-  { name: 'Asesor Comercial Tarija 1', number: '59160279699', location: 'Sucursal Tarija' },
-  { name: 'Asesor Comercial Tarija 2', number: '59175131474', location: 'Sucursal Tarija' },
-];
+// Configuración de asesores por sucursal
+const WHATSAPP_BY_BRANCH: { [key: string]: { name: string; number: string; location: string }[] } = {
+  'cochabamba': [
+    { name: 'Asesor Comercial Cochabamba', number: '59174563943', location: 'Sucursal Cochabamba' },
+  ],
+  'tarija': [
+    { name: 'Asesor Comercial Tarija 1', number: '59160279699', location: 'Sucursal Tarija' },
+    { name: 'Asesor Comercial Tarija 2', number: '59175131474', location: 'Sucursal Tarija' },
+  ],
+};
+
+// Mapeo de sucursal a ciudad
+const BRANCH_TO_CITY: { [key: string]: string } = {
+  'cochabamba': 'Cochabamba',
+  'tarija': 'Tarija',
+};
 
 export default function Cart() {
   const {
@@ -19,9 +34,56 @@ export default function Cart() {
     updateQuantity,
     setCity,
     getTotal,
+    selectedStore,
+    setSelectedStore,
+    comments,
+    setComments,
   } = useCartStore();
   
-  const [selectedStore, setSelectedStore] = useState(WHATSAPP_STORES[0].number);
+  const { selectedBranch } = useBranchStore();
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [availableStores, setAvailableStores] = useState<{ name: string; number: string; location: string }[]>([]);
+
+  // Cargar sucursales
+  useEffect(() => {
+    const fetchBranches = async () => {
+      const { data } = await supabase.from('branches').select('*');
+      if (data) setBranches(data);
+    };
+    fetchBranches();
+  }, []);
+
+  // Auto-configurar sucursal, asesor y ciudad cuando hay una sucursal seleccionada
+  useEffect(() => {
+    if (selectedBranch && branches.length > 0) {
+      const branch = branches.find(b => b.id === selectedBranch);
+      if (branch) {
+        const branchKey = branch.name.replace(/^Sucursal\s+/i, '').trim().toLowerCase();
+        
+        // Configurar asesores disponibles
+        const stores = WHATSAPP_BY_BRANCH[branchKey] || [];
+        setAvailableStores(stores);
+        
+        // Auto-seleccionar el primer asesor si hay disponibles
+        if (stores.length > 0 && !selectedStore) {
+          setSelectedStore(stores[0].number);
+        }
+        
+        // Auto-seleccionar ciudad correspondiente
+        const city = BRANCH_TO_CITY[branchKey];
+        if (city && !selectedCity) {
+          setCity(city);
+        }
+      }
+    } else {
+      // Si no hay sucursal seleccionada, mostrar todos los asesores
+      const allStores = Object.values(WHATSAPP_BY_BRANCH).flat();
+      setAvailableStores(allStores);
+      if (allStores.length > 0 && !selectedStore) {
+        setSelectedStore(allStores[0].number);
+      }
+    }
+  }, [selectedBranch, branches, selectedStore, selectedCity, setSelectedStore, setCity]);
 
   const generateWhatsAppMessage = () => {
     const productsText = items
@@ -33,16 +95,22 @@ export default function Cart() {
 
     const total = getTotal();
 
-    return `¡Hola! 👋 Quiero realizar el siguiente pedido:
+    let message = `¡Hola! 👋 Quiero realizar el siguiente pedido:
 
 *PRODUCTOS:*
 ${productsText}
 
 *TOTAL: Bs. ${total.toFixed(2)}*
 
-*Ciudad de entrega:* ${selectedCity}
+*Ciudad de entrega:* ${selectedCity}`;
 
-¿Podrían confirmarme la disponibilidad y opciones de pago? ¡Gracias! 🙌`;
+    if (comments.trim()) {
+      message += `\n\n*Comentarios adicionales:*\n${comments}`;
+    }
+
+    message += `\n\n¿Podrían confirmarme la disponibilidad y opciones de pago? ¡Gracias! 🙌`;
+
+    return message;
   };
 
   const handleCheckout = () => {
@@ -192,7 +260,7 @@ ${productsText}
                       onChange={(e) => setSelectedStore(e.target.value)}
                       className="w-full p-3.5 border border-gray-200 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all bg-white text-sm"
                     >
-                      {WHATSAPP_STORES.map((store) => (
+                      {availableStores.map((store) => (
                         <option key={store.number} value={store.number}>
                           {store.name} - {store.location}
                         </option>
@@ -216,6 +284,19 @@ ${productsText}
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium mb-2 tracking-[0.15em] uppercase text-gray-600">
+                      Comentarios (Opcional)
+                    </label>
+                    <textarea
+                      value={comments}
+                      onChange={(e) => setComments(e.target.value)}
+                      placeholder="Ej: Preferencia de color, talla alternativa, dirección de entrega..."
+                      rows={3}
+                      className="w-full p-3.5 border border-gray-200 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all bg-white text-sm resize-none"
+                    />
                   </div>
 
                   <button
