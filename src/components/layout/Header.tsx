@@ -69,10 +69,10 @@ export default function Header() {
             <Logo className="h-9 sm:h-11 group-hover:scale-105 transition-transform duration-300" />
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-10">
+          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-10">
             <Link
               to="/drops"
-              className="group relative text-sm font-medium tracking-[0.15em] text-gray-700 hover:text-black transition-colors duration-300"
+              className="group relative text-xs xl:text-sm font-medium tracking-[0.15em] text-gray-700 hover:text-black transition-colors duration-300"
             >
               <span>ÚLTIMO DROP</span>
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300"></span>
@@ -81,7 +81,7 @@ export default function Header() {
               <Link
                 key={category}
                 to={`/shop?category=${encodeURIComponent(category)}`}
-                className="group relative text-sm font-medium tracking-[0.15em] text-gray-700 hover:text-black transition-colors duration-300"
+                className="group relative text-xs xl:text-sm font-medium tracking-[0.15em] text-gray-700 hover:text-black transition-colors duration-300"
               >
                 <span>{category.toUpperCase()}</span>
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300"></span>
@@ -169,7 +169,7 @@ export default function Header() {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Menu"
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -178,7 +178,7 @@ export default function Header() {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 max-h-[calc(100vh-4rem)] overflow-y-auto">
             <nav className="flex flex-col p-3">
               <Link
                 to="/drops"

@@ -22,33 +22,34 @@ export default function BranchSelectorModal({ isOpen: externalIsOpen, onClose }:
   useEffect(() => {
     // Verificar si ya hay una selección guardada y cuándo fue la última vez
     const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
-    const stored = localStorage.getItem('pass-branch-storage');
     const lastSelectionTime = localStorage.getItem('pass-branch-selection-time');
     
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if (parsed.state?.selectedBranch !== undefined) {
-          // Verificar si han pasado 24 horas desde la última selección
-          const now = Date.now();
-          const lastTime = lastSelectionTime ? parseInt(lastSelectionTime, 10) : 0;
-          const timeDiff = now - lastTime;
-          
-          if (timeDiff < TWENTY_FOUR_HOURS) {
-            setHasSelectedBefore(true);
-          } else {
-            // Han pasado 24 horas, pedir selección de nuevo
-            setHasSelectedBefore(false);
-            localStorage.removeItem('pass-branch-selection-time');
-          }
-        }
-      } catch (e) {
-        // ignore
+    let shouldShowModal = false;
+    
+    if (lastSelectionTime) {
+      // Verificar si han pasado 24 horas desde la última selección
+      const now = Date.now();
+      const lastTime = parseInt(lastSelectionTime, 10);
+      const timeDiff = now - lastTime;
+      
+      if (timeDiff < TWENTY_FOUR_HOURS) {
+        // No han pasado 24 horas, no mostrar modal
+        setHasSelectedBefore(true);
+        shouldShowModal = false;
+      } else {
+        // Han pasado 24 horas, pedir selección de nuevo
+        setHasSelectedBefore(false);
+        localStorage.removeItem('pass-branch-selection-time');
+        shouldShowModal = true;
       }
+    } else {
+      // Nunca ha seleccionado, mostrar modal
+      setHasSelectedBefore(false);
+      shouldShowModal = true;
     }
 
-    // Si no hay selección previa y no está controlado externamente, mostrar modal
-    if (!hasSelectedBefore && externalIsOpen === undefined) {
+    // Mostrar modal si es necesario y no está controlado externamente
+    if (shouldShowModal && externalIsOpen === undefined) {
       setInternalIsOpen(true);
     }
 
