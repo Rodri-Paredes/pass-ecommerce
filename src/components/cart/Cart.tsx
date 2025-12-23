@@ -43,6 +43,7 @@ export default function Cart() {
   const { selectedBranch } = useBranchStore();
   const [branches, setBranches] = useState<Branch[]>([]);
   const [availableStores, setAvailableStores] = useState<{ name: string; number: string; location: string }[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Cargar sucursales
   useEffect(() => {
@@ -100,7 +101,7 @@ export default function Cart() {
       const orderCode = generateOrderCode();
       const total = getTotal();
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('shared_orders')
         .insert({
           order_code: orderCode,
@@ -158,25 +159,27 @@ Código de pedido: *${orderCode}*`;
       return;
     }
 
-    // Mostrar indicador de carga
-    const button = document.querySelector('button[disabled]') as HTMLButtonElement;
-    if (button) button.textContent = 'Generando pedido...';
+    setIsProcessing(true);
 
-    // Guardar pedido y obtener código
-    const orderCode = await saveSharedOrder();
+    try {
+      // Guardar pedido y obtener código
+      const orderCode = await saveSharedOrder();
 
-    if (!orderCode) {
-      alert('Error al crear el pedido. Por favor intenta nuevamente.');
-      if (button) button.textContent = 'Finalizar Compra';
-      return;
+      if (!orderCode) {
+        alert('Error al crear el pedido. Por favor intenta nuevamente.');
+        return;
+      }
+
+      // Generar mensaje de WhatsApp con el enlace
+      const message = encodeURIComponent(generateWhatsAppMessage(orderCode));
+      const whatsappUrl = `https://wa.me/${selectedStore}?text=${message}`;
+      window.open(whatsappUrl, '_blank');
+    } catch (error) {
+      console.error('Error en checkout:', error);
+      alert('Error al procesar el pedido. Por favor intenta nuevamente.');
+    } finally {
+      setIsProcessing(false);
     }
-
-    // Generar mensaje de WhatsApp con el enlace
-    const message = encodeURIComponent(generateWhatsAppMessage(orderCode));
-    const whatsappUrl = `https://wa.me/${selectedStore}?text=${message}`;
-    window.open(whatsappUrl, '_blank');
-
-    if (button) button.textContent = 'Finalizar Compra';
   };
 
   return (
@@ -351,10 +354,10 @@ Código de pedido: *${orderCode}*`;
 
                   <button
                     onClick={handleCheckout}
-                    disabled={!selectedCity}
+                    disabled={!selectedCity || isProcessing}
                     className="w-full bg-black text-white py-4 font-light tracking-[0.2em] uppercase text-sm hover:bg-gray-900 transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed hover:shadow-lg transform hover:-translate-y-0.5 disabled:hover:transform-none disabled:hover:shadow-none"
                   >
-                    Finalizar Compra
+                    {isProcessing ? 'Generando pedido...' : 'Finalizar Compra'}
                   </button>
 
                   <p className="text-xs text-center text-gray-500 leading-relaxed">
