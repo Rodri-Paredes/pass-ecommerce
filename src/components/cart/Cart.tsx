@@ -96,39 +96,6 @@ export default function Cart() {
     return code;
   };
 
-  const saveSharedOrder = async () => {
-    try {
-      const orderCode = generateOrderCode();
-      const total = getTotal();
-
-      // Intentar guardar en Supabase
-      const { error } = await supabase
-        .from('shared_orders')
-        .insert({
-          order_code: orderCode,
-          items: items,
-          total: total,
-          selected_city: selectedCity,
-          selected_store: selectedStore,
-          comments: comments,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error al guardar en Supabase (tabla no existe?):', error);
-        // Aún así retornar el código para que el flujo continúe
-        console.log('Continuando sin guardar en BD...');
-      }
-
-      return orderCode;
-    } catch (error) {
-      console.error('Error al guardar pedido:', error);
-      // Aún así generar un código para que funcione
-      return generateOrderCode();
-    }
-  };
-
   const generateWhatsAppMessage = (orderCode: string) => {
     const total = getTotal();
     const orderUrl = `${window.location.origin}/pedido/${orderCode}`;
@@ -168,23 +135,29 @@ Código de pedido: *${orderCode}*`;
     setIsProcessing(true);
 
     try {
-      console.log('Iniciando proceso de checkout...');
+      // Generar código de pedido
+      const orderCode = generateOrderCode();
       
-      // Guardar pedido y obtener código
-      const orderCode = await saveSharedOrder();
-      console.log('Código de pedido generado:', orderCode);
-
-      if (!orderCode) {
-        console.error('No se pudo generar el código de pedido');
-        alert('Error al crear el pedido. Por favor intenta nuevamente.');
-        return;
-      }
+      // Intentar guardar en Supabase (en background, no bloqueante)
+      supabase
+        .from('shared_orders')
+        .insert({
+          order_code: orderCode,
+          items: items,
+          total: getTotal(),
+          selected_city: selectedCity,
+          selected_store: selectedStore,
+          comments: comments,
+        })
+        .then(({ error }) => {
+          if (error) console.warn('No se pudo guardar en BD:', error.message);
+        });
 
       // Generar mensaje de WhatsApp con el enlace
       const message = encodeURIComponent(generateWhatsAppMessage(orderCode));
       const whatsappUrl = `https://wa.me/${selectedStore}?text=${message}`;
       
-      console.log('Abriendo WhatsApp...');
+      // Abrir WhatsApp
       window.open(whatsappUrl, '_blank');
     } catch (error) {
       console.error('Error en checkout:', error);
