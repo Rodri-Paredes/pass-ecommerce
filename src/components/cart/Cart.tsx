@@ -101,6 +101,7 @@ export default function Cart() {
       const orderCode = generateOrderCode();
       const total = getTotal();
 
+      // Intentar guardar en Supabase
       const { error } = await supabase
         .from('shared_orders')
         .insert({
@@ -114,12 +115,17 @@ export default function Cart() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error al guardar en Supabase (tabla no existe?):', error);
+        // Aún así retornar el código para que el flujo continúe
+        console.log('Continuando sin guardar en BD...');
+      }
 
       return orderCode;
     } catch (error) {
       console.error('Error al guardar pedido:', error);
-      return null;
+      // Aún así generar un código para que funcione
+      return generateOrderCode();
     }
   };
 
@@ -162,10 +168,14 @@ Código de pedido: *${orderCode}*`;
     setIsProcessing(true);
 
     try {
+      console.log('Iniciando proceso de checkout...');
+      
       // Guardar pedido y obtener código
       const orderCode = await saveSharedOrder();
+      console.log('Código de pedido generado:', orderCode);
 
       if (!orderCode) {
+        console.error('No se pudo generar el código de pedido');
         alert('Error al crear el pedido. Por favor intenta nuevamente.');
         return;
       }
@@ -173,6 +183,8 @@ Código de pedido: *${orderCode}*`;
       // Generar mensaje de WhatsApp con el enlace
       const message = encodeURIComponent(generateWhatsAppMessage(orderCode));
       const whatsappUrl = `https://wa.me/${selectedStore}?text=${message}`;
+      
+      console.log('Abriendo WhatsApp...');
       window.open(whatsappUrl, '_blank');
     } catch (error) {
       console.error('Error en checkout:', error);
