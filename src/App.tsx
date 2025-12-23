@@ -15,6 +15,7 @@ import ShippingPage from './pages/ShippingPage';
 import ReturnsPage from './pages/ReturnsPage';
 import SizeGuidePage from './pages/SizeGuidePage';
 import ContactPage from './pages/ContactPage';
+import SharedOrderPage from './pages/SharedOrderPage';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/returns" element={<ReturnsPage />} />
             <Route path="/size-guide" element={<SizeGuidePage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/pedido/:orderCode" element={<SharedOrderPage />} />
           </Routes>
         </main>
         <Footer />

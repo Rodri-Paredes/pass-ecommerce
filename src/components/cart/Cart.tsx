@@ -85,27 +85,61 @@ export default function Cart() {
     }
   }, [selectedBranch, branches, selectedStore, selectedCity, setSelectedStore, setCity]);
 
-  const generateWhatsAppMessage = () => {
-    const productsText = items
-      .map(
-        (item) =>
-          `• ${item.product.name} - Talla: ${item.variant.size} - Cantidad: ${item.quantity} - Bs. ${(item.product.price * item.quantity).toFixed(2)}`
-      )
-      .join('\n');
+  const generateOrderCode = () => {
+    // Generar código de 8 caracteres alfanuméricos
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
 
+  const saveSharedOrder = async () => {
+    try {
+      const orderCode = generateOrderCode();
+      const total = getTotal();
+
+      const { data, error } = await supabase
+        .from('shared_orders')
+        .insert({
+          order_code: orderCode,
+          items: items,
+          total: total,
+          selected_city: selectedCity,
+          selected_store: selectedStore,
+          comments: comments,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return orderCode;
+    } catch (error) {
+      console.error('Error al guardar pedido:', error);
+      return null;
+    }
+  };
+
+  const generateWhatsAppMessage = (orderCode: string) => {
     const total = getTotal();
+    const orderUrl = `${window.location.origin}/pedido/${orderCode}`;
+    const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
     let message = `¡Hola! 👋 Quiero realizar el siguiente pedido:
 
-*PRODUCTOS:*
-${productsText}
+*RESUMEN DEL PEDIDO:*
+📦 ${itemCount} producto${itemCount > 1 ? 's' : ''} - Total: Bs. ${total.toFixed(2)}
+📍 Ciudad de entrega: ${selectedCity}
 
-*TOTAL: Bs. ${total.toFixed(2)}*
+🔗 *Ver pedido completo con imágenes:*
+${orderUrl}
 
-*Ciudad de entrega:* ${selectedCity}`;
+Código de pedido: *${orderCode}*`;
 
     if (comments.trim()) {
-      message += `\n\n*Comentarios adicionales:*\n${comments}`;
+      message += `\n\n💬 *Comentarios:*\n${comments}`;
     }
 
     message += `\n\n¿Podrían confirmarme la disponibilidad y opciones de pago? ¡Gracias! 🙌`;
@@ -113,7 +147,7 @@ ${productsText}
     return message;
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!selectedCity) {
       alert('Por favor selecciona una ciudad de entrega');
       return;
@@ -124,9 +158,25 @@ ${productsText}
       return;
     }
 
-    const message = encodeURIComponent(generateWhatsAppMessage());
+    // Mostrar indicador de carga
+    const button = document.querySelector('button[disabled]') as HTMLButtonElement;
+    if (button) button.textContent = 'Generando pedido...';
+
+    // Guardar pedido y obtener código
+    const orderCode = await saveSharedOrder();
+
+    if (!orderCode) {
+      alert('Error al crear el pedido. Por favor intenta nuevamente.');
+      if (button) button.textContent = 'Finalizar Compra';
+      return;
+    }
+
+    // Generar mensaje de WhatsApp con el enlace
+    const message = encodeURIComponent(generateWhatsAppMessage(orderCode));
     const whatsappUrl = `https://wa.me/${selectedStore}?text=${message}`;
     window.open(whatsappUrl, '_blank');
+
+    if (button) button.textContent = 'Finalizar Compra';
   };
 
   return (
