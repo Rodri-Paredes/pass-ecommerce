@@ -38,6 +38,7 @@ export default function Cart() {
     setSelectedStore,
     comments,
     setComments,
+    clearCart,
   } = useCartStore();
   
   const { selectedBranch } = useBranchStore();
@@ -159,6 +160,12 @@ Código de pedido: *${orderCode}*`;
       
       // Abrir WhatsApp
       window.open(whatsappUrl, '_blank');
+      
+      // Limpiar carrito después de enviar el pedido
+      clearCart();
+      
+      // Cerrar el carrito
+      closeCart();
     } catch (error) {
       console.error('Error en checkout:', error);
       alert('Error al procesar el pedido. Por favor intenta nuevamente.');
