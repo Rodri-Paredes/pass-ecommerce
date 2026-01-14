@@ -41,9 +41,6 @@ export default function ShippingPage() {
             </div>
             <div className="space-y-3 text-gray-700">
               <p>
-                <strong>Compras mayores a Bs. 300:</strong> Envío GRATIS
-              </p>
-              <p>
                 <strong>La Paz:</strong> Bs. 15
               </p>
               <p>
