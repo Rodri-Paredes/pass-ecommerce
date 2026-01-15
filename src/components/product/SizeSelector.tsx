@@ -28,9 +28,13 @@ export default function SizeSelector({
     Map<string, { variant: ProductVariant; stock: number; cityStock?: number }>
   >(new Map());
 
-  // Determinar qué tallas mostrar según la categoría
-  const isNumericSize = productCategory && 
-    (NUMERIC_SIZE_CATEGORIES as readonly string[]).includes(productCategory);
+  // Determinar qué tallas mostrar según las variantes REALES del producto
+  // Revisamos si alguna variante tiene una talla numérica (28, 30, etc.)
+  const hasNumericSizes = variants.some(v => PANT_SIZES.includes(v.size as any));
+  const hasLetterSizes = variants.some(v => SIZES.includes(v.size as any));
+  
+  // Si tiene tallas numéricas, usar esas. Si no, usar letras.
+  const isNumericSize = hasNumericSizes;
   const allSizes = isNumericSize ? [...PANT_SIZES] : [...SIZES];
 
   useEffect(() => {
