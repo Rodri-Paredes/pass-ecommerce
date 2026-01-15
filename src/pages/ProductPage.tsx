@@ -6,6 +6,7 @@ import { useCartStore } from '../store/cartStore';
 import type { ProductWithVariants, ProductVariant } from '../types';
 import SizeSelector from '../components/product/SizeSelector';
 import SizeGuideModal from '../components/product/SizeGuideModal';
+import ProductCard from '../components/product/ProductCard';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [recommendedProducts, setRecommendedProducts] = useState<ProductWithVariants[]>([]);
 
   const { addItem, openCart } = useCartStore();
 
@@ -51,10 +53,57 @@ export default function ProductPage() {
 
       if (error) throw error;
       setProduct(data);
+
+      // Cargar productos recomendados
+      loadRecommendedProducts(data);
     } catch (error) {
       console.error('Error loading product:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadRecommendedProducts = async (currentProduct: ProductWithVariants) => {
+    try {
+      let query = supabase
+        .from('products')
+        .select(`
+          *,
+          variants:product_variants(
+            id,
+            size,
+            stock(quantity)
+          ),
+          drop:drops(*)
+        `)
+        .neq('id', currentProduct.id)
+        .limit(4);
+
+      // Priorizar productos de la misma categoría o del mismo drop
+      if (currentProduct.drop_id) {
+        const { data: dropProducts } = await query
+          .eq('drop_id', currentProduct.drop_id);
+        
+        if (dropProducts && dropProducts.length >= 4) {
+          setRecommendedProducts(dropProducts);
+          return;
+        }
+      }
+
+      // Si no hay suficientes del mismo drop, buscar de la misma categoría
+      const { data: categoryProducts } = await query
+        .eq('category', currentProduct.category);
+
+      if (categoryProducts && categoryProducts.length > 0) {
+        setRecommendedProducts(categoryProducts);
+        return;
+      }
+
+      // Si no hay suficientes de la misma categoría, traer productos aleatorios
+      const { data: randomProducts } = await query;
+      setRecommendedProducts(randomProducts || []);
+    } catch (error) {
+      console.error('Error loading recommended products:', error);
     }
   };
 
@@ -233,6 +282,20 @@ export default function ProductPage() {
             </div>
           </div>
         </div>
+
+        {/* Productos Recomendados */}
+        {recommendedProducts.length > 0 && (
+          <div className="mt-16 border-t border-gray-200 pt-12">
+            <h2 className="text-2xl font-bold mb-8 tracking-tight">
+              TAMBIÉN TE PUEDE GUSTAR
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {recommendedProducts.map((recommendedProduct) => (
+                <ProductCard key={recommendedProduct.id} product={recommendedProduct} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Size Guide Modal */}
