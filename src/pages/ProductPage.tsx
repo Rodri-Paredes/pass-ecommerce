@@ -72,7 +72,11 @@ export default function ProductPage() {
           variants:product_variants(
             id,
             size,
-            stock(quantity)
+            stock(
+              quantity,
+              branch_id,
+              branch:branches(name, address)
+            )
           ),
           drop:drops(*)
         `)
@@ -290,8 +294,8 @@ export default function ProductPage() {
               TAMBIÉN TE PUEDE GUSTAR
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {recommendedProducts.map((recommendedProduct) => (
-                <ProductCard key={recommendedProduct.id} product={recommendedProduct} />
+              {recommendedProducts.map((recommendedProduct, index) => (
+                <ProductCard key={recommendedProduct.id} product={recommendedProduct} index={index} />
               ))}
             </div>
           </div>
