@@ -1,0 +1,20 @@
+-- =============================================
+-- ✅ Sistema de Descuentos Ya Existe
+-- =============================================
+-- Este archivo está aquí solo como referencia.
+-- El sistema de descuentos YA ESTÁ CREADO en tu base de datos con:
+--
+-- Tablas:
+--   - discounts
+--   - discount_products
+--   - discount_drops
+--
+-- Vista:
+--   - products_with_active_discount
+--
+-- NO NECESITAS EJECUTAR ESTE ARCHIVO.
+-- El código TypeScript ya está adaptado para usar tu esquema existente.
+-- =============================================
+
+-- Si por alguna razón necesitas recrear el sistema, usa tu script original
+-- que incluye validaciones de solapamiento y triggers.

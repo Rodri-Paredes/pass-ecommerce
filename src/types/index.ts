@@ -71,6 +71,41 @@ export interface CartItem {
   availableStock: number;
 }
 
+export interface Discount {
+  id: string;
+  name: string;
+  percentage: number;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface DiscountProduct {
+  id: string;
+  discount_id: string;
+  product_id: string;
+  created_at: string;
+}
+
+export interface DiscountDrop {
+  id: string;
+  discount_id: string;
+  drop_id: string;
+  created_at: string;
+}
+
+export interface ProductWithDiscount extends Product {
+  discount: {
+    percentage: number;
+    name: string;
+    source: 'product' | 'drop';
+  };
+  originalPrice: number;
+  finalPrice: number;
+  savings: number;
+}
+
 export const CATEGORIES = [
   'Hoodies',
   'Poleras',

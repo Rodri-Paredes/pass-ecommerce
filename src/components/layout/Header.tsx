@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Menu, X, MapPin } from 'lucide-react';
+import { ShoppingCart, Menu, X, MapPin, Percent } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useBranchStore } from '../../store/branchStore';
 import { useState, useEffect } from 'react';
@@ -9,10 +9,12 @@ import Logo from '../common/Logo';
 import { supabase } from '../../lib/supabase';
 import type { Branch } from '../../types';
 import BranchSelectorModal from './BranchSelectorModal';
+import { useDiscountedProducts } from '../../hooks/useDiscountedProducts';
 
 export default function Header() {
   const { openCart, getItemCount } = useCartStore();
   const { selectedBranch, setSelectedBranch } = useBranchStore();
+  const { count: discountCount } = useDiscountedProducts();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [showBranchSelector, setShowBranchSelector] = useState(false);
@@ -76,6 +78,19 @@ export default function Header() {
             >
               <span>ÚLTIMO DROP</span>
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300"></span>
+            </Link>
+            <Link
+              to="/pass-off"
+              className="group relative text-xs xl:text-sm font-bold tracking-[0.15em] text-red-600 hover:text-red-700 transition-colors duration-300 flex items-center gap-2"
+            >
+              <Percent className="h-4 w-4" />
+              <span>PASS OFF</span>
+              {discountCount > 0 && (
+                <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                  {discountCount}
+                </span>
+              )}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
             {CATEGORIES.slice(0, 4).map((category) => (
               <Link
@@ -188,6 +203,25 @@ export default function Header() {
                 <div className="flex items-center justify-between">
                   <span className="group-hover:translate-x-1 transition-transform">ÚLTIMO DROP</span>
                   <span className="text-gray-400 group-hover:text-black transition-colors text-xs">→</span>
+                </div>
+              </Link>
+              
+              <Link
+                to="/pass-off"
+                className="group relative py-3 px-3 text-sm font-bold tracking-wide transition-all hover:bg-red-50 rounded-lg active:scale-98 bg-gradient-to-r from-red-50 to-orange-50"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-red-600 group-hover:translate-x-1 transition-transform">
+                    <Percent className="h-4 w-4" />
+                    <span>PASS OFF</span>
+                    {discountCount > 0 && (
+                      <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                        {discountCount}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-red-400 group-hover:text-red-600 transition-colors text-xs">→</span>
                 </div>
               </Link>
               

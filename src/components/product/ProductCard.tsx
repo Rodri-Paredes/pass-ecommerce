@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import type { ProductWithVariants } from '../../types';
 import LazyImage from '../common/LazyImage';
 import { useBranchStore } from '../../store/branchStore';
+import { useDiscountStore } from '../../store/discountStore';
+import { DiscountBadge, DiscountPrice } from '../discounts/DiscountBadge';
 
 interface ProductCardProps {
   product: ProductWithVariants;
@@ -14,6 +16,22 @@ interface ProductCardProps {
 const ProductCard = memo(function ProductCard({ product, index }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { selectedBranch } = useBranchStore();
+  const { activeDiscountsMap } = useDiscountStore();
+  
+  // Verificar si el producto tiene descuento
+  const discountInfo = useMemo(() => {
+    return activeDiscountsMap.get(product.id);
+  }, [activeDiscountsMap, product.id]);
+
+  // Calcular precio con descuento si existe
+  const { originalPrice, finalPrice } = useMemo(() => {
+    if (discountInfo) {
+      const original = product.price;
+      const final = original - (original * discountInfo.percentage / 100);
+      return { originalPrice: original, finalPrice: final };
+    }
+    return { originalPrice: product.price, finalPrice: product.price };
+  }, [product.price, discountInfo]);
   
   // Memoizar cálculo de stock (operación costosa)
   const totalStock = useMemo(() => {
@@ -113,6 +131,12 @@ const ProductCard = memo(function ProductCard({ product, index }: ProductCardPro
               {product.drop.name}
             </div>
           )}
+
+          {discountInfo && (
+            <div className="absolute top-3 right-3 z-10">
+              <DiscountBadge percentage={discountInfo.percentage} />
+            </div>
+          )}
         </div>
 
         <div className="space-y-1">
@@ -126,7 +150,14 @@ const ProductCard = memo(function ProductCard({ product, index }: ProductCardPro
           </div>
           <p className="text-sm text-gray-600">{product.category}</p>
           <div className="flex items-center gap-2">
-            <p className="font-semibold">Bs. {product.price.toFixed(2)}</p>
+            {discountInfo ? (
+              <DiscountPrice 
+                originalPrice={originalPrice} 
+                discountedPrice={finalPrice} 
+              />
+            ) : (
+              <p className="font-semibold">Bs. {product.price.toFixed(2)}</p>
+            )}
             {branchName && (
               <span className="text-[10px] font-black tracking-wider text-white bg-gradient-to-r from-gray-900 to-black px-1.5 py-0.5 rounded">
                 {getBranchAbbreviation(branchName)}
