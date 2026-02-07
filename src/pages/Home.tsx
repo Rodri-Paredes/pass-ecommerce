@@ -56,61 +56,49 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center md:bg-top"
           style={{
             backgroundImage:
-              'url(https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops-banners/IMG_2995.JPG)',
+              'url(https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops-banners/226.PNG)',
             backgroundPosition: 'center center',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
         
         {/* Decorative gradient orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-700" />
 
-        <div className="relative h-full flex items-center justify-center text-center text-white px-4">
-          <div className="max-w-5xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-8"
-            >
-              <div className="inline-block px-6 py-2 border border-white/20 backdrop-blur-sm bg-white/5 rounded-full">
-                <span className="text-xs sm:text-sm tracking-[0.35em] uppercase text-gray-300 font-light">Streetwear Premium</span>
-              </div>
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-6 sm:mb-8 tracking-tighter leading-[0.85] drop-shadow-2xl"
-            >
-              <span className="inline-block hover:scale-105 transition-transform duration-300">PASS</span>
-              <span className="block mt-2 sm:mt-3 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">CLOTHING</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 text-gray-200 font-light tracking-wide max-w-3xl mx-auto leading-relaxed"
-            >
-              Diseños únicos que definen tu identidad urbana.
-            </motion.p>
+        {/* Título arriba */}
+        <div className="absolute top-0 left-0 right-0 flex justify-center pt-28 px-4">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white"
+            style={{ textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}
+          >
+            <span className="inline-block hover:scale-105 transition-transform duration-300 opacity-80">PASS</span>
+            <span className="ml-2 opacity-70">CLOTHING</span>
+          </motion.h1>
+        </div>
+
+        {/* Contenido abajo */}
+        <div className="relative h-full flex items-end justify-center text-center text-white px-4 pb-12 sm:pb-20">
+          <div className="max-w-5xl w-full">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+              className="flex flex-row gap-2 sm:gap-4 justify-center items-center"
             >
               <Link
                 to={latestDrop ? `/drops/${latestDrop.id}` : '/drops'}
-                className="group inline-flex items-center gap-2 sm:gap-3 bg-white text-black px-6 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 font-semibold tracking-[0.1em] sm:tracking-[0.15em] hover:bg-black hover:text-white transition-all duration-500 text-xs sm:text-sm uppercase border-2 border-white hover:shadow-2xl hover:shadow-white/30 hover:scale-105 rounded-sm"
+                className="group inline-flex items-center gap-2 bg-white text-black px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 font-semibold tracking-wide hover:bg-black hover:text-white transition-all duration-500 text-[10px] sm:text-xs md:text-sm uppercase border-2 border-white hover:shadow-2xl hover:shadow-white/30 hover:scale-105 rounded-full"
               >
                 Ver Último Drop
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-all duration-300" />
+                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-2 transition-all duration-300" />
               </Link>
               <Link
                 to="/shop"
-                className="group inline-flex items-center gap-2 sm:gap-3 bg-transparent text-white px-6 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 font-light tracking-[0.1em] sm:tracking-[0.15em] hover:bg-white/10 transition-all duration-500 text-xs sm:text-sm uppercase border-2 border-white/50 hover:border-white backdrop-blur-sm"
+                className="group inline-flex items-center gap-2 bg-transparent text-white px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 font-light tracking-wide hover:bg-white/10 transition-all duration-500 text-[10px] sm:text-xs md:text-sm uppercase border-2 border-white/50 hover:border-white backdrop-blur-sm rounded-full"
               >
                 Explorar Tienda
               </Link>
