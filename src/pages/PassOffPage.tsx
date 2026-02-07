@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingDown, Package } from 'lucide-react';
+import { Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDiscountedProducts } from '../hooks/useDiscountedProducts';
 import { DiscountPrice, DiscountBadge } from '../components/discounts/DiscountBadge';
@@ -87,7 +87,7 @@ const PassOffPage: React.FC = () => {
                   {/* Precio */}
                   <DiscountPrice
                     originalPrice={product.originalPrice}
-                    discountedPrice={product.finalPrice}
+                    discountPercentage={product.discount.percentage}
                   />
                 </div>
               </Link>
