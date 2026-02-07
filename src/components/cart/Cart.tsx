@@ -2,10 +2,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useBranchStore } from '../../store/branchStore';
+import { useDiscountStore } from '../../store/discountStore';
 import { CITIES } from '../../types';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { Branch } from '../../types';
+import { DiscountBadge } from '../discounts/DiscountBadge';
 
 // Configuración de asesores por sucursal
 const WHATSAPP_BY_BRANCH: { [key: string]: { name: string; number: string; location: string }[] } = {
@@ -33,7 +35,6 @@ export default function Cart() {
     removeItem,
     updateQuantity,
     setCity,
-    getTotal,
     selectedStore,
     setSelectedStore,
     comments,
@@ -42,17 +43,30 @@ export default function Cart() {
   } = useCartStore();
   
   const { selectedBranch } = useBranchStore();
+  const { activeDiscountsMap, loadActiveDiscountsMap } = useDiscountStore();
   const [branches, setBranches] = useState<Branch[]>([]);
   const [availableStores, setAvailableStores] = useState<{ name: string; number: string; location: string }[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Cargar sucursales
+  // Calcular total con descuentos
+  const getTotalWithDiscounts = () => {
+    return items.reduce((total, item) => {
+      const discount = activeDiscountsMap.get(item.product.id);
+      const price = discount 
+        ? item.product.price * (1 - discount.percentage / 100)
+        : item.product.price;
+      return total + (price * item.quantity);
+    }, 0);
+  };
+
+  // Cargar sucursales y descuentos
   useEffect(() => {
     const fetchBranches = async () => {
       const { data } = await supabase.from('branches').select('*');
       if (data) setBranches(data);
     };
     fetchBranches();
+    loadActiveDiscountsMap();
   }, []);
 
   // Auto-configurar sucursal, asesor y ciudad cuando hay una sucursal seleccionada
@@ -98,7 +112,7 @@ export default function Cart() {
   };
 
   const generateWhatsAppMessage = (orderCode: string) => {
-    const total = getTotal();
+    const total = getTotalWithDiscounts();
     const orderUrl = `${window.location.origin}/pedido/${orderCode}`;
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -145,7 +159,7 @@ Código de pedido: *${orderCode}*`;
         .insert({
           order_code: orderCode,
           items: items,
-          total: getTotal(),
+          total: getTotalWithDiscounts(),
           selected_city: selectedCity,
           selected_store: selectedStore,
           comments: comments,
@@ -235,7 +249,12 @@ Código de pedido: *${orderCode}*`;
                         <div className="flex-1 min-w-0 space-y-2">
                           <div className="flex justify-between gap-2">
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-medium text-sm truncate">{item.product.name}</h3>
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="font-medium text-sm truncate">{item.product.name}</h3>
+                                {activeDiscountsMap.has(item.product.id) && (
+                                  <DiscountBadge percentage={activeDiscountsMap.get(item.product.id)!.percentage} />
+                                )}
+                              </div>
                               <p className="text-xs text-gray-600">Talla: {item.variant.size}</p>
                               <p className="text-xs text-gray-500 mt-1">
                                 Stock: {item.availableStock} unidades
@@ -278,9 +297,22 @@ Código de pedido: *${orderCode}*`;
                                 <Plus className="w-3 h-3" />
                               </button>
                             </div>
-                            <p className="font-semibold text-sm">
-                              Bs. {(item.product.price * item.quantity).toFixed(2)}
-                            </p>
+                            <div className="text-right">
+                              {activeDiscountsMap.has(item.product.id) ? (
+                                <>
+                                  <p className="text-xs text-gray-400 line-through">
+                                    Bs. {(item.product.price * item.quantity).toFixed(2)}
+                                  </p>
+                                  <p className="font-semibold text-sm text-red-600">
+                                    Bs. {((item.product.price * (1 - activeDiscountsMap.get(item.product.id)!.percentage / 100)) * item.quantity).toFixed(2)}
+                                  </p>
+                                </>
+                              ) : (
+                                <p className="font-semibold text-sm">
+                                  Bs. {(item.product.price * item.quantity).toFixed(2)}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -293,7 +325,7 @@ Código de pedido: *${orderCode}*`;
                 <div className="border-t border-gray-100 p-6 space-y-5 bg-gray-50/50">
                   <div className="flex items-center justify-between py-3 border-b border-gray-200">
                     <span className="text-sm tracking-wider uppercase text-gray-600">Subtotal</span>
-                    <span className="text-2xl font-light">Bs. {getTotal().toFixed(2)}</span>
+                    <span className="text-2xl font-light">Bs. {getTotalWithDiscounts().toFixed(2)}</span>
                   </div>
 
                   <div>

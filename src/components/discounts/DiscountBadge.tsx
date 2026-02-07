@@ -14,20 +14,22 @@ export const DiscountBadge: React.FC<DiscountBadgeProps> = ({ percentage }) => {
 
 interface DiscountPriceProps {
   originalPrice: number;
-  discountedPrice: number;
+  discountPercentage: number;
 }
 
 export const DiscountPrice: React.FC<DiscountPriceProps> = ({ 
   originalPrice, 
-  discountedPrice 
+  discountPercentage
 }) => {
+  const discountedPrice = originalPrice * (1 - discountPercentage / 100);
+  
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-sm text-gray-400 line-through">
-        ${originalPrice.toFixed(2)}
+    <div className="flex items-center gap-2">
+      <span className="text-base text-gray-400 line-through">
+        Bs. {originalPrice.toFixed(2)}
       </span>
       <span className="text-xl font-bold text-red-600">
-        ${discountedPrice.toFixed(2)}
+        Bs. {discountedPrice.toFixed(2)}
       </span>
     </div>
   );

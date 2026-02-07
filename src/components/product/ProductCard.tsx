@@ -23,15 +23,10 @@ const ProductCard = memo(function ProductCard({ product, index }: ProductCardPro
     return activeDiscountsMap.get(product.id);
   }, [activeDiscountsMap, product.id]);
 
-  // Calcular precio con descuento si existe
-  const { originalPrice, finalPrice } = useMemo(() => {
-    if (discountInfo) {
-      const original = product.price;
-      const final = original - (original * discountInfo.percentage / 100);
-      return { originalPrice: original, finalPrice: final };
-    }
-    return { originalPrice: product.price, finalPrice: product.price };
-  }, [product.price, discountInfo]);
+  // Calcular precio original si hay descuento
+  const originalPrice = useMemo(() => {
+    return product.price;
+  }, [product.price]);
   
   // Memoizar cálculo de stock (operación costosa)
   const totalStock = useMemo(() => {
@@ -52,24 +47,6 @@ const ProductCard = memo(function ProductCard({ product, index }: ProductCardPro
         (variant.stock?.reduce((stockSum, s) => stockSum + s.quantity, 0) || 0),
       0
     ) || 0;
-  }, [product.variants, selectedBranch]);
-
-  // Stock por talla cuando hay sucursal seleccionada
-  const stockBySize = useMemo(() => {
-    if (!selectedBranch || !product.variants) return null;
-    
-    const sizeStock: { size: string; quantity: number }[] = [];
-    
-    product.variants.forEach(variant => {
-      const branchStockQty = variant.stock?.reduce((sum, s) => 
-        s.branch_id === selectedBranch ? sum + s.quantity : sum, 0) || 0;
-      
-      if (branchStockQty > 0) {
-        sizeStock.push({ size: variant.size, quantity: branchStockQty });
-      }
-    });
-    
-    return sizeStock.length > 0 ? sizeStock : null;
   }, [product.variants, selectedBranch]);
 
   // Obtener nombre de sucursal si está seleccionada
@@ -153,7 +130,7 @@ const ProductCard = memo(function ProductCard({ product, index }: ProductCardPro
             {discountInfo ? (
               <DiscountPrice 
                 originalPrice={originalPrice} 
-                discountedPrice={finalPrice} 
+                discountPercentage={discountInfo.percentage} 
               />
             ) : (
               <p className="font-semibold">Bs. {product.price.toFixed(2)}</p>

@@ -3,10 +3,12 @@ import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCartStore } from '../store/cartStore';
+import { useDiscountStore } from '../store/discountStore';
 import type { ProductWithVariants, ProductVariant } from '../types';
 import SizeSelector from '../components/product/SizeSelector';
 import SizeGuideModal from '../components/product/SizeGuideModal';
 import ProductCard from '../components/product/ProductCard';
+import { DiscountBadge, DiscountPrice } from '../components/discounts/DiscountBadge';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +22,7 @@ export default function ProductPage() {
   const [recommendedProducts, setRecommendedProducts] = useState<ProductWithVariants[]>([]);
 
   const { addItem, openCart } = useCartStore();
+  const { activeDiscountsMap, loadActiveDiscountsMap } = useDiscountStore();
 
   useEffect(() => {
     // Scroll to top when product page loads
@@ -27,6 +30,7 @@ export default function ProductPage() {
     
     if (id) {
       loadProduct();
+      loadActiveDiscountsMap();
     }
   }, [id]);
 
@@ -227,7 +231,17 @@ export default function ProductPage() {
 
             <div>
               <h1 className="text-3xl font-bold mb-2 tracking-tight">{product.name}</h1>
-              <p className="text-xl font-semibold">Bs. {product.price.toFixed(2)}</p>
+              {activeDiscountsMap.has(product.id) ? (
+                <div className="flex items-center gap-3">
+                  <DiscountBadge percentage={activeDiscountsMap.get(product.id)!.percentage} />
+                  <DiscountPrice 
+                    originalPrice={product.price} 
+                    discountPercentage={activeDiscountsMap.get(product.id)!.percentage} 
+                  />
+                </div>
+              ) : (
+                <p className="text-xl font-semibold">Bs. {product.price.toFixed(2)}</p>
+              )}
             </div>
 
             {product.description && (
