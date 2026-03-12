@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar } from 'lucide-react';
 import type { Drop } from '../../types';
+import { optimizeImageUrl } from '../../lib/imageOptimizer';
 
 interface DropCardProps {
   drop: Drop;
@@ -27,7 +28,7 @@ export default function DropCard({ drop, index }: DropCardProps) {
         <div className="relative aspect-[4/5] bg-gray-100 overflow-hidden mb-4">
           {drop.image_url && (
             <motion.img
-              src={drop.image_url}
+              src={optimizeImageUrl(drop.image_url, { width: 600 })}
               alt={drop.name}
               className="w-full h-full object-cover"
               whileHover={{ scale: 1.05 }}

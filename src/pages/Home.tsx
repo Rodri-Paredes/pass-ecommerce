@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { ArrowRight, Truck, Shield, Sparkles, Instagram } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import type { Drop } from '../types';
+import { optimizeImageUrl } from '../lib/imageOptimizer';
+import { CacheManager } from '../lib/cache';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -21,22 +22,27 @@ const staggerContainer = {
 };
 
 export default function Home() {
-  const [latestDrop, setLatestDrop] = useState<Drop | null>(null);
+  const [latestDrop, setLatestDrop] = useState<{ id: string } | null>(() =>
+    CacheManager.get<{ id: string }>('latest_drop')
+  );
 
   useEffect(() => {
-    // Load the most recent drop to link directly to its detail page from the hero
     const loadLatestDrop = async () => {
+      if (latestDrop) return;
       try {
         const { data, error } = await supabase
           .from('drops')
-          .select('*')
+          .select('id')
           .eq('status', 'ACTIVO')
           .order('is_featured', { ascending: false })
           .order('launch_date', { ascending: false })
           .limit(1);
 
         if (error) throw error;
-        if (data && data.length > 0) setLatestDrop(data[0]);
+        if (data && data.length > 0) {
+          setLatestDrop(data[0]);
+          CacheManager.set('latest_drop', data[0], 60);
+        }
       } catch (err) {
         console.error('Error loading latest drop:', err);
       }
@@ -56,7 +62,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center md:bg-top"
           style={{
             backgroundImage:
-              'url(https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops-banners/226.PNG)',
+              `url(${optimizeImageUrl('https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops-banners/226.PNG', { width: 1200, quality: 70 })})`,
             backgroundPosition: 'center center',
           }}
         />
@@ -144,7 +150,7 @@ export default function Home() {
               <motion.img
                 whileHover={{ scale: 1.08 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                src="https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/1760802011775-Photoroom_20251018_110704.jpeg"
+                src={optimizeImageUrl('https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/1760802011775-Photoroom_20251018_110704.jpeg', { width: 800 })}
                 alt="Hoodies"
                 loading="lazy"
                 className="w-full h-full object-cover brightness-90"
@@ -167,7 +173,7 @@ export default function Home() {
               <motion.img
                 whileHover={{ scale: 1.08 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                src="https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/1754948116239-Photoroom_20250417_140556.jpeg"
+                src={optimizeImageUrl('https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/1754948116239-Photoroom_20250417_140556.jpeg', { width: 800 })}
                 alt="Poleras"
                 loading="lazy"
                 className="w-full h-full object-cover brightness-90"
@@ -231,7 +237,7 @@ export default function Home() {
             >
               <div className="aspect-[3/4] bg-gray-100 overflow-hidden shadow-2xl group/img relative">
                 <img
-                  src="https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/home.jpeg"
+                  src={optimizeImageUrl('https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/home.jpeg', { width: 800 })}
                   alt="Pass Clothing"
                   className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-1000"
                 />

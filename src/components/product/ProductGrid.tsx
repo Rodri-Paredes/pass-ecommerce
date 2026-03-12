@@ -43,12 +43,10 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
       .select(`
         *,
         variants:product_variants(
-          id,
-          size,
+          *,
           stock(
-            quantity,
-            branch_id,
-            branch:branches(name, address)
+            *,
+            branch:branches(*)
           )
         ),
         drop:drops(*)
@@ -71,8 +69,8 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
     cacheKey,
     fetchProducts,
     {
-      cacheTime: 3 * 60 * 1000, // 3 minutos
-      staleTime: 60 * 1000, // 1 minuto
+      cacheTime: 10 * 60 * 1000, // 10 minutos
+      staleTime: 3 * 60 * 1000,  // 3 minutos stale
     }
   );
 

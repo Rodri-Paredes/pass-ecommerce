@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { CacheManager } from '../lib/cache';
 
 interface CacheEntry<T> {
   data: T;
@@ -7,36 +8,42 @@ interface CacheEntry<T> {
 }
 
 interface UseQueryOptions {
-  cacheTime?: number; // Tiempo en ms que los datos permanecen en caché (default: 5 minutos)
-  staleTime?: number; // Tiempo en ms antes de considerar datos obsoletos (default: 0)
+  cacheTime?: number; // Tiempo en ms que los datos permanecen en caché (default: 10 minutos)
+  staleTime?: number; // Tiempo en ms antes de considerar datos obsoletos (default: 2 min)
   refetchOnMount?: boolean;
   enabled?: boolean;
+  /** Persist cache to localStorage (survives page reloads). Default true. */
+  persist?: boolean;
 }
 
 // Cache global en memoria
 const queryCache = new Map<string, CacheEntry<any>>();
 
-/**
- * Hook personalizado para fetch con caché (alternativa ligera a React Query)
- * - Cachea respuestas del ERP
- * - Evita llamadas duplicadas
- * - Gestiona loading y error states
- */
 export function useCachedQuery<T>(
   key: string,
   fetcher: () => Promise<T>,
   options: UseQueryOptions = {}
 ) {
   const {
-    cacheTime = 5 * 60 * 1000, // 5 minutos default
-    staleTime = 0,
+    cacheTime = 10 * 60 * 1000, // 10 minutos default
+    staleTime = 2 * 60 * 1000,  // 2 minutos default
     refetchOnMount = true,
     enabled = true,
+    persist = true,
   } = options;
 
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<T | null>(() => {
+    // Initialise from memory cache or localStorage synchronously
+    const memCached = queryCache.get(key);
+    if (memCached && Date.now() < memCached.expiresAt) return memCached.data;
+    if (persist) {
+      const stored = CacheManager.get<T>(key);
+      if (stored) return stored;
+    }
+    return null;
+  });
   const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(data === null);
   const [isFetching, setIsFetching] = useState(false);
   
   const fetchInProgressRef = useRef(false);
@@ -71,12 +78,17 @@ export function useCachedQuery<T>(
     try {
       const result = await fetcher();
       
-      // Guardar en caché
+      // Guardar en caché en memoria
       queryCache.set(key, {
         data: result,
         timestamp: now,
         expiresAt: now + cacheTime,
       });
+
+      // Persistir en localStorage
+      if (persist) {
+        CacheManager.set(key, result, Math.round(cacheTime / 60000));
+      }
 
       setData(result);
       setError(null);

@@ -3,6 +3,7 @@ import { Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDiscountedProducts } from '../hooks/useDiscountedProducts';
 import { DiscountPrice, DiscountBadge } from '../components/discounts/DiscountBadge';
+import { optimizeImageUrl } from '../lib/imageOptimizer';
 
 const PassOffPage: React.FC = () => {
   const { discountedProducts, count, isLoading } = useDiscountedProducts();
@@ -65,9 +66,11 @@ const PassOffPage: React.FC = () => {
                   <div className="aspect-square bg-gray-100 overflow-hidden">
                     {product.image_url ? (
                       <img
-                        src={product.image_url}
+                        src={optimizeImageUrl(product.image_url, { width: 400 })}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        loading="lazy"
+                        decoding="async"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

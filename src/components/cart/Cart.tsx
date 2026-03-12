@@ -62,7 +62,7 @@ export default function Cart() {
   // Cargar sucursales y descuentos
   useEffect(() => {
     const fetchBranches = async () => {
-      const { data } = await supabase.from('branches').select('*');
+      const { data } = await supabase.from('branches').select('id, name, address, created_at');
       if (data) setBranches(data);
     };
     fetchBranches();

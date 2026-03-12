@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { optimizeImageUrl } from '../lib/imageOptimizer';
 import { useCartStore } from '../store/cartStore';
 import { useDiscountStore } from '../store/discountStore';
 import type { ProductWithVariants, ProductVariant } from '../types';
@@ -42,12 +43,10 @@ export default function ProductPage() {
         .select(`
           *,
           variants:product_variants(
-            id,
-            size,
+            *,
             stock(
-              quantity,
-              branch_id,
-              branch:branches(name, address)
+              *,
+              branch:branches(*)
             )
           ),
           drop:drops(*)
@@ -69,21 +68,21 @@ export default function ProductPage() {
 
   const loadRecommendedProducts = async (currentProduct: ProductWithVariants) => {
     try {
+      const recommendedSelect = `
+        *,
+        variants:product_variants(
+          *,
+          stock(
+            *,
+            branch:branches(*)
+          )
+        ),
+        drop:drops(*)
+      `;
+
       let query = supabase
         .from('products')
-        .select(`
-          *,
-          variants:product_variants(
-            id,
-            size,
-            stock(
-              quantity,
-              branch_id,
-              branch:branches(name, address)
-            )
-          ),
-          drop:drops(*)
-        `)
+        .select(recommendedSelect)
         .neq('id', currentProduct.id)
         .limit(4);
 
@@ -176,7 +175,7 @@ export default function ProductPage() {
           <div className="space-y-4">
             <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden rounded-lg">
               <img
-                src={allImages[currentImage]}
+                src={optimizeImageUrl(allImages[currentImage], { width: 800 })}
                 alt={product.name}
                 className="w-full h-full object-cover transition-all duration-300"
               />
@@ -212,7 +211,7 @@ export default function ProductPage() {
                     }`}
                   >
                     <img 
-                      src={image} 
+                      src={optimizeImageUrl(image, { width: 200, quality: 60 })} 
                       alt={`${product.name} ${index + 1}`} 
                       className="w-full h-full object-cover" 
                     />

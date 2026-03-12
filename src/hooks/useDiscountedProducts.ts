@@ -2,6 +2,7 @@ import { useMemo, useEffect } from 'react';
 import { useDiscountStore } from '../store/discountStore';
 import { supabase } from '../lib/supabase';
 import { useState } from 'react';
+import { CacheManager } from '../lib/cache';
 import type { Product, ProductWithDiscount } from '../types';
 
 export const useDiscountedProducts = () => {
@@ -13,8 +14,17 @@ export const useDiscountedProducts = () => {
     const loadData = async () => {
       try {
         setIsLoading(true);
+
+        // Try localStorage cache first
+        const cached = CacheManager.get<Product[]>('discount_products');
+        if (cached) {
+          setProducts(cached);
+          setIsLoading(false);
+          // Still refresh discounts map in background
+          loadActiveDiscountsMap();
+          return;
+        }
         
-        // Cargar productos
         const { data, error } = await supabase
           .from('products')
           .select('*')
@@ -22,6 +32,7 @@ export const useDiscountedProducts = () => {
 
         if (error) throw error;
         setProducts(data || []);
+        CacheManager.set('discount_products', data || [], 30); // Cache 30 min
 
         // Cargar mapa de descuentos
         await loadActiveDiscountsMap();

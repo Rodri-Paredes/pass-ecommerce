@@ -29,4 +29,18 @@ export function event(name: string, params?: Record<string, any>) {
   }
 }
 
-export default { pageview, event };
+/**
+ * Log the approximate size of a Supabase query response.
+ * Useful for monitoring egress during development.
+ */
+export function logDataTransfer(endpoint: string, data: unknown) {
+  if (import.meta.env.PROD) return; // Only in dev
+  try {
+    const sizeKB = (new Blob([JSON.stringify(data)]).size / 1024).toFixed(2);
+    console.log(`📊 [egress] ${endpoint}: ${sizeKB} KB`);
+  } catch {
+    // noop
+  }
+}
+
+export default { pageview, event, logDataTransfer };

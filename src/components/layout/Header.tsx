@@ -23,7 +23,7 @@ export default function Header() {
 
   useEffect(() => {
     const fetchBranches = async () => {
-      const { data } = await supabase.from('branches').select('*').order('name');
+      const { data } = await supabase.from('branches').select('id, name, address, created_at').order('name');
       if (data) {
         // Filtrar cualquier sucursal que contenga 'Sucre' en el nombre
         const filtered = data.filter(branch => !branch.name.toLowerCase().includes('sucre'));

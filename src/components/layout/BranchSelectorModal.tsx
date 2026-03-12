@@ -62,7 +62,7 @@ export default function BranchSelectorModal({ isOpen: externalIsOpen, onClose }:
     try {
       const { data, error } = await supabase
         .from('branches')
-        .select('*')
+        .select('id, name, address, created_at')
         .order('name');
 
       if (error) throw error;

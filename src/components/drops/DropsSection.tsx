@@ -16,7 +16,7 @@ export default function DropsSection() {
     try {
       const { data, error } = await supabase
         .from('drops')
-        .select('*')
+        .select('id, name, description, launch_date, end_date, status, is_featured, image_url, banner_url, created_at')
         .eq('status', 'ACTIVO')
         .order('is_featured', { ascending: false })
         .order('launch_date', { ascending: false })

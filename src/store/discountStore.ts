@@ -29,7 +29,7 @@ export const useDiscountStore = create<DiscountStore>((set, get) => ({
       // Usar la vista que ya existe en la base de datos
       const { data: productsWithDiscount, error } = await supabase
         .from('products_with_active_discount')
-        .select('*');
+        .select('product_id, percentage, discount_name, discount_source');
 
       if (error) {
         console.error('Error cargando descuentos:', error);

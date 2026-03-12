@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, Loader2, Calendar } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { optimizeImageUrl } from '../lib/imageOptimizer';
 import type { Drop } from '../types';
 import ProductGrid from '../components/product/ProductGrid';
 
@@ -24,7 +25,7 @@ export default function DropDetailPage() {
     try {
       const { data, error } = await supabase
         .from('drops')
-        .select('*')
+        .select('id, name, description, launch_date, end_date, status, is_featured, image_url, banner_url, created_at')
         .eq('id', id)
         .single();
 
@@ -68,7 +69,7 @@ export default function DropDetailPage() {
       {drop.banner_url && (
         <div className="relative h-[50vh] overflow-hidden">
           <img
-            src={drop.banner_url}
+            src={optimizeImageUrl(drop.banner_url, { width: 1200, quality: 70 })}
             alt={drop.name}
             className="w-full h-full object-cover"
           />
