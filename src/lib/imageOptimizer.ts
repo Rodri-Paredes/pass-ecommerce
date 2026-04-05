@@ -9,6 +9,9 @@ export function optimizeImageUrl(
 ): string {
   if (!src) return '';
   
+  // SOLUCIÓN TEMPORAL: Retornar directo de Supabase para arreglar el Error 500
+  return src;
+  
   // Debes de habilitar y configurar estas env vars en Vercel y local
   // Ejemplo: VITE_SUPABASE_CDN_URL="https://cdn.passtreetwear.com"
   const CDN_DOMAIN = import.meta.env.VITE_SUPABASE_CDN_URL || 'https://cdn.tu-dominio.com';
