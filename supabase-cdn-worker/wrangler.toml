@@ -1,0 +1,13 @@
+name = "supabase-cdn"
+main = "src/index.js"
+compatibility_date = "2024-03-29"
+
+# Deshabilitar el dominio .workers.dev temporalmente si prefieres solo usar tu custom domain
+# workers_dev = false 
+
+[vars]
+# ==============================================================
+# IMPORTANTE: Reemplaza esto con el URL base de tu proyecto Supabase
+# Ejemplo: "https://vabwxhzbdcjd....supabase.co"
+# ==============================================================
+SUPABASE_URL = "https://jbdiidhseumjqdfxyzop.supabase.co"

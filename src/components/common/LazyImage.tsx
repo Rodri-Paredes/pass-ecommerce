@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { optimizeImageUrl } from '../../lib/imageOptimizer';
+import { optimizeImageUrl, getOriginalSupabaseUrl } from '../../lib/imageOptimizer';
 
 // Tiny transparent placeholder (avoids layout shift)
 const PLACEHOLDER =
@@ -55,6 +55,14 @@ export default function LazyImage({
     };
   }, [optimizedSrc]);
 
+  // Si falla el CDN de Cloudflare, intenta usando la URL directo a Supabase
+  const handleError = () => {
+    if (imageSrc !== getOriginalSupabaseUrl(optimizedSrc)) {
+      console.warn(`[CDN Error] Fallback de imagen ${alt} cargando desde base...`);
+      setImageSrc(getOriginalSupabaseUrl(optimizedSrc));
+    }
+  };
+
   return (
     <img
       ref={imgRef}
@@ -62,6 +70,7 @@ export default function LazyImage({
       alt={alt}
       className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
       onLoad={() => setIsLoaded(true)}
+      onError={handleError}
       loading="lazy"
       decoding="async"
     />
