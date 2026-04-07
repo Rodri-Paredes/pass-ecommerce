@@ -8,7 +8,7 @@ interface SizeGuideModalProps {
 }
 
 const SIZE_GUIDE_IMAGES: Record<string, string> = {
-  'Pantalones': 'https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops/guia-size/guia-pant.jpeg',
+  'Pantalones': 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops/guia-size/guia-pant.jpeg',
   // Puedes agregar más guías aquí cuando las tengas
   // 'Shorts': 'url_de_guia_shorts',
   // 'Hoodies': 'url_de_guia_hoodies',

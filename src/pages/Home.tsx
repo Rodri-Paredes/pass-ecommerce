@@ -62,7 +62,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center md:bg-top"
           style={{
             backgroundImage:
-              `url(${optimizeImageUrl('https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops-banners/226.PNG', { width: 1200, quality: 70 })})`,
+              `url(${optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops-banners/226.PNG', { width: 1200, quality: 70 })})`,
             backgroundPosition: 'center center',
           }}
         />
@@ -150,7 +150,7 @@ export default function Home() {
               <motion.img
                 whileHover={{ scale: 1.08 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                src={optimizeImageUrl('https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/1760802011775-Photoroom_20251018_110704.jpeg', { width: 800 })}
+                src={optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/1760802011775-Photoroom_20251018_110704.jpeg', { width: 800 })}
                 alt="Hoodies"
                 loading="lazy"
                 className="w-full h-full object-cover brightness-90"
@@ -173,7 +173,7 @@ export default function Home() {
               <motion.img
                 whileHover={{ scale: 1.08 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                src={optimizeImageUrl('https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/1754948116239-Photoroom_20250417_140556.jpeg', { width: 800 })}
+                src={optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/1754948116239-Photoroom_20250417_140556.jpeg', { width: 800 })}
                 alt="Poleras"
                 loading="lazy"
                 className="w-full h-full object-cover brightness-90"
@@ -237,7 +237,7 @@ export default function Home() {
             >
               <div className="aspect-[3/4] bg-gray-100 overflow-hidden shadow-2xl group/img relative">
                 <img
-                  src={optimizeImageUrl('https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/products/home.jpeg', { width: 800 })}
+                  src={optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/home.jpeg', { width: 800 })}
                   alt="Pass Clothing"
                   className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-1000"
                 />
