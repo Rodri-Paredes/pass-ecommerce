@@ -65,7 +65,8 @@ export default function SizeSelector({
 
       // Incluir todas las variantes, incluso sin stock, para mostrarlas como no disponibles
       // Almacenamos también cityStock opcional para mostrar desglose si el usuario seleccionó ciudad
-      sizeMap.set(variant.size, { variant, stock: totalStock, cityStock });
+      // Normalizar a mayúsculas para que coincida con SIZES = ['S', 'M', 'L']
+      sizeMap.set(variant.size.toUpperCase(), { variant, stock: totalStock, cityStock });
     });
 
     setAvailableSizes(sizeMap);
