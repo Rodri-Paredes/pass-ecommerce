@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { Branch } from '../../types';
 import { DiscountBadge } from '../discounts/DiscountBadge';
+import { optimizeImageUrl } from '../../lib/imageOptimizer';
 
 // Configuración de asesores por sucursal
 const WHATSAPP_BY_BRANCH: { [key: string]: { name: string; number: string; location: string }[] } = {
@@ -240,9 +241,10 @@ Código de pedido: *${orderCode}*`;
                       <div key={item.variant.id} className="group flex gap-4 pb-6 border-b border-gray-100 last:border-0 hover:bg-gray-50/50 -mx-2 px-2 py-2 rounded-lg transition-colors">
                         <div className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 overflow-hidden rounded-lg">
                           <img
-                            src={item.product.image_url}
+                            src={optimizeImageUrl(item.product.image_url, { width: 200, quality: 75 })}
                             alt={item.product.name}
                             className="w-full h-full object-cover bg-gray-100 group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
                           />
                         </div>
 
