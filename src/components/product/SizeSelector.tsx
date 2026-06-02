@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { ProductVariant, Stock, Branch } from '../../types';
-import { SIZES, PANT_SIZES, NUMERIC_SIZE_CATEGORIES } from '../../types';
+import { SIZES, PANT_SIZES } from '../../types';
 import { Ruler } from 'lucide-react';
 import { useBranchStore } from '../../store/branchStore';
 
@@ -31,8 +31,7 @@ export default function SizeSelector({
   // Determinar qué tallas mostrar según las variantes REALES del producto
   // Revisamos si alguna variante tiene una talla numérica (28, 30, etc.)
   const hasNumericSizes = variants.some(v => PANT_SIZES.includes(v.size as any));
-  const hasLetterSizes = variants.some(v => SIZES.includes(v.size as any));
-  
+
   // Si tiene tallas numéricas, usar esas. Si no, usar letras.
   const isNumericSize = hasNumericSizes;
   const allSizes = isNumericSize ? [...PANT_SIZES] : [...SIZES];
@@ -41,6 +40,7 @@ export default function SizeSelector({
     const sizeMap = new Map();
 
     variants.forEach((variant) => {
+      const normalizedSize = variant.size?.trim().toUpperCase() || '';
       let totalStock = 0;
       let cityStock: number | undefined = undefined;
 
@@ -65,8 +65,7 @@ export default function SizeSelector({
 
       // Incluir todas las variantes, incluso sin stock, para mostrarlas como no disponibles
       // Almacenamos también cityStock opcional para mostrar desglose si el usuario seleccionó ciudad
-      // Normalizar a mayúsculas para que coincida con SIZES = ['S', 'M', 'L']
-      sizeMap.set(variant.size.toUpperCase(), { variant, stock: totalStock, cityStock });
+      sizeMap.set(normalizedSize, { variant, stock: totalStock, cityStock });
     });
 
     setAvailableSizes(sizeMap);
@@ -94,45 +93,55 @@ export default function SizeSelector({
         </div>
       </div>
 
-      <div className={`grid gap-2 ${isNumericSize ? 'grid-cols-4' : 'grid-cols-6'}`}>
-        {allSizes.map((size) => {
-          const sizeData = availableSizes.get(size);
-          const isAvailable = sizeData && sizeData.stock > 0;
-          const isSelected = selectedSize === size;
+      {(() => {
+        const normalizedSelectedSize = selectedSize?.trim().toUpperCase() || null;
+        const selectedSizeKey = normalizedSelectedSize ?? '';
 
-          return (
-            <button
-              key={size}
-              onClick={() => {
-                if (isAvailable && sizeData) {
-                  onSizeSelect(sizeData.variant, sizeData.stock);
-                }
-              }}
-              disabled={!isAvailable}
-              className={`
-                py-3 text-sm font-medium tracking-wide transition-all
-                ${isSelected
-                  ? 'bg-black text-white'
-                  : isAvailable
-                  ? 'bg-white border border-gray-300 hover:border-black'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed line-through'
-                }
-              `}
-            >
-              {size}
-            </button>
-          );
-        })}
-      </div>
+        return (
+          <>
+            <div className={`grid gap-2 ${isNumericSize ? 'grid-cols-4' : 'grid-cols-6'}`}>
+              {allSizes.map((size) => {
+                const sizeData = availableSizes.get(size);
+                const isAvailable = sizeData && sizeData.stock > 0;
+                const isSelected = normalizedSelectedSize === size;
 
-      {selectedSize && availableSizes.get(selectedSize) && (
-        <p className="text-sm text-gray-600">
-          Stock disponible: {availableSizes.get(selectedSize)!.stock} unidades
-          {selectedCity && typeof availableSizes.get(selectedSize)!.cityStock === 'number' && (
-            <span className="text-xs text-gray-500 ml-2">({availableSizes.get(selectedSize)!.cityStock} en {selectedCity})</span>
-          )}
-        </p>
-      )}
+                return (
+                  <button
+                    key={size}
+                    onClick={() => {
+                      if (isAvailable && sizeData) {
+                        onSizeSelect(sizeData.variant, sizeData.stock);
+                      }
+                    }}
+                    disabled={!isAvailable}
+                    className={
+                      `
+                      py-3 text-sm font-medium tracking-wide transition-all
+                      ${isSelected
+                        ? 'bg-black text-white'
+                        : isAvailable
+                        ? 'bg-white border border-gray-300 hover:border-black'
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed line-through'
+                      }
+                    `}
+                  >
+                    {size}
+                  </button>
+                );
+              })}
+            </div>
+
+            {selectedSizeKey && availableSizes.get(selectedSizeKey) && (
+              <p className="text-sm text-gray-600">
+                Stock disponible: {availableSizes.get(selectedSizeKey)!.stock} unidades
+                {selectedCity && typeof availableSizes.get(selectedSizeKey)!.cityStock === 'number' && (
+                  <span className="text-xs text-gray-500 ml-2">({availableSizes.get(selectedSizeKey)!.cityStock} en {selectedCity})</span>
+                )}
+              </p>
+            )}
+          </>
+        );
+      })()}
 
       {variants.length === 0 && (
         <p className="text-sm text-red-500">
