@@ -54,6 +54,11 @@ export default function Footer() {
                   Pantalones
                 </Link>
               </li>
+              <li>
+                <Link to="/pass-off" className="hover:text-white transition-colors inline-block">
+                  Ofertas
+                </Link>
+              </li>
             </ul>
           </div>
 

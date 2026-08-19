@@ -95,6 +95,81 @@ export interface DiscountDrop {
   created_at: string;
 }
 
+// =============================================
+// PASS CREW
+// =============================================
+
+export interface CustomerProfile {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CrewPlan {
+  id: string;
+  code: string;
+  name: string;
+  price: number;
+  currency: string;
+  duration_days: number;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface CrewSettings {
+  id: number;
+  payment_qr_url: string | null;
+  payment_instructions: string | null;
+}
+
+export interface CrewBenefit {
+  id: string;
+  plan_id: string | null;
+  title: string;
+  description: string | null;
+  icon: string | null;
+  is_active: boolean;
+  display_order: number;
+}
+
+export type CrewRequestStatus = 'pending' | 'approved' | 'rejected';
+export type CrewMembershipStatus = 'active' | 'expired' | 'suspended' | 'cancelled';
+
+export interface CrewMembershipRequest {
+  id: string;
+  request_number: string;
+  customer_id: string;
+  plan_id: string;
+  status: CrewRequestStatus;
+  amount: number;
+  currency: string;
+  receipt_url: string | null;
+  rejection_reason: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  plan?: CrewPlan;
+}
+
+export interface CrewMembership {
+  id: string;
+  member_number: string;
+  customer_id: string;
+  plan_id: string;
+  status: CrewMembershipStatus;
+  started_at: string;
+  expires_at: string;
+  cancelled_at: string | null;
+  source_request_id: string | null;
+  created_at: string;
+  updated_at: string;
+  plan?: CrewPlan;
+}
+
 export interface ProductWithDiscount extends Product {
   discount: {
     percentage: number;

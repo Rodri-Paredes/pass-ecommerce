@@ -16,7 +16,7 @@ const WHATSAPP_BY_BRANCH: { [key: string]: { name: string; number: string; locat
     { name: 'Asesor Comercial Cochabamba', number: '59174563943', location: 'Sucursal Cochabamba' },
   ],
   'tarija': [
-    { name: 'Asesor Comercial Tarija 1', number: '59160279699', location: 'Sucursal Tarija' },
+    { name: 'Asesor Comercial Tarija 1', number: '59157908595', location: 'Sucursal Tarija' },
     { name: 'Asesor Comercial Tarija 2', number: '59175131474', location: 'Sucursal Tarija' },
   ],
 };

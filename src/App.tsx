@@ -6,7 +6,11 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import BranchSelectorModal from './components/layout/BranchSelectorModal';
 import DiscountModal from './components/layout/DiscountModal';
+import PageTransition from './components/layout/PageTransition';
+import PassCrewOverlay from './components/pass-crew/PassCrewOverlay';
 import Cart from './components/cart/Cart';
+import Toast from './components/ui/Toast';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductPage from './pages/ProductPage';
@@ -18,9 +22,21 @@ import SizeGuidePage from './pages/SizeGuidePage';
 import ContactPage from './pages/ContactPage';
 import SharedOrderPage from './pages/SharedOrderPage';
 import PassOffPage from './pages/PassOffPage';
+import LoginPage from './pages/account/LoginPage';
+import SignupPage from './pages/account/SignupPage';
+import AccountPage from './pages/account/AccountPage';
+import PassCrewLandingPage from './pages/PassCrewLandingPage';
+import PassCrewRequestPage from './pages/PassCrewRequestPage';
+import PassCrewStatusPage from './pages/PassCrewStatusPage';
+import { useCustomerAuthStore } from './store/customerAuthStore';
 
 function App() {
   const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const loadCustomer = useCustomerAuthStore((s) => s.loadCustomer);
+
+  useEffect(() => {
+    loadCustomer();
+  }, [loadCustomer]);
 
   useEffect(() => {
     // Esperar a que se cierre el modal de sucursal
@@ -45,27 +61,37 @@ function App() {
       <div className="min-h-screen bg-white overflow-x-hidden">
         <Header />
         <Cart />
+        <Toast />
         <BranchSelectorModal />
-        <DiscountModal 
-          isOpen={showDiscountModal} 
-          onClose={() => setShowDiscountModal(false)} 
+        <PassCrewOverlay />
+        <DiscountModal
+          isOpen={showDiscountModal}
+          onClose={() => setShowDiscountModal(false)}
         />
         {/* Track SPA route changes and send pageviews to analytics */}
         <RouteChangeTracker />
         <main className="overflow-x-hidden">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/product/:id" element={<ProductPage />} />
-            <Route path="/drops" element={<DropsPage />} />
-            <Route path="/drops/:id" element={<DropDetailPage />} />
-            <Route path="/pass-off" element={<PassOffPage />} />
-            <Route path="/shipping" element={<ShippingPage />} />
-            <Route path="/returns" element={<ReturnsPage />} />
-            <Route path="/size-guide" element={<SizeGuidePage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/pedido/:orderCode" element={<SharedOrderPage />} />
-          </Routes>
+          <PageTransition>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/product/:id" element={<ProductPage />} />
+              <Route path="/drops" element={<DropsPage />} />
+              <Route path="/drops/:id" element={<DropDetailPage />} />
+              <Route path="/pass-off" element={<PassOffPage />} />
+              <Route path="/shipping" element={<ShippingPage />} />
+              <Route path="/returns" element={<ReturnsPage />} />
+              <Route path="/size-guide" element={<SizeGuidePage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/pedido/:orderCode" element={<SharedOrderPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+              <Route path="/pass-crew" element={<PassCrewLandingPage />} />
+              <Route path="/pass-crew/join" element={<ProtectedRoute><PassCrewRequestPage /></ProtectedRoute>} />
+              <Route path="/pass-crew/status" element={<ProtectedRoute><PassCrewStatusPage /></ProtectedRoute>} />
+            </Routes>
+          </PageTransition>
         </main>
         <Footer />
         <Analytics />

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Menu, X, MapPin, Percent } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ShoppingCart, Menu, X, MapPin, Crown, User, ArrowRight } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useBranchStore } from '../../store/branchStore';
 import { useState, useEffect } from 'react';
@@ -9,12 +10,14 @@ import Logo from '../common/Logo';
 import { supabase } from '../../lib/supabase';
 import type { Branch } from '../../types';
 import BranchSelectorModal from './BranchSelectorModal';
-import { useDiscountedProducts } from '../../hooks/useDiscountedProducts';
+import { useCrewOverlayStore } from '../../store/crewOverlayStore';
+import { useCustomerAuthStore } from '../../store/customerAuthStore';
 
 export default function Header() {
   const { openCart, getItemCount } = useCartStore();
   const { selectedBranch, setSelectedBranch } = useBranchStore();
-  const { count: discountCount } = useDiscountedProducts();
+  const { isAuthenticated } = useCustomerAuthStore();
+  const openCrewOverlay = useCrewOverlayStore((s) => s.open);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [showBranchSelector, setShowBranchSelector] = useState(false);
@@ -78,19 +81,6 @@ export default function Header() {
             >
               <span>ÚLTIMO DROP</span>
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300"></span>
-            </Link>
-            <Link
-              to="/pass-off"
-              className="group relative text-xs xl:text-sm font-bold tracking-[0.15em] text-red-600 hover:text-red-700 transition-colors duration-300 flex items-center gap-2"
-            >
-              <Percent className="h-4 w-4" />
-              <span>PASS OFF</span>
-              {discountCount > 0 && (
-                <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
-                  {discountCount}
-                </span>
-              )}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
             {CATEGORIES.slice(0, 4).map((category) => (
               <Link
@@ -169,6 +159,28 @@ export default function Header() {
               )}
             </div>
 
+            {/* Separador + acceso a PASS CREW */}
+            <div className="hidden lg:block w-px h-5 bg-gray-200" />
+            <motion.button
+              onClick={openCrewOverlay}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              className="hidden lg:flex relative items-center gap-2 pl-3 pr-4 py-2 rounded-full bg-pass-black border border-champagne/40 overflow-hidden group"
+              aria-label="Abrir PASS CREW"
+            >
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-champagne/20 to-transparent" />
+              <Crown className="w-3.5 h-3.5 text-champagne relative" />
+              <span className="relative text-[11px] font-semibold tracking-[0.25em] text-champagne">PASS CREW</span>
+            </motion.button>
+
+            <Link
+              to={isAuthenticated ? '/account' : '/login'}
+              className="group relative p-2.5 hover:bg-gray-50 rounded-full transition-all duration-300 hover:scale-110"
+              aria-label="Cuenta"
+            >
+              <User className="w-5 h-5 group-hover:stroke-black transition-colors" />
+            </Link>
+
             <button
               onClick={() => openCart()}
               className="group relative p-2.5 hover:bg-gray-50 rounded-full transition-all duration-300 hover:scale-110"
@@ -206,27 +218,42 @@ export default function Header() {
                 </div>
               </Link>
               
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  openCrewOverlay();
+                }}
+                className="group relative w-full text-left py-4 px-4 mt-1 mb-1 rounded-xl bg-pass-black border border-champagne/30 overflow-hidden active:scale-[0.99] transition-transform"
+              >
+                <span className="absolute inset-0 -translate-x-full group-active:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-champagne/15 to-transparent" />
+                <div className="relative flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Crown className="h-5 w-5 text-champagne" />
+                    <div>
+                      <p className="text-sm font-semibold tracking-[0.2em] text-champagne">PASS CREW</p>
+                      <p className="text-[11px] text-white/40 mt-0.5">Únete a la membresía exclusiva</p>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-champagne/60" />
+                </div>
+              </button>
+
               <Link
-                to="/pass-off"
-                className="group relative py-3 px-3 text-sm font-bold tracking-wide transition-all hover:bg-red-50 rounded-lg active:scale-98 bg-gradient-to-r from-red-50 to-orange-50"
+                to={isAuthenticated ? '/account' : '/login'}
+                className="group relative py-3 px-3 text-sm font-medium tracking-wide transition-all hover:bg-gray-50 rounded-lg active:scale-98"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-red-600 group-hover:translate-x-1 transition-transform">
-                    <Percent className="h-4 w-4" />
-                    <span>PASS OFF</span>
-                    {discountCount > 0 && (
-                      <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                        {discountCount}
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                    <User className="h-4 w-4" />
+                    <span>{isAuthenticated ? 'MI CUENTA' : 'INICIAR SESIÓN'}</span>
                   </div>
-                  <span className="text-red-400 group-hover:text-red-600 transition-colors text-xs">→</span>
+                  <span className="text-gray-400 group-hover:text-black transition-colors text-xs">→</span>
                 </div>
               </Link>
-              
+
               <div className="h-px bg-gray-100 my-1"></div>
-              
+
               {CATEGORIES.map((category) => (
                 <Link
                   key={category}
