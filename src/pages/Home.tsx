@@ -62,7 +62,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center md:bg-top"
           style={{
             backgroundImage:
-              `url(${optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops-banners/226.PNG', { width: 1200, quality: 70 })})`,
+              `url(${optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops-banners/IMG_9579.HEIC', { width: 1200, quality: 70 })})`,
             backgroundPosition: 'center center',
           }}
         />
