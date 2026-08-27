@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Menu, X, MapPin, Crown, User, ArrowRight } from 'lucide-react';
+import { ShoppingCart, Menu, X, MapPin, User } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useBranchStore } from '../../store/branchStore';
 import { useState, useEffect } from 'react';
@@ -10,14 +9,12 @@ import Logo from '../common/Logo';
 import { supabase } from '../../lib/supabase';
 import type { Branch } from '../../types';
 import BranchSelectorModal from './BranchSelectorModal';
-import { useCrewOverlayStore } from '../../store/crewOverlayStore';
 import { useCustomerAuthStore } from '../../store/customerAuthStore';
 
 export default function Header() {
   const { openCart, getItemCount } = useCartStore();
   const { selectedBranch, setSelectedBranch } = useBranchStore();
   const { isAuthenticated } = useCustomerAuthStore();
-  const openCrewOverlay = useCrewOverlayStore((s) => s.open);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [showBranchSelector, setShowBranchSelector] = useState(false);
@@ -159,20 +156,6 @@ export default function Header() {
               )}
             </div>
 
-            {/* Separador + acceso a PASS CREW */}
-            <div className="hidden lg:block w-px h-5 bg-gray-200" />
-            <motion.button
-              onClick={openCrewOverlay}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              className="hidden lg:flex relative items-center gap-2 pl-3 pr-4 py-2 rounded-full bg-pass-black border border-champagne/40 overflow-hidden group"
-              aria-label="Abrir PASS CREW"
-            >
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-champagne/20 to-transparent" />
-              <Crown className="w-3.5 h-3.5 text-champagne relative" />
-              <span className="relative text-[11px] font-semibold tracking-[0.25em] text-champagne">PASS CREW</span>
-            </motion.button>
-
             <Link
               to={isAuthenticated ? '/account' : '/login'}
               className="group relative p-2.5 hover:bg-gray-50 rounded-full transition-all duration-300 hover:scale-110"
@@ -217,26 +200,6 @@ export default function Header() {
                   <span className="text-gray-400 group-hover:text-black transition-colors text-xs">→</span>
                 </div>
               </Link>
-              
-              <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  openCrewOverlay();
-                }}
-                className="group relative w-full text-left py-4 px-4 mt-1 mb-1 rounded-xl bg-pass-black border border-champagne/30 overflow-hidden active:scale-[0.99] transition-transform"
-              >
-                <span className="absolute inset-0 -translate-x-full group-active:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-champagne/15 to-transparent" />
-                <div className="relative flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Crown className="h-5 w-5 text-champagne" />
-                    <div>
-                      <p className="text-sm font-semibold tracking-[0.2em] text-champagne">PASS CREW</p>
-                      <p className="text-[11px] text-white/40 mt-0.5">Únete a la membresía exclusiva</p>
-                    </div>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-champagne/60" />
-                </div>
-              </button>
 
               <Link
                 to={isAuthenticated ? '/account' : '/login'}

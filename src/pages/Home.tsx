@@ -59,11 +59,11 @@ export default function Home() {
           initial={{ scale: 1.05, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0 bg-cover bg-center md:bg-top"
+          className="absolute inset-0 bg-cover bg-[center_15%] md:bg-[center_20%]"
           style={{
             backgroundImage:
-              `url(${optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops-banners/IMG_9579.HEIC', { width: 1200, quality: 70 })})`,
-            backgroundPosition: 'center center',
+              `url(${optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops-banners/IMG_9579.HEIC', { width: 1600, quality: 80 })})`,
+            backgroundPosition: 'center 15%',
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
