@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Menu, X, MapPin, User } from 'lucide-react';
+import { ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useBranchStore } from '../../store/branchStore';
 import { useState, useEffect } from 'react';
@@ -9,12 +9,10 @@ import Logo from '../common/Logo';
 import { supabase } from '../../lib/supabase';
 import type { Branch } from '../../types';
 import BranchSelectorModal from './BranchSelectorModal';
-import { useCustomerAuthStore } from '../../store/customerAuthStore';
 
 export default function Header() {
   const { openCart, getItemCount } = useCartStore();
   const { selectedBranch, setSelectedBranch } = useBranchStore();
-  const { isAuthenticated } = useCustomerAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [showBranchSelector, setShowBranchSelector] = useState(false);
@@ -156,14 +154,6 @@ export default function Header() {
               )}
             </div>
 
-            <Link
-              to={isAuthenticated ? '/account' : '/login'}
-              className="group relative p-2.5 hover:bg-gray-50 rounded-full transition-all duration-300 hover:scale-110"
-              aria-label="Cuenta"
-            >
-              <User className="w-5 h-5 group-hover:stroke-black transition-colors" />
-            </Link>
-
             <button
               onClick={() => openCart()}
               className="group relative p-2.5 hover:bg-gray-50 rounded-full transition-all duration-300 hover:scale-110"
@@ -197,20 +187,6 @@ export default function Header() {
               >
                 <div className="flex items-center justify-between">
                   <span className="group-hover:translate-x-1 transition-transform">ÚLTIMO DROP</span>
-                  <span className="text-gray-400 group-hover:text-black transition-colors text-xs">→</span>
-                </div>
-              </Link>
-
-              <Link
-                to={isAuthenticated ? '/account' : '/login'}
-                className="group relative py-3 px-3 text-sm font-medium tracking-wide transition-all hover:bg-gray-50 rounded-lg active:scale-98"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                    <User className="h-4 w-4" />
-                    <span>{isAuthenticated ? 'MI CUENTA' : 'INICIAR SESIÓN'}</span>
-                  </div>
                   <span className="text-gray-400 group-hover:text-black transition-colors text-xs">→</span>
                 </div>
               </Link>
