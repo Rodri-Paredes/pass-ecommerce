@@ -24,12 +24,12 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-gray-50">
+    <div className="min-h-screen py-12 sm:py-20 bg-white">
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="max-w-2xl mx-auto px-4 sm:px-6"
+        className="max-w-3xl mx-auto px-4 sm:px-6"
       >
         <motion.div variants={fadeUp}>
           <Link to="/" className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-gray-400 hover:text-pass-black transition-colors mb-8">
@@ -38,11 +38,11 @@ export default function AccountPage() {
           </Link>
         </motion.div>
 
-        <motion.h1 variants={fadeUp} className="font-display text-3xl sm:text-4xl tracking-tight text-pass-black mb-8">
+        <motion.h1 variants={fadeUp} className="text-5xl sm:text-7xl font-black uppercase tracking-[-0.06em] text-black mb-10">
           Mi cuenta
         </motion.h1>
 
-        <motion.div variants={fadeUp} className="bg-white rounded-2xl shadow-sm p-8 mb-6">
+        <motion.div variants={fadeUp} className="border-y border-black/10 py-8 mb-8">
           <h2 className="text-xs tracking-[0.25em] uppercase text-gray-400 mb-4">Datos personales</h2>
           <div className="space-y-2 text-sm text-pass-black">
             <p><span className="font-medium">Nombre:</span> {customer?.full_name}</p>
@@ -51,8 +51,7 @@ export default function AccountPage() {
           </div>
         </motion.div>
 
-        <motion.div variants={fadeUp} className="relative bg-pass-black text-white rounded-2xl shadow-sm p-8 mb-6 overflow-hidden border border-champagne/20">
-          <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-champagne/10 blur-[80px] pointer-events-none" />
+        <motion.div variants={fadeUp} className="relative bg-black text-white p-8 mb-8 overflow-hidden">
 
           <div className="relative flex items-center gap-2 mb-4">
             <Crown className="w-5 h-5 text-champagne" />
@@ -79,7 +78,7 @@ export default function AccountPage() {
               <p className="text-white/50">Aún no eres miembro PASS CREW.</p>
               <Link
                 to="/pass-crew"
-                className="inline-flex items-center gap-2 bg-champagne text-pass-black px-6 py-3 rounded-full font-medium tracking-[0.15em] text-xs uppercase hover:bg-champagne-light transition-colors"
+                className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 font-bold tracking-[0.15em] text-[10px] uppercase hover:bg-white/80 transition-colors"
               >
                 <Crown className="w-3.5 h-3.5" />
                 Conocer PASS CREW

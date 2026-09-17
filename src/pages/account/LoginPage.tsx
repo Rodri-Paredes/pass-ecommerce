@@ -23,8 +23,8 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
       navigate(redirectTo, { replace: true });
-    } catch (error: any) {
-      addToast(error.message || 'No se pudo iniciar sesión', 'error');
+    } catch (error: unknown) {
+      addToast(error instanceof Error ? error.message : 'No se pudo iniciar sesión', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -69,7 +69,7 @@ export default function LoginPage() {
           disabled={isSubmitting}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="w-full bg-pass-black text-white py-3.5 rounded-full font-medium tracking-[0.2em] text-xs uppercase hover:bg-gray-900 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full bg-black text-white py-4 font-bold tracking-[0.2em] text-[10px] uppercase hover:bg-gray-900 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Ingresando...' : 'Ingresar'}
         </motion.button>

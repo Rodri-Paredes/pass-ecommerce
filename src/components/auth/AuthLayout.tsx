@@ -1,72 +1,10 @@
-import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import type { ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { fadeUp, easeOut } from '../../lib/motion';
+import { Link } from 'react-router-dom';
 
-interface AuthLayoutProps {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-  footer: ReactNode;
-}
+interface Props { title: string; subtitle?: string; children: ReactNode; footer: ReactNode }
+const IMAGE = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/home.jpeg';
 
-export default function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
-  return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Panel oscuro */}
-      <div className="relative w-full lg:w-[55%] min-h-[32vh] lg:min-h-screen bg-pass-black flex items-center justify-center overflow-hidden px-6 py-16 lg:py-0">
-        <motion.div
-          className="absolute -top-32 -left-32 w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-champagne/10 blur-[100px]"
-          animate={{ x: [0, 40, 0], y: [0, 30, 0] }}
-          transition={{ duration: 16, repeat: Infinity, ease: easeOut }}
-        />
-        <motion.div
-          className="absolute bottom-0 right-0 w-72 h-72 sm:w-[28rem] sm:h-[28rem] rounded-full bg-white/5 blur-[120px]"
-          animate={{ x: [0, -30, 0], y: [0, -20, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: easeOut }}
-        />
-
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="relative text-center lg:text-left max-w-md"
-        >
-          <Link to="/" className="inline-block font-display text-2xl sm:text-3xl tracking-[0.3em] text-pass-white mb-6 sm:mb-10">
-            PASS
-          </Link>
-          <p className="font-display text-3xl sm:text-5xl lg:text-6xl text-pass-white leading-[1.1]">
-            ÚNETE A LA<br />COMUNIDAD
-          </p>
-          <p className="text-white/40 text-sm sm:text-base mt-5 max-w-xs mx-auto lg:mx-0">
-            Acceso anticipado a drops, beneficios exclusivos y una membresía pensada para quienes visten distinto.
-          </p>
-        </motion.div>
-      </div>
-
-      {/* Panel de formulario */}
-      <div className="flex-1 flex items-center justify-center px-6 sm:px-10 py-12 lg:py-0 bg-white">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="w-full max-w-sm"
-        >
-          <Link to="/" className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-gray-400 hover:text-pass-black transition-colors mb-10">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Volver al inicio
-          </Link>
-
-          <h1 className="font-display text-3xl sm:text-4xl tracking-tight text-pass-black mb-2">{title}</h1>
-          {subtitle && <p className="text-sm text-gray-400 mb-8">{subtitle}</p>}
-          {!subtitle && <div className="mb-8" />}
-
-          {children}
-
-          <div className="mt-8 text-sm text-gray-400">{footer}</div>
-        </motion.div>
-      </div>
-    </div>
-  );
+export default function AuthLayout({ title, subtitle, children, footer }: Props) {
+  return <main className="grid min-h-[calc(100svh-100px)] bg-white lg:grid-cols-2"><div className="relative hidden overflow-hidden bg-black lg:block"><img src={IMAGE} alt="PASS Clothing" className="absolute inset-0 h-full w-full object-cover opacity-75" /><div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" /><p className="absolute bottom-12 left-12 max-w-lg text-6xl font-black uppercase leading-[.88] tracking-[-0.065em] text-white">Wear your own movement.</p></div><div className="flex items-center justify-center px-5 py-14 sm:px-10"><div className="w-full max-w-md"><Link to="/" className="mb-12 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-black/45"><ArrowLeft className="h-3.5 w-3.5" /> Volver</Link><p className="pass-kicker">PASS Account</p><h1 className="pass-heading mt-2 text-4xl sm:text-5xl">{title}</h1>{subtitle && <p className="mt-3 text-sm text-black/45">{subtitle}</p>}<div className="mt-9">{children}</div><div className="mt-8 border-t border-black/10 pt-6 text-sm text-black/50">{footer}</div></div></div></main>;
 }
