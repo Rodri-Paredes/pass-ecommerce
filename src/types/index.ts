@@ -104,6 +104,9 @@ export interface DiscountDrop {
 
 export interface CustomerProfile {
   id: string;
+  auth_user_id?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
   full_name: string;
   email: string;
   phone: string | null;
@@ -117,29 +120,32 @@ export interface CrewPlan {
   name: string;
   price: number;
   currency: string;
-  duration_days: number;
+  duration_months: number;
   is_active: boolean;
   sort_order: number;
 }
 
 export interface CrewSettings {
   id: number;
-  payment_qr_url: string | null;
+  payment_qr_path: string | null;
+  payment_qr_url?: string | null;
   payment_instructions: string | null;
 }
 
 export interface CrewBenefit {
   id: string;
-  plan_id: string | null;
-  title: string;
+  code: string;
+  name: string;
   description: string | null;
-  icon: string | null;
+  benefit_type: 'percentage_discount' | 'fixed_discount' | 'product_discount' | 'category_discount' | 'drop_discount' | 'manual' | 'crew_plan';
+  rule: Record<string, unknown>;
   is_active: boolean;
-  display_order: number;
+  is_public: boolean;
 }
 
-export type CrewRequestStatus = 'pending' | 'approved' | 'rejected';
-export type CrewMembershipStatus = 'active' | 'expired' | 'suspended' | 'cancelled';
+export interface CrewPlanBenefit { id: string; plan_id: string; benefit_id: string; priority: number; is_active: boolean; benefit?: CrewBenefit; }
+export type CrewRequestStatus = 'draft' | 'pending' | 'approved' | 'rejected' | 'cancelled';
+export type CrewMembershipStatus = 'scheduled' | 'active' | 'expired' | 'inactive' | 'cancelled';
 
 export interface CrewMembershipRequest {
   id: string;
@@ -147,12 +153,16 @@ export interface CrewMembershipRequest {
   customer_id: string;
   plan_id: string;
   status: CrewRequestStatus;
-  amount: number;
-  currency: string;
-  receipt_url: string | null;
+  plan_code_snapshot: string;
+  plan_name_snapshot: string;
+  price_snapshot: number;
+  currency_snapshot: string;
+  duration_months_snapshot: number;
+  receipt_path: string | null;
   rejection_reason: string | null;
   reviewed_by: string | null;
   reviewed_at: string | null;
+  submitted_at: string | null;
   created_at: string;
   updated_at: string;
   plan?: CrewPlan;
@@ -163,6 +173,10 @@ export interface CrewMembership {
   member_number: string;
   customer_id: string;
   plan_id: string;
+  plan_code_snapshot: string;
+  plan_name_snapshot: string;
+  price_snapshot: number;
+  duration_months_snapshot: number;
   status: CrewMembershipStatus;
   started_at: string;
   expires_at: string;

@@ -1,125 +1,30 @@
 import { supabase } from '../lib/supabase';
-import type { CrewBenefit, CrewMembership, CrewMembershipRequest, CrewPlan, CrewSettings } from '../types';
+import type { CrewBenefit, CrewMembership, CrewMembershipRequest, CrewPlan, CrewPlanBenefit, CrewSettings } from '../types';
+
+const fail = (error: { message: string } | null) => { if (error) throw error; };
 
 export const passCrewService = {
-  async getActivePlan(): Promise<CrewPlan | null> {
-    const { data, error } = await supabase
-      .from('crew_plans')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .limit(1)
-      .maybeSingle();
-
-    if (error) throw error;
-    return data;
-  },
-
+  async getActivePlans(): Promise<CrewPlan[]> { const { data, error } = await supabase.from('crew_plans').select('*').eq('is_active', true).order('sort_order'); fail(error); return (data || []) as CrewPlan[]; },
   async getCrewBenefits(planId?: string | null): Promise<CrewBenefit[]> {
-    let query = supabase
-      .from('crew_benefits')
-      .select('*')
-      .eq('is_active', true)
-      .order('display_order', { ascending: true });
-
-    if (planId) {
-      query = query.or(`plan_id.is.null,plan_id.eq.${planId}`);
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-    return data || [];
+    let query = supabase.from('crew_plan_benefits').select('*, benefit:crew_benefit_definitions(*)').eq('is_active', true).order('priority', { ascending: false });
+    if (planId) query = query.eq('plan_id', planId);
+    const { data, error } = await query; fail(error);
+    return ((data || []) as CrewPlanBenefit[]).map(row => row.benefit).filter((item): item is CrewBenefit => Boolean(item?.is_active && item.is_public));
   },
-
   async getCrewSettings(): Promise<CrewSettings | null> {
-    const { data, error } = await supabase
-      .from('crew_settings')
-      .select('*')
-      .eq('id', 1)
-      .maybeSingle();
-
-    if (error) throw error;
-    return data;
+    const { data, error } = await supabase.from('crew_settings').select('*').eq('id', 1).maybeSingle(); fail(error); if (!data) return null;
+    let payment_qr_url: string | null = null;
+    if (data.payment_qr_path) { const signed = await supabase.storage.from('crew-assets').createSignedUrl(data.payment_qr_path, 900); if (!signed.error) payment_qr_url = signed.data?.signedUrl || null; }
+    return { ...data, payment_qr_url } as CrewSettings;
   },
-
-  async getMyMembership(customerId: string): Promise<CrewMembership | null> {
-    const { data, error } = await supabase
-      .from('crew_memberships')
-      .select('*, plan:crew_plans(*)')
-      .eq('customer_id', customerId)
-      .in('status', ['active', 'suspended'])
-      .maybeSingle();
-
-    if (error) throw error;
-    return data;
-  },
-
-  async getMyRequests(customerId: string): Promise<CrewMembershipRequest[]> {
-    const { data, error } = await supabase
-      .from('crew_membership_requests')
-      .select('*, plan:crew_plans(*)')
-      .eq('customer_id', customerId)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
-  },
-
-  async getMyActiveRequest(customerId: string): Promise<CrewMembershipRequest | null> {
-    const { data, error } = await supabase
-      .from('crew_membership_requests')
-      .select('*, plan:crew_plans(*)')
-      .eq('customer_id', customerId)
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (error) throw error;
-    return data;
-  },
-
-  async createMembershipRequest(customerId: string, planId: string, amount: number): Promise<CrewMembershipRequest> {
-    const { data, error } = await supabase
-      .from('crew_membership_requests')
-      .insert({
-        customer_id: customerId,
-        plan_id: planId,
-        amount,
-      })
-      .select('*, plan:crew_plans(*)')
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-
-  async uploadReceipt(customerId: string, requestId: string, file: File): Promise<string> {
-    const ext = file.name.split('.').pop();
-    const path = `${customerId}/${requestId}-${Date.now()}.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('crew-receipts')
-      .upload(path, file, { upsert: true });
-
-    if (uploadError) throw uploadError;
-
-    const { error: updateError } = await supabase
-      .from('crew_membership_requests')
-      .update({ receipt_url: path })
-      .eq('id', requestId);
-
-    if (updateError) throw updateError;
-
-    return path;
-  },
-
-  async getReceiptSignedUrl(path: string): Promise<string | null> {
-    const { data, error } = await supabase.storage
-      .from('crew-receipts')
-      .createSignedUrl(path, 60 * 60);
-
-    if (error) throw error;
-    return data?.signedUrl || null;
+  async getMyMemberships(customerId: string): Promise<CrewMembership[]> { const { data, error } = await supabase.from('crew_memberships').select('*').eq('customer_id', customerId).order('started_at', { ascending: false }); fail(error); return (data || []) as CrewMembership[]; },
+  async getMyRequests(customerId: string): Promise<CrewMembershipRequest[]> { const { data, error } = await supabase.from('crew_membership_requests').select('*').eq('customer_id', customerId).order('created_at', { ascending: false }); fail(error); return (data || []) as CrewMembershipRequest[]; },
+  async createMembershipRequest(planId: string): Promise<CrewMembershipRequest> { const { data, error } = await supabase.rpc('create_crew_membership_request', { p_plan_id: planId }); fail(error); return data as CrewMembershipRequest; },
+  async uploadAndSubmitReceipt(requestId: string, file: File): Promise<CrewMembershipRequest> {
+    const { data: auth } = await supabase.auth.getUser(); if (!auth.user) throw new Error('Debes iniciar sesión');
+    const extension = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const path = `${auth.user.id}/${requestId}/receipt-${Date.now()}.${extension}`;
+    const { error: uploadError } = await supabase.storage.from('crew-receipts').upload(path, file, { upsert: false }); fail(uploadError);
+    const { data, error } = await supabase.rpc('submit_crew_receipt', { p_request_id: requestId, p_receipt_path: path }); fail(error); return data as CrewMembershipRequest;
   },
 };

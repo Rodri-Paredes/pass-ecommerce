@@ -10,7 +10,8 @@ export const customerAuthService = {
       const { error: profileError } = await supabase
         .from('customer_profiles')
         .insert({
-          id: data.user.id,
+          auth_user_id: data.user.id,
+          first_name: fullName.trim(),
           full_name: fullName,
           email,
           phone: phone || null,
@@ -40,7 +41,7 @@ export const customerAuthService = {
     const { data: profile, error } = await supabase
       .from('customer_profiles')
       .select('*')
-      .eq('id', user.id)
+      .eq('auth_user_id', user.id)
       .maybeSingle();
 
     if (error) throw error;
