@@ -187,6 +187,16 @@ export interface CrewMembership {
   plan?: CrewPlan;
 }
 
+export interface CrewSaleQuote {
+  source: 'none' | 'crew' | 'manual' | 'catalog_promotion';
+  catalog_subtotal: number;
+  subtotal: number;
+  discount_amount: number;
+  total: number;
+  savings: number;
+  benefit_snapshot?: { name?: string; type?: string } | null;
+}
+
 export interface ProductWithDiscount extends Product {
   discount: {
     percentage: number;

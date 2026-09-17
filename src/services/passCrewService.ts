@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { CrewBenefit, CrewMembership, CrewMembershipRequest, CrewPlan, CrewPlanBenefit, CrewSettings } from '../types';
+import type { CrewBenefit, CrewMembership, CrewMembershipRequest, CrewPlan, CrewPlanBenefit, CrewSaleQuote, CrewSettings } from '../types';
 
 const fail = (error: { message: string } | null) => { if (error) throw error; };
 
@@ -26,5 +26,9 @@ export const passCrewService = {
     const path = `${auth.user.id}/${requestId}/receipt-${Date.now()}.${extension}`;
     const { error: uploadError } = await supabase.storage.from('crew-receipts').upload(path, file, { upsert: false }); fail(uploadError);
     const { data, error } = await supabase.rpc('submit_crew_receipt', { p_request_id: requestId, p_receipt_path: path }); fail(error); return data as CrewMembershipRequest;
+  },
+  async quoteCart(customerId: string, items: Array<{ variantId: string; quantity: number; unitPrice: number }>): Promise<CrewSaleQuote> {
+    const { data, error } = await supabase.rpc('crew_calculate_sale_quote', { p_customer_id: customerId, p_items: items, p_manual_discount: 0 }); fail(error);
+    return data as CrewSaleQuote;
   },
 };

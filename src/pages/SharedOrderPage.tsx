@@ -117,6 +117,8 @@ export default function SharedOrderPage() {
   const expiresAt = new Date(order.expires_at);
   const createdAt = new Date(order.created_at);
   const hoursUntilExpiry = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60)));
+  const listSubtotal = order.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const savings = Math.max(0, listSubtotal - order.total);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -204,8 +206,9 @@ export default function SharedOrderPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal:</span>
-                  <span className="font-medium">Bs. {order.total.toFixed(2)}</span>
+                  <span className="font-medium">Bs. {listSubtotal.toFixed(2)}</span>
                 </div>
+                {savings > 0 && <div className="flex justify-between text-emerald-700"><span>Descuentos aplicados:</span><span>− Bs. {savings.toFixed(2)}</span></div>}
                 <div className="pt-3 border-t border-gray-200">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">TOTAL:</span>

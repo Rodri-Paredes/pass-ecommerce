@@ -76,6 +76,7 @@ export default function AccountPage() {
               <p className="text-white/70">Vence: {new Date(membership.expires_at).toLocaleDateString('es-BO')}</p>
               {crewBenefits.length > 0 && <div className="mt-4 border-t border-white/15 pt-4"><p className="mb-2 text-[10px] uppercase tracking-[.2em] text-white/35">Beneficios</p>{crewBenefits.map(item => <p key={item.id} className="text-white/70">• {item.name}</p>)}</div>}
               {scheduledMembership && <p className="mt-4 text-champagne">Renovación {scheduledMembership.plan_name_snapshot} programada desde {new Date(scheduledMembership.started_at).toLocaleDateString('es-BO')}</p>}
+              {!scheduledMembership && !activeRequest && <Link to="/pass-crew/join" className="mt-4 inline-block border-b border-champagne pb-1 text-xs uppercase tracking-[.15em] text-champagne">Renovar membresía</Link>}
             </div>
           ) : activeRequest ? (
             <div className="relative space-y-3 text-sm">
