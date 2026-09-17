@@ -28,6 +28,9 @@ export interface Product {
   images: string[];
   drop_id: string | null;
   created_at: string;
+  color?: string | null;
+  fit?: string | null;
+  product_style?: string | null;
 }
 
 export interface ProductVariant {

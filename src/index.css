@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,16 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased;
+    @apply bg-white font-sans text-black antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-black text-white;
+  }
+
+  button, a, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -16,11 +25,27 @@
   }
 
   .product-card {
-    @apply bg-white overflow-hidden group cursor-pointer transition-transform duration-300 hover:scale-[1.02];
+    @apply bg-white overflow-hidden group;
   }
 
   .cart-sidebar {
-    @apply fixed right-0 top-0 h-full w-full md:w-[400px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out;
+    @apply fixed right-0 top-0 h-full w-full md:w-[440px] bg-white z-50 transform transition-transform duration-300 ease-in-out;
+  }
+
+  .pass-container {
+    @apply mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-10 xl:px-12;
+  }
+
+  .pass-kicker {
+    @apply text-[10px] font-semibold uppercase tracking-[0.28em] text-black/50;
+  }
+
+  .pass-heading {
+    @apply text-3xl font-black uppercase leading-[0.92] tracking-editorial sm:text-5xl lg:text-7xl;
+  }
+
+  .pass-link {
+    @apply inline-flex items-center border-b border-black pb-1 text-xs font-semibold uppercase tracking-[0.18em] transition-opacity hover:opacity-50;
   }
 }
 

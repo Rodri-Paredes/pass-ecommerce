@@ -16,7 +16,10 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        display: ['Fraunces', 'Georgia', 'serif'],
+        display: ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif'],
+      },
+      letterSpacing: {
+        editorial: '-0.045em',
       },
       animation: {
         'slide-in': 'slideIn 0.3s ease-out',
