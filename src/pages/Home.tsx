@@ -1,418 +1,69 @@
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ArrowRight, Truck, Shield, Sparkles, Instagram } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import ProductCard from '../components/product/ProductCard';
 import { optimizeImageUrl } from '../lib/imageOptimizer';
-import { CacheManager } from '../lib/cache';
+import { supabase } from '../lib/supabase';
+import type { Drop, ProductWithVariants } from '../types';
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6 }
-};
-
-const staggerContainer = {
-  initial: {},
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+const HERO = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops-banners/IMG_9579.HEIC';
+const HOODIES = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/1760802011775-Photoroom_20251018_110704.jpeg';
+const POLERAS = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/1754948116239-Photoroom_20250417_140556.jpeg';
+const EDITORIAL = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/home.jpeg';
 
 export default function Home() {
-  const [latestDrop, setLatestDrop] = useState<{ id: string } | null>(() =>
-    CacheManager.get<{ id: string }>('latest_drop')
-  );
+  const [latestDrop, setLatestDrop] = useState<Drop | null>(null);
+  const [newArrivals, setNewArrivals] = useState<ProductWithVariants[]>([]);
 
   useEffect(() => {
-    const loadLatestDrop = async () => {
-      if (latestDrop) return;
-      try {
-        const { data, error } = await supabase
-          .from('drops')
-          .select('id')
-          .eq('status', 'ACTIVO')
-          .order('is_featured', { ascending: false })
-          .order('launch_date', { ascending: false })
-          .limit(1);
-
-        if (error) throw error;
-        if (data && data.length > 0) {
-          setLatestDrop(data[0]);
-          CacheManager.set('latest_drop', data[0], 60);
-        }
-      } catch (err) {
-        console.error('Error loading latest drop:', err);
-      }
-    };
-
-    loadLatestDrop();
+    Promise.all([
+      supabase.from('drops').select('*').eq('status', 'ACTIVO').order('is_featured', { ascending: false }).order('launch_date', { ascending: false }).limit(1),
+      supabase.from('products').select('*, variants:product_variants(*, stock(*, branch:branches(*))), drop:drops(*)').order('created_at', { ascending: false }).limit(4),
+    ]).then(([dropResult, productsResult]) => {
+      if (dropResult.data?.[0]) setLatestDrop(dropResult.data[0]);
+      if (productsResult.data) setNewArrivals(productsResult.data);
+    });
   }, []);
 
+  const dropImage = latestDrop?.banner_url || latestDrop?.image_url || EDITORIAL;
+
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* Hero Section */}
-      <section className="relative h-[80svh] md:h-[90vh] bg-black overflow-hidden">
-        <motion.div
-          initial={{ scale: 1.05, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0 bg-cover bg-[center_15%] md:bg-[center_20%]"
-          style={{
-            backgroundImage:
-              `url(${optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops-banners/IMG_9579.HEIC', { width: 1600, quality: 80 })})`,
-            backgroundPosition: 'center 15%',
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
-        
-        {/* Decorative gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-700" />
-
-        {/* Título arriba */}
-        <div className="absolute top-0 left-0 right-0 flex justify-center pt-28 px-4">
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white"
-            style={{ textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}
-          >
-            <span className="inline-block hover:scale-105 transition-transform duration-300 opacity-80">PASS</span>
-            <span className="ml-2 opacity-70">CLOTHING</span>
-          </motion.h1>
-        </div>
-
-        {/* Contenido abajo */}
-        <div className="relative h-full flex items-end justify-center text-center text-white px-4 pb-12 sm:pb-20">
-          <div className="max-w-5xl w-full">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-row gap-2 sm:gap-4 justify-center items-center"
-            >
-              <Link
-                to={latestDrop ? `/drops/${latestDrop.id}` : '/drops'}
-                className="group inline-flex items-center gap-2 bg-white text-black px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 font-semibold tracking-wide hover:bg-black hover:text-white transition-all duration-500 text-[10px] sm:text-xs md:text-sm uppercase border-2 border-white hover:shadow-2xl hover:shadow-white/30 hover:scale-105 rounded-full"
-              >
-                Ver Último Drop
-                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-2 transition-all duration-300" />
-              </Link>
-              <Link
-                to="/shop"
-                className="group inline-flex items-center gap-2 bg-transparent text-white px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 font-light tracking-wide hover:bg-white/10 transition-all duration-500 text-[10px] sm:text-xs md:text-sm uppercase border-2 border-white/50 hover:border-white backdrop-blur-sm rounded-full"
-              >
-                Explorar Tienda
-              </Link>
-            </motion.div>
+    <div className="bg-white">
+      <section className="relative min-h-[calc(100svh-96px)] overflow-hidden bg-black sm:min-h-[calc(100svh-100px)]">
+        <img src={optimizeImageUrl(HERO, { width: 1800, quality: 84 })} alt="PASS Clothing" className="absolute inset-0 h-full w-full object-cover object-[center_18%]" fetchPriority="high" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-black/10" />
+        <div className="pass-container relative flex min-h-[calc(100svh-96px)] items-end pb-10 text-white sm:min-h-[calc(100svh-100px)] sm:pb-16">
+          <div className="max-w-3xl">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.28em] sm:text-xs">New drop</p>
+            <h1 className="text-[clamp(3.5rem,11vw,9rem)] font-black uppercase leading-[0.78] tracking-[-0.075em]">Move<br />Different.</h1>
+            <div className="mt-8 flex flex-wrap gap-3"><Link to={latestDrop ? `/drops/${latestDrop.id}` : '/drops'} className="inline-flex h-12 items-center gap-3 bg-white px-6 text-[10px] font-bold uppercase tracking-[0.18em] text-black hover:bg-black hover:text-white">Ver colección <ArrowRight className="h-4 w-4" /></Link><Link to="/shop" className="inline-flex h-12 items-center border border-white px-6 text-[10px] font-bold uppercase tracking-[0.18em] hover:bg-white hover:text-black">Shop all</Link></div>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Categories Grid */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.6 }}
-          className="py-16 sm:py-20 md:py-28 lg:py-32"
-        >
-          <div className="text-center mb-16 sm:mb-20 md:mb-24">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="inline-block px-5 py-2 border border-gray-200 bg-gray-50 mb-8"
-            >
-              <span className="text-xs sm:text-sm tracking-[0.35em] uppercase text-gray-600 font-light">Colecciones</span>
-            </motion.div>
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight leading-tight"
-            >
-              Encuentra tu <span className="font-black italic bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">estilo</span>
-            </motion.h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
-            <Link
-              to="/shop?category=Hoodies"
-              className="relative aspect-[4/3] overflow-hidden group"
-            >
-              <motion.img
-                whileHover={{ scale: 1.08 }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                src={optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/1760802011775-Photoroom_20251018_110704.jpeg', { width: 800 })}
-                alt="Hoodies"
-                loading="lazy"
-                className="w-full h-full object-cover brightness-90"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/95 transition-all duration-700">
-                <div className="transform group-hover:translate-y-[-10px] transition-transform duration-500">
-                  <div className="w-16 h-1 bg-white mb-4 group-hover:w-24 transition-all duration-500" />
-                  <h3 className="text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-3 sm:mb-4 group-hover:tracking-wide transition-all duration-500 drop-shadow-lg">HOODIES</h3>
-                  <p className="text-gray-200 text-sm sm:text-base md:text-lg tracking-[0.15em] sm:tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2">
-                    Explorar colección <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </p>
-                </div>
-              </div>
-            </Link>
+      <section className="pass-container py-16 sm:py-24">
+        <div className="mb-8 flex items-end justify-between border-b border-black pb-4"><div><p className="pass-kicker">Lo último</p><h2 className="pass-heading mt-2 text-3xl sm:text-5xl">New arrivals</h2></div><Link to="/shop?sort=newest" className="pass-link hidden text-[10px] font-bold uppercase tracking-[0.18em] sm:block">Ver todo →</Link></div>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-4 md:gap-x-5">{newArrivals.map((product, index) => <ProductCard key={product.id} product={product} index={index} />)}</div>
+        <Link to="/shop?sort=newest" className="mt-10 block border border-black py-4 text-center text-[10px] font-bold uppercase tracking-[0.18em] sm:hidden">Ver todo</Link>
+      </section>
 
-            <Link
-              to="/shop?category=Poleras"
-              className="relative aspect-[4/3] overflow-hidden group"
-            >
-              <motion.img
-                whileHover={{ scale: 1.08 }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                src={optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/1754948116239-Photoroom_20250417_140556.jpeg', { width: 800 })}
-                alt="Poleras"
-                loading="lazy"
-                className="w-full h-full object-cover brightness-90"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent flex items-end p-8 sm:p-10 md:p-12 group-hover:from-black/95 transition-all duration-700">
-                <div className="transform group-hover:translate-y-[-10px] transition-transform duration-500">
-                  <div className="w-16 h-1 bg-white mb-4 group-hover:w-24 transition-all duration-500" />
-                  <h3 className="text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-3 sm:mb-4 group-hover:tracking-wide transition-all duration-500 drop-shadow-lg">POLERAS</h3>
-                  <p className="text-gray-200 text-sm sm:text-base md:text-lg tracking-[0.15em] sm:tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2">
-                    Explorar colección <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </p>
-                </div>
-              </div>
-            </Link>
-          </div>
-        </motion.section>
+      <section className="grid md:grid-cols-2">
+        <CategoryBlock image={HOODIES} title="Hoodies" to="/shop?category=Hoodies" />
+        <CategoryBlock image={POLERAS} title="Poleras" to="/shop?category=Poleras" />
+      </section>
 
-        {/* About Section - Quiénes Somos */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.8 }}
-          className="py-16 sm:py-20 md:py-28 lg:py-32"
-        >
-          <div className="grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-20 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="inline-block px-5 py-2 border border-gray-300 bg-gray-100 mb-6">
-                <span className="text-xs tracking-[0.35em] uppercase text-gray-600 font-light">Nuestra Historia</span>
-              </div>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-6 sm:mb-8 md:mb-10 leading-[1.1]">
-                Diseñamos el <span className="font-black bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">futuro</span> del streetwear boliviano
-              </h2>
-              <div className="w-16 sm:w-20 h-1 bg-black mb-6 sm:mb-8" />
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 leading-relaxed mb-4 sm:mb-6">
-                PASS nació de la pasión por la moda urbana y el deseo de crear prendas que 
-                representen la identidad de nuestra generación.
-              </p>
-              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed mb-8 sm:mb-10">
-                Creemos que la ropa es más que tela: es una forma de expresión y una actitud.
-              </p>
-              <Link
-                to="/shop"
-                className="inline-flex items-center gap-2 sm:gap-3 bg-black text-white px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm tracking-[0.1em] sm:tracking-[0.15em] uppercase hover:bg-gray-900 transition-all duration-300 group font-semibold hover:shadow-xl hover:scale-105"
-              >
-                Conoce nuestra colección
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-300" />
-              </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="relative mt-10 md:mt-0"
-            >
-              <div className="aspect-[3/4] bg-gray-100 overflow-hidden shadow-2xl group/img relative">
-                <img
-                  src={optimizeImageUrl('https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/home.jpeg', { width: 800 })}
-                  alt="Pass Clothing"
-                  className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-1000"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/10 transition-colors duration-500" />
-              </div>
-              <div className="absolute -bottom-8 -left-8 sm:-bottom-10 sm:-left-10 bg-black text-white p-8 sm:p-10 md:p-12 max-w-[240px] sm:max-w-md shadow-2xl border-l-4 border-white">
-                <p className="text-base sm:text-lg tracking-wide leading-relaxed font-light">
-                  <span className="text-2xl font-bold mb-2 block">“</span>
-                  Cada prenda cuenta una historia, cada diseño rompe esquemas
-                  <span className="text-2xl font-bold mt-2 block text-right">”</span>
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </motion.section>
+      <section className="pass-container py-16 sm:py-28">
+        <div className="grid items-stretch lg:grid-cols-[1.05fr_.95fr]">
+          <div className="min-h-[60vh] overflow-hidden bg-neutral-100"><img src={optimizeImageUrl(dropImage, { width: 1200, quality: 82 })} alt={latestDrop?.name || 'PASS Drop'} loading="lazy" className="h-full min-h-[60vh] w-full object-cover" /></div>
+          <div className="flex flex-col justify-center bg-black px-7 py-12 text-white sm:px-14 lg:px-16"><p className="pass-kicker text-white/50">Drop destacado</p><h2 className="mt-4 text-5xl font-black uppercase leading-[0.88] tracking-[-0.06em] sm:text-7xl">{latestDrop?.name || 'PASS Clothing'}</h2>{latestDrop?.description && <p className="mt-7 max-w-lg text-sm leading-6 text-white/65 sm:text-base">{latestDrop.description}</p>}<Link to={latestDrop ? `/drops/${latestDrop.id}` : '/drops'} className="mt-9 inline-flex w-fit items-center gap-3 border-b border-white pb-2 text-[10px] font-bold uppercase tracking-[0.2em]">Explorar drop <ArrowRight className="h-4 w-4" /></Link></div>
+        </div>
+      </section>
 
-        {/* Features Section */}
-        <motion.section
-          variants={staggerContainer}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, margin: '-50px' }}
-          className="py-16 sm:py-20 md:py-24 border-y border-gray-200"
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-14 md:gap-16">
-            <motion.div variants={fadeInUp} className="text-center px-4 group">
-              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-black text-white mb-6 sm:mb-8 shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500">
-                <Truck className="w-9 h-9 sm:w-11 sm:h-11 group-hover:rotate-6 transition-transform duration-300" />
-              </div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight mb-3 sm:mb-4 group-hover:text-gray-700 transition-colors">Envíos a Todo Bolivia</h3>
-              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-xs mx-auto">
-                Llegamos a todo el país con envíos rápidos y seguros.
-              </p>
-            </motion.div>
-            <motion.div variants={fadeInUp} className="text-center px-4 group">
-              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-black text-white mb-6 sm:mb-8 shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500">
-                <Shield className="w-9 h-9 sm:w-11 sm:h-11 group-hover:rotate-6 transition-transform duration-300" />
-              </div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight mb-3 sm:mb-4 group-hover:text-gray-700 transition-colors">Calidad Garantizada</h3>
-              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-xs mx-auto">
-                Materiales premium y acabados impecables.
-              </p>
-            </motion.div>
-            <motion.div variants={fadeInUp} className="text-center px-4 group">
-              <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-black text-white mb-6 sm:mb-8 shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500">
-                <Sparkles className="w-9 h-9 sm:w-11 sm:h-11 group-hover:rotate-6 transition-transform duration-300" />
-              </div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight mb-3 sm:mb-4 group-hover:text-gray-700 transition-colors">Drops Exclusivos</h3>
-              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-xs mx-auto">
-                Colecciones limitadas que solo podrás encontrar aquí.
-              </p>
-            </motion.div>
-          </div>
-        </motion.section>
-
-        {/* Community Section */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.8 }}
-          className="py-16 sm:py-20 md:py-24 lg:py-28"
-        >
-          <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-            {/* Background - Pure black */}
-            <div className="absolute inset-0 bg-black" />
-            
-            {/* Subtle decorative elements */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-white/[0.02] rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/[0.02] rounded-full blur-3xl" />
-            
-            {/* Content */}
-            <div className="relative text-white p-10 sm:p-14 md:p-20 lg:p-24 text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="max-w-3xl mx-auto"
-              >
-                {/* Icon with animated background */}
-                <div className="relative inline-flex items-center justify-center mb-8 sm:mb-10">
-                  <div className="absolute inset-0 bg-white/5 rounded-full blur-xl animate-pulse" />
-                  <div className="relative bg-white/5 backdrop-blur-sm p-6 sm:p-7 md:p-8 rounded-full border border-white/10">
-                    <Instagram className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16" />
-                  </div>
-                </div>
-
-                {/* Title */}
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-4 sm:mb-5 md:mb-6 leading-tight">
-                  Únete a la <span className="font-bold">comunidad</span>
-                </h2>
-                
-                {/* Hashtag */}
-                <p className="text-xs sm:text-sm md:text-base tracking-[0.25em] sm:tracking-[0.3em] uppercase text-gray-500 mb-8 sm:mb-10 md:mb-12">
-                  #PassClothing
-                </p>
-                
-                {/* Description */}
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 mb-10 sm:mb-12 md:mb-14 max-w-2xl mx-auto leading-relaxed font-light">
-                  Forma parte del movimiento streetwear boliviano. Comparte tu estilo y conecta con la comunidad.
-                </p>
-                
-                {/* CTA Button */}
-                <a
-                  href="https://www.instagram.com/pass________________________?igsh=ZmpxaGs5cnFteGFz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2 sm:gap-3 md:gap-4 bg-white text-black px-8 sm:px-12 md:px-14 lg:px-16 py-4 sm:py-5 md:py-6 lg:py-7 font-bold tracking-[0.05em] sm:tracking-[0.1em] hover:bg-gray-100 transition-all text-sm sm:text-base md:text-lg uppercase shadow-2xl hover:shadow-white/30 hover:scale-110 duration-500"
-                >
-                  <Instagram className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:rotate-12 transition-transform duration-300" />
-                  <span>Seguir en Instagram</span>
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 group-hover:translate-x-2 transition-transform duration-300" />
-                </a>
-              </motion.div>
-            </div>
-          </div>
-        </motion.section>
-
-        {/* Location Section */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.8 }}
-          className="py-12 sm:py-16 md:py-20 mb-12 sm:mb-16 md:mb-20"
-        >
-{/*           <div className="grid md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
-            <div>
-              <span className="text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase text-gray-500 mb-3 sm:mb-4 block">Visítanos</span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight mb-4 sm:mb-6">
-                Encuentra nuestras <span className="font-bold">tiendas</span>
-              </h2>
-              <div className="space-y-4 sm:space-y-6">
-                <div className="flex gap-3 sm:gap-4">
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-gray-600" />
-                  <div>
-                    <h4 className="font-medium mb-1 text-sm sm:text-base">La Paz</h4>
-                    <p className="text-xs sm:text-sm text-gray-600">Zona Sur, Av. Principal</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 sm:gap-4">
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-gray-600" />
-                  <div>
-                    <h4 className="font-medium mb-1 text-sm sm:text-base">Cochabamba</h4>
-                    <p className="text-xs sm:text-sm text-gray-600">Centro Comercial, 2do Piso</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 sm:gap-4">
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-gray-600" />
-                  <div>
-                    <h4 className="font-medium mb-1 text-sm sm:text-base">Santa Cruz</h4>
-                    <p className="text-xs sm:text-sm text-gray-600">Equipetrol, Local 45</p>
-                  </div>
-                </div>
-              </div>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 mt-6 sm:mt-8 text-xs sm:text-sm tracking-[0.2em] uppercase hover:gap-4 transition-all"
-              >
-                Ver todas las ubicaciones
-                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
-              </Link>
-            </div>
-            <div className="aspect-square bg-gray-100 overflow-hidden order-first md:order-last">
-              <img
-                src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070"
-                alt="Tienda Pass"
-                loading="lazy"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-          </div> */}
-        </motion.section>
-      </div>
+      <section className="relative min-h-[70vh] overflow-hidden bg-neutral-900"><img src={optimizeImageUrl(EDITORIAL, { width: 1800, quality: 82 })} alt="PASS streetwear" loading="lazy" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-black/35" /><div className="pass-container relative flex min-h-[70vh] items-end pb-12 text-white sm:pb-20"><div><p className="pass-kicker text-white/70">PASS / Bolivia</p><p className="mt-3 max-w-3xl text-4xl font-black uppercase leading-[0.92] tracking-[-0.055em] sm:text-7xl">Diseñado para moverte a tu manera.</p></div></div></section>
     </div>
   );
+}
+
+function CategoryBlock({ image, title, to }: { image: string; title: string; to: string }) {
+  return <Link to={to} className="group relative min-h-[62vh] overflow-hidden bg-neutral-100"><img src={optimizeImageUrl(image, { width: 1000, quality: 80 })} alt={title} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.035]" /><div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" /><div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-6 text-white sm:p-10"><h2 className="text-4xl font-black uppercase tracking-[-0.055em] sm:text-6xl">{title}</h2><span className="mb-1 text-2xl transition-transform group-hover:translate-x-1">→</span></div></Link>;
 }
