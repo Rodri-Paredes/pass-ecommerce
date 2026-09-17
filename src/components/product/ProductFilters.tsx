@@ -1,109 +1,19 @@
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { useEffect } from 'react';
+import { SlidersHorizontal, X } from 'lucide-react';
+import { EMPTY_FILTERS, type FilterFacets, type ShopFilters } from './productFilterTypes';
+interface Props { value: ShopFilters; facets: FilterFacets; sortBy: string; onChange: (filters: ShopFilters) => void; onSortChange: (sort: string) => void; mobileOpen: boolean; setMobileOpen: (open: boolean) => void }
 
-interface FilterProps {
-  onPriceRangeChange: (min: number, max: number) => void;
-  onSortChange: (sort: string) => void;
+export default function ProductFilters(props: Props) {
+  const { mobileOpen, setMobileOpen } = props;
+  useEffect(() => { if (!mobileOpen) return; const previous = document.body.style.overflow; document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = previous; }; }, [mobileOpen]);
+  return <><div className="hidden border-y border-black/10 lg:block"><div className="flex items-center gap-1 py-2"><FilterContent {...props} /><Sort value={props.sortBy} onChange={props.onSortChange} /></div></div><div className="flex border-y border-black/10 lg:hidden"><button type="button" onClick={() => setMobileOpen(true)} className="flex h-12 flex-1 items-center justify-center gap-2 border-r border-black/10 text-[10px] font-bold uppercase tracking-[0.18em]"><SlidersHorizontal className="h-4 w-4" /> Filtros</button><div className="flex-1"><Sort value={props.sortBy} onChange={props.onSortChange} /></div></div>{mobileOpen && <div className="fixed inset-0 z-[75] bg-white lg:hidden"><header className="flex h-16 items-center justify-between border-b border-black/10 px-4"><p className="text-sm font-bold uppercase tracking-[0.14em]">Filtros</p><button type="button" onClick={() => setMobileOpen(false)} className="p-2"><X className="h-5 w-5" /></button></header><div className="h-[calc(100%-8rem)] overflow-y-auto px-4 py-4"><FilterContent {...props} mobile /></div><div className="grid h-16 grid-cols-2 border-t border-black/10"><button type="button" onClick={() => props.onChange(EMPTY_FILTERS)} className="text-[10px] font-bold uppercase tracking-[0.15em]">Limpiar</button><button type="button" onClick={() => setMobileOpen(false)} className="bg-black text-[10px] font-bold uppercase tracking-[0.15em] text-white">Ver productos</button></div></div>}</>;
 }
 
-export default function ProductFilters({ onPriceRangeChange, onSortChange }: FilterProps) {
-  const [isPriceOpen, setIsPriceOpen] = useState(false);
-  const [isSortOpen, setIsSortOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
-
-  const handlePriceChange = (type: 'min' | 'max', value: string) => {
-    const numValue = parseInt(value) || 0;
-    const newRange = { ...priceRange, [type]: numValue };
-    setPriceRange(newRange);
-    onPriceRangeChange(newRange.min, newRange.max);
-  };
-
-  const sortOptions = [
-    { value: 'newest', label: 'Más Recientes' },
-    { value: 'price-asc', label: 'Precio: Menor a Mayor' },
-    { value: 'price-desc', label: 'Precio: Mayor a Menor' },
-    { value: 'name-asc', label: 'Nombre: A-Z' },
-  ];
-
-  return (
-    <div className="flex items-center gap-3">
-      {/* Sort Filter - Minimalist */}
-      <div className="relative">
-        <button
-          onClick={() => setIsSortOpen(!isSortOpen)}
-          className="flex items-center gap-2 px-4 py-2 text-xs font-light tracking-[0.2em] uppercase text-gray-600 hover:text-black transition-all duration-300 border border-gray-200 hover:border-gray-400"
-        >
-          <span>Ordenar</span>
-          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isSortOpen ? 'rotate-180' : ''}`} />
-        </button>
-        
-        {isSortOpen && (
-          <>
-            <div 
-              className="fixed inset-0 z-10" 
-              onClick={() => setIsSortOpen(false)}
-            />
-            <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-56 bg-white border border-gray-200 shadow-xl z-20 max-h-64 overflow-y-auto">
-              {sortOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    onSortChange(option.value);
-                    setIsSortOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-3 text-xs font-light hover:bg-gray-50 transition-all duration-200 border-b border-gray-100 last:border-0 hover:pl-5"
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Price Filter - Minimalist */}
-      <div className="relative">
-        <button
-          onClick={() => setIsPriceOpen(!isPriceOpen)}
-          className="flex items-center gap-2 px-4 py-2 text-xs font-light tracking-[0.2em] uppercase text-gray-600 hover:text-black transition-all duration-300 border border-gray-200 hover:border-gray-400"
-        >
-          <span>Precio</span>
-          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isPriceOpen ? 'rotate-180' : ''}`} />
-        </button>
-        
-        {isPriceOpen && (
-          <>
-            <div 
-              className="fixed inset-0 z-10" 
-              onClick={() => setIsPriceOpen(false)}
-            />
-            <div className="absolute top-full left-0 sm:right-0 sm:left-auto mt-2 w-64 bg-white border border-gray-200 shadow-xl z-20 p-5">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-light mb-2 tracking-wider uppercase text-gray-600">Mínimo (Bs.)</label>
-                  <input
-                    type="number"
-                    value={priceRange.min}
-                    onChange={(e) => handlePriceChange('min', e.target.value)}
-                    className="w-full px-3 py-2.5 border border-gray-200 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-light mb-2 tracking-wider uppercase text-gray-600">Máximo (Bs.)</label>
-                  <input
-                    type="number"
-                    value={priceRange.max}
-                    onChange={(e) => handlePriceChange('max', e.target.value)}
-                    className="w-full px-3 py-2.5 border border-gray-200 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
-                    min="0"
-                  />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
+function FilterContent({ value, facets, onChange, mobile = false }: Props & { mobile?: boolean }) {
+  const toggle = (key: 'sizes' | 'colors' | 'fits' | 'styles', option: string) => onChange({ ...value, [key]: value[key].includes(option) ? value[key].filter((item) => item !== option) : [...value[key], option] });
+  const sections: { key: 'sizes' | 'colors' | 'fits' | 'styles'; label: string; options: string[] }[] = [{ key: 'sizes', label: 'Talla', options: facets.sizes }, { key: 'colors', label: 'Color', options: facets.colors }, { key: 'fits', label: 'Fit', options: facets.fits }, { key: 'styles', label: 'Estilo', options: facets.styles }];
+  return <div className={mobile ? 'divide-y divide-black/10' : 'flex items-center'}>{sections.filter((section) => section.options.length).map((section) => <details key={section.key} className={mobile ? 'py-1' : 'relative'} open={mobile || undefined}><summary className={`${mobile ? 'py-4' : 'cursor-pointer px-4 py-3'} list-none text-[10px] font-bold uppercase tracking-[0.16em]`}>{section.label}{value[section.key].length ? ` (${value[section.key].length})` : ''}</summary><div className={mobile ? 'flex flex-wrap gap-2 pb-4' : 'absolute left-0 top-full z-20 mt-2 min-w-52 border border-black/10 bg-white p-4 shadow-xl'}>{section.options.map((option) => <label key={option} className={`${mobile ? '' : 'flex'} cursor-pointer items-center gap-2 whitespace-nowrap`}><input type="checkbox" checked={value[section.key].includes(option)} onChange={() => toggle(section.key, option)} className="peer sr-only" /><span className={`${mobile ? 'inline-flex border px-3 py-2' : 'py-1 text-xs'} border-black/15 peer-checked:bg-black peer-checked:text-white`}>{option}</span></label>)}</div></details>)}<details className={mobile ? 'py-1' : 'relative'} open={mobile || undefined}><summary className={`${mobile ? 'py-4' : 'cursor-pointer px-4 py-3'} list-none text-[10px] font-bold uppercase tracking-[0.16em]`}>Precio</summary><div className={mobile ? 'grid grid-cols-2 gap-3 pb-4' : 'absolute left-0 top-full z-20 mt-2 grid w-64 grid-cols-2 gap-3 border border-black/10 bg-white p-4 shadow-xl'}><PriceInput label="Mín." value={value.price.min} onChange={(min) => onChange({ ...value, price: { ...value.price, min } })} /><PriceInput label="Máx." value={value.price.max} onChange={(max) => onChange({ ...value, price: { ...value.price, max } })} /></div></details><label className={`${mobile ? 'flex py-5' : 'ml-2 flex px-3'} cursor-pointer items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em]`}><input type="checkbox" checked={value.availableOnly} onChange={(event) => onChange({ ...value, availableOnly: event.target.checked })} /> En stock</label></div>;
 }
+
+function PriceInput({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) { return <label><span className="mb-1 block text-[9px] uppercase tracking-wider text-black/45">{label}</span><input type="number" min="0" value={value} onChange={(event) => onChange(Number(event.target.value) || 0)} className="w-full border border-black/20 px-3 py-2 text-sm outline-none focus:border-black" /></label>; }
+function Sort({ value, onChange }: { value: string; onChange: (value: string) => void }) { return <select value={value} onChange={(event) => onChange(event.target.value)} className="h-12 w-full cursor-pointer border-0 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.14em] outline-none lg:ml-auto lg:w-auto"><option value="newest">Más recientes</option><option value="price-asc">Precio menor</option><option value="price-desc">Precio mayor</option></select>; }
