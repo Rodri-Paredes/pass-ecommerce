@@ -1,326 +1,55 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, Loader2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Heart, Loader2, Minus, Plus } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
+import ProductCard from '../components/product/ProductCard';
+import ProductGallery from '../components/product/ProductGallery';
+import SizeGuideModal from '../components/product/SizeGuideModal';
+import SizeSelector from '../components/product/SizeSelector';
 import { supabase } from '../lib/supabase';
-import { optimizeImageUrl } from '../lib/imageOptimizer';
 import { useCartStore } from '../store/cartStore';
 import { useDiscountStore } from '../store/discountStore';
-import type { ProductWithVariants, ProductVariant } from '../types';
-import SizeSelector from '../components/product/SizeSelector';
-import SizeGuideModal from '../components/product/SizeGuideModal';
-import ProductCard from '../components/product/ProductCard';
-import { DiscountBadge, DiscountPrice } from '../components/discounts/DiscountBadge';
+import { useFavoriteStore } from '../store/favoriteStore';
+import type { ProductVariant, ProductWithVariants } from '../types';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<ProductWithVariants | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [recommended, setRecommended] = useState<ProductWithVariants[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
-  const [availableStock, setAvailableStock] = useState(0);
+  const [stock, setStock] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [currentImage, setCurrentImage] = useState(0);
-  const [isGuideOpen, setIsGuideOpen] = useState(false);
-  const [recommendedProducts, setRecommendedProducts] = useState<ProductWithVariants[]>([]);
-
+  const [loading, setLoading] = useState(true);
+  const [guideOpen, setGuideOpen] = useState(false);
   const { addItem, openCart } = useCartStore();
-  const { activeDiscountsMap, loadActiveDiscountsMap } = useDiscountStore();
+  const discount = useDiscountStore((state) => id ? state.activeDiscountsMap.get(id) : undefined);
+  const loadDiscounts = useDiscountStore((state) => state.loadActiveDiscountsMap);
+  const { isFavorite, toggleFavorite } = useFavoriteStore();
 
   useEffect(() => {
-    // Scroll to top when product page loads
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    if (id) {
-      loadProduct();
-      loadActiveDiscountsMap();
-    }
-  }, [id]);
-
-  const loadProduct = async () => {
+    window.scrollTo(0, 0);
+    if (!id) return;
     setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .select(`
-          *,
-          variants:product_variants(
-            *,
-            stock(
-              *,
-              branch:branches(*)
-            )
-          ),
-          drop:drops(*)
-        `)
-        .eq('id', id)
-        .single();
-
-      if (error) throw error;
+    loadDiscounts();
+    supabase.from('products').select('*, variants:product_variants(*, stock(*, branch:branches(*))), drop:drops(*)').eq('id', id).single().then(async ({ data }) => {
       setProduct(data);
-
-      // Cargar productos recomendados
-      loadRecommendedProducts(data);
-    } catch (error) {
-      console.error('Error loading product:', error);
-    } finally {
       setLoading(false);
-    }
-  };
-
-  const loadRecommendedProducts = async (currentProduct: ProductWithVariants) => {
-    try {
-      const recommendedSelect = `
-        *,
-        variants:product_variants(
-          *,
-          stock(
-            *,
-            branch:branches(*)
-          )
-        ),
-        drop:drops(*)
-      `;
-
-      let query = supabase
-        .from('products')
-        .select(recommendedSelect)
-        .neq('id', currentProduct.id)
-        .limit(4);
-
-      // Priorizar productos de la misma categoría o del mismo drop
-      if (currentProduct.drop_id) {
-        const { data: dropProducts } = await query
-          .eq('drop_id', currentProduct.drop_id);
-        
-        if (dropProducts && dropProducts.length >= 4) {
-          setRecommendedProducts(dropProducts);
-          return;
-        }
+      if (data) {
+        const { data: related } = await supabase.from('products').select('*, variants:product_variants(*, stock(*, branch:branches(*))), drop:drops(*)').eq('category', data.category).neq('id', data.id).limit(4);
+        setRecommended(related || []);
       }
-
-      // Si no hay suficientes del mismo drop, buscar de la misma categoría
-      const { data: categoryProducts } = await query
-        .eq('category', currentProduct.category);
-
-      if (categoryProducts && categoryProducts.length > 0) {
-        setRecommendedProducts(categoryProducts);
-        return;
-      }
-
-      // Si no hay suficientes de la misma categoría, traer productos aleatorios
-      const { data: randomProducts } = await query;
-      setRecommendedProducts(randomProducts || []);
-    } catch (error) {
-      console.error('Error loading recommended products:', error);
-    }
-  };
-
-  const handleSizeSelect = (variant: ProductVariant, stock: number) => {
-    setSelectedVariant(variant);
-    setAvailableStock(stock);
-    setQuantity(1);
-  };
-
-  const handleAddToCart = () => {
-    if (!product || !selectedVariant) {
-      alert('Por favor selecciona una talla');
-      return;
-    }
-
-    addItem({
-      product,
-      variant: selectedVariant,
-      quantity,
-      availableStock,
     });
+  }, [id, loadDiscounts]);
 
-    openCart();
-  };
+  const images = useMemo(() => product ? [product.image_url, ...(product.images || [])] : [], [product]);
+  const finalPrice = product ? product.price * (discount ? 1 - discount.percentage / 100 : 1) : 0;
+  const selectSize = (variant: ProductVariant, available: number) => { setSelectedVariant(variant); setStock(available); setQuantity(1); };
+  const add = () => { if (!product || !selectedVariant) return; addItem({ product, variant: selectedVariant, quantity, availableStock: stock }); openCart(); };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pt-16">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-      </div>
-    );
-  }
+  if (loading) return <div className="grid min-h-[70vh] place-items-center"><Loader2 className="h-7 w-7 animate-spin" /></div>;
+  if (!product) return <div className="grid min-h-[70vh] place-items-center text-center"><div><p className="text-xl font-bold uppercase">Producto no encontrado</p><Link to="/shop" className="mt-5 inline-block underline">Volver al shop</Link></div></div>;
 
-  if (!product) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center pt-16">
-        <p className="text-xl text-gray-500 mb-4">Producto no encontrado</p>
-        <Link to="/shop" className="text-sm underline">
-          Volver a la tienda
-        </Link>
-      </div>
-    );
-  }
-
-  // Combinar imagen principal con el array de imágenes adicionales
-  const allImages = product.images && product.images.length > 0 
-    ? [product.image_url, ...product.images]
-    : [product.image_url];
-
-  return (
-    <div className="min-h-screen pt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Link
-          to="/shop"
-          className="inline-flex items-center gap-2 text-sm mb-8 hover:opacity-70 transition-opacity"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Volver a la tienda
-        </Link>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div className="space-y-4">
-            <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden rounded-lg">
-              <img
-                src={optimizeImageUrl(allImages[currentImage], { width: 800 })}
-                alt={product.name}
-                className="w-full h-full object-cover transition-all duration-300"
-              />
-              
-              {allImages.length > 1 && (
-                <>
-                  <button
-                    onClick={() => setCurrentImage((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all"
-                    aria-label="Imagen anterior"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => setCurrentImage((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all"
-                    aria-label="Imagen siguiente"
-                  >
-                    <ChevronLeft className="w-5 h-5 rotate-180" />
-                  </button>
-                </>
-              )}
-            </div>
-
-            {allImages.length > 1 && (
-              <div className="grid grid-cols-4 gap-4">
-                {allImages.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImage(index)}
-                    className={`aspect-square bg-gray-100 overflow-hidden border-2 transition-all rounded-md hover:opacity-75 ${
-                      currentImage === index ? 'border-black' : 'border-transparent'
-                    }`}
-                  >
-                    <img 
-                      src={optimizeImageUrl(image, { width: 200, quality: 60 })} 
-                      alt={`${product.name} ${index + 1}`} 
-                      className="w-full h-full object-cover" 
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-6">
-            {product.drop && (
-              <div className="inline-block bg-black text-white px-3 py-1 text-xs font-medium tracking-wide">
-                {product.drop.name}
-              </div>
-            )}
-
-            <div>
-              <h1 className="text-3xl font-bold mb-2 tracking-tight">{product.name}</h1>
-              {activeDiscountsMap.has(product.id) ? (
-                <div className="flex items-center gap-3">
-                  <DiscountBadge percentage={activeDiscountsMap.get(product.id)!.percentage} />
-                  <DiscountPrice 
-                    originalPrice={product.price} 
-                    discountPercentage={activeDiscountsMap.get(product.id)!.percentage} 
-                  />
-                </div>
-              ) : (
-                <p className="text-xl font-semibold">Bs. {product.price.toFixed(2)}</p>
-              )}
-            </div>
-
-            {product.description && (
-              <div>
-                <h3 className="text-sm font-medium tracking-wide mb-2">DESCRIPCIÓN</h3>
-                <p className="text-gray-600 leading-relaxed">{product.description}</p>
-              </div>
-            )}
-
-            <div className="border-t border-gray-200 pt-6">
-              {product.variants && (
-                <SizeSelector
-                  variants={product.variants}
-                  selectedSize={selectedVariant?.size || null}
-                  onSizeSelect={handleSizeSelect}
-                  productCategory={product.category}
-                  onShowSizeGuide={() => setIsGuideOpen(true)}
-                />
-              )}
-            </div>
-
-            {selectedVariant && (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2 tracking-wide">CANTIDAD</label>
-                  <div className="flex items-center gap-4">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 border border-gray-300 hover:border-black transition-colors"
-                    >
-                      -
-                    </button>
-                    <span className="text-lg font-medium w-12 text-center">{quantity}</span>
-                    <button
-                      onClick={() => setQuantity(Math.min(availableStock, quantity + 1))}
-                      className="w-10 h-10 border border-gray-300 hover:border-black transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full bg-black text-white py-4 font-medium tracking-wide hover:bg-gray-800 transition-colors"
-                >
-                  AGREGAR AL CARRITO
-                </button>
-              </div>
-            )}
-
-            <div className="border-t border-gray-200 pt-6 text-sm text-gray-600 space-y-2">
-              <p>• Envíos a todo Bolivia</p>
-              <p>• Pago contra entrega disponible</p>
-              <p>• Consulta disponibilidad por WhatsApp</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Productos Recomendados */}
-        {recommendedProducts.length > 0 && (
-          <div className="mt-16 border-t border-gray-200 pt-12">
-            <h2 className="text-2xl font-bold mb-8 tracking-tight">
-              TAMBIÉN TE PUEDE GUSTAR
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {recommendedProducts.map((recommendedProduct, index) => (
-                <ProductCard key={recommendedProduct.id} product={recommendedProduct} index={index} />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Size Guide Modal */}
-      <SizeGuideModal
-        isOpen={isGuideOpen}
-        onClose={() => setIsGuideOpen(false)}
-        category={product?.category}
-      />
-    </div>
-  );
+  return <main><div className="pass-container py-5 sm:py-10"><div className="mb-5 text-[10px] uppercase tracking-[0.14em] text-black/45"><Link to="/shop">Shop</Link> / <span>{product.category}</span></div><div className="grid gap-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,.65fr)] lg:gap-10"><ProductGallery images={images} name={product.name} /><aside className="lg:sticky lg:top-32 lg:h-fit"><div className="flex items-start justify-between gap-4"><div>{product.drop && <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.2em] text-black/45">{product.drop.name}</p>}<h1 className="text-3xl font-black uppercase leading-[.95] tracking-[-0.045em] sm:text-4xl">{product.name}</h1></div><button type="button" onClick={() => toggleFavorite(product.id)} className="shrink-0 p-2" aria-label="Favorito"><Heart className={`h-5 w-5 ${isFavorite(product.id) ? 'fill-black' : ''}`} /></button></div><div className="mt-5 flex items-center gap-3 text-lg">{discount && <span className="text-black/35 line-through">Bs. {product.price.toFixed(2)}</span>}<span className="font-bold">Bs. {finalPrice.toFixed(2)}</span>{discount && <span className="bg-black px-2 py-1 text-[9px] font-bold text-white">-{discount.percentage}%</span>}</div>{product.description && <p className="mt-6 text-sm leading-6 text-black/65">{product.description}</p>}<div className="mt-7 grid grid-cols-3 border-y border-black/10 py-4">{product.color && <Meta label="Color" value={product.color} />}{product.fit && <Meta label="Fit" value={product.fit} />}{product.product_style && <Meta label="Estilo" value={product.product_style} />}</div><div className="mt-7"><SizeSelector variants={product.variants || []} selectedSize={selectedVariant?.size || null} onSizeSelect={selectSize} productCategory={product.category} onShowSizeGuide={() => setGuideOpen(true)} /></div>{selectedVariant && <div className="mt-6 flex items-center justify-between border-y border-black/10 py-3"><span className="text-[10px] font-bold uppercase tracking-[0.16em]">Cantidad</span><div className="flex items-center"><button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="grid h-9 w-9 place-items-center border border-black/15"><Minus className="h-3.5 w-3.5" /></button><span className="grid h-9 w-10 place-items-center text-xs font-bold">{quantity}</span><button type="button" onClick={() => setQuantity(Math.min(stock, quantity + 1))} disabled={quantity >= stock} className="grid h-9 w-9 place-items-center border border-black/15 disabled:opacity-25"><Plus className="h-3.5 w-3.5" /></button></div></div>}<button type="button" onClick={add} disabled={!selectedVariant} className="mt-6 h-14 w-full bg-black text-[11px] font-bold uppercase tracking-[0.2em] text-white disabled:bg-black/20">{selectedVariant ? `Agregar al carrito · Bs. ${(finalPrice * quantity).toFixed(2)}` : 'Selecciona una talla'}</button><div className="mt-7 divide-y divide-black/10 border-y border-black/10 text-xs"><InfoLine text="Envíos a todo Bolivia" /><InfoLine text="Pago contra entrega disponible" /><Link to="/returns" className="flex py-4 uppercase tracking-[0.12em]">Cambios y devoluciones</Link></div></aside></div></div>{recommended.length > 0 && <section className="pass-container border-t border-black/10 py-16 sm:py-24"><div className="mb-8 flex items-end justify-between"><div><p className="pass-kicker">También te puede gustar</p><h2 className="pass-heading mt-2 text-3xl sm:text-5xl">Más de {product.category}</h2></div></div><div className="grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-4 md:gap-x-5">{recommended.map((item, index) => <ProductCard key={item.id} product={item} index={index} />)}</div></section>}<div className="fixed inset-x-0 bottom-0 z-30 border-t border-black/10 bg-white p-3 lg:hidden"><button type="button" onClick={add} disabled={!selectedVariant} className="h-13 w-full bg-black py-4 text-[10px] font-bold uppercase tracking-[0.18em] text-white disabled:bg-black/25">{selectedVariant ? `Agregar · Bs. ${(finalPrice * quantity).toFixed(2)}` : 'Selecciona una talla'}</button></div><SizeGuideModal isOpen={guideOpen} onClose={() => setGuideOpen(false)} category={product.category} /></main>;
 }
+
+function Meta({ label, value }: { label: string; value: string }) { return <div><p className="text-[9px] font-bold uppercase tracking-[0.16em] text-black/40">{label}</p><p className="mt-1 text-xs font-medium">{value}</p></div>; }
+function InfoLine({ text }: { text: string }) { return <p className="py-4 uppercase tracking-[0.12em]">{text}</p>; }
