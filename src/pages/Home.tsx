@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <div className="bg-white">
       <section className="relative min-h-[calc(100svh-96px)] overflow-hidden bg-black sm:min-h-[calc(100svh-100px)]">
-        <img src={optimizeImageUrl(HERO, { width: 1800, quality: 84 })} alt="PASS Clothing" className="absolute inset-0 h-full w-full object-cover object-[center_18%]" fetchPriority="high" />
+        <img src={optimizeImageUrl(HERO, { width: 1800, quality: 84 })} alt="PASS Clothing" className="absolute inset-0 h-full w-full object-cover object-[center_18%]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-black/10" />
         <div className="pass-container relative flex min-h-[calc(100svh-96px)] items-end pb-10 text-white sm:min-h-[calc(100svh-100px)] sm:pb-16">
           <div className="max-w-3xl">
