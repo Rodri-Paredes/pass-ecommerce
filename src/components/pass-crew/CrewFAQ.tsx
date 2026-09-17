@@ -7,22 +7,17 @@ const FAQ_ITEMS = [
   {
     question: '¿Cómo funciona el pago de PASS CREW?',
     answer:
-      'Realizas el pago mensual mediante el código QR que te mostramos al generar tu solicitud, subes el comprobante y nuestro equipo valida tu pago en un plazo máximo de 24 horas hábiles.',
+      'Eliges un plan, realizas el pago con las instrucciones disponibles, subes el comprobante y el equipo de PASS revisa la solicitud antes de activar la membresía.',
   },
   {
     question: '¿Cuánto dura mi membresía?',
     answer:
-      'Cada membresía PASS CREW tiene una duración de 30 días desde el momento en que se aprueba tu pago. Para mantenerla activa, debes generar una nueva solicitud antes de que venza.',
+      'Puedes elegir el plan semestral de 6 meses o el plan anual de 12 meses. El periodo comienza cuando el equipo aprueba la solicitud.',
   },
   {
     question: '¿Qué pasa si mi comprobante es rechazado?',
     answer:
       'Si tu comprobante no puede ser validado, te lo notificaremos en la sección "Mi cuenta" y podrás generar una nueva solicitud con un comprobante válido.',
-  },
-  {
-    question: '¿Puedo cancelar cuando quiera?',
-    answer:
-      'Sí. PASS CREW no tiene permanencia: simplemente no generas una nueva solicitud y tu membresía expirará al finalizar el periodo vigente.',
   },
 ];
 

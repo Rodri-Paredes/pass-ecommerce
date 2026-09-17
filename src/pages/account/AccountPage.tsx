@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, LogOut, Crown } from 'lucide-react';
@@ -6,10 +6,13 @@ import { useCustomerAuthStore } from '../../store/customerAuthStore';
 import { usePassCrewStore } from '../../store/passCrewStore';
 import { CREW_MEMBERSHIP_LABELS, CREW_REQUEST_LABELS } from '../../lib/crewLabels';
 import { fadeUp, staggerContainer } from '../../lib/motion';
+import { passCrewService } from '../../services/passCrewService';
+import type { CrewBenefit } from '../../types';
 
 export default function AccountPage() {
   const { customer, signOut } = useCustomerAuthStore();
-  const { membership, activeRequest, isLoading, loadMyStatus } = usePassCrewStore();
+  const { membership, scheduledMembership, activeRequest, requests, isLoading, loadMyStatus } = usePassCrewStore();
+  const [crewBenefits, setCrewBenefits] = useState<CrewBenefit[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,6 +20,11 @@ export default function AccountPage() {
       loadMyStatus(customer.id);
     }
   }, [customer, loadMyStatus]);
+
+  useEffect(() => {
+    if (membership?.plan_id) passCrewService.getCrewBenefits(membership.plan_id).then(setCrewBenefits).catch(() => setCrewBenefits([]));
+    else setCrewBenefits([]);
+  }, [membership?.plan_id]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -64,7 +72,10 @@ export default function AccountPage() {
             <div className="relative space-y-2 text-sm">
               <p className="text-champagne font-medium">{CREW_MEMBERSHIP_LABELS[membership.status]}</p>
               <p className="text-white/70">Número de miembro: <span className="font-mono">{membership.member_number}</span></p>
+              <p className="text-white/70">Plan: {membership.plan_name_snapshot}</p>
               <p className="text-white/70">Vence: {new Date(membership.expires_at).toLocaleDateString('es-BO')}</p>
+              {crewBenefits.length > 0 && <div className="mt-4 border-t border-white/15 pt-4"><p className="mb-2 text-[10px] uppercase tracking-[.2em] text-white/35">Beneficios</p>{crewBenefits.map(item => <p key={item.id} className="text-white/70">• {item.name}</p>)}</div>}
+              {scheduledMembership && <p className="mt-4 text-champagne">Renovación {scheduledMembership.plan_name_snapshot} programada desde {new Date(scheduledMembership.started_at).toLocaleDateString('es-BO')}</p>}
             </div>
           ) : activeRequest ? (
             <div className="relative space-y-3 text-sm">
@@ -85,6 +96,7 @@ export default function AccountPage() {
               </Link>
             </div>
           )}
+          {!activeRequest && requests[0]?.status === 'rejected' && <p className="relative mt-4 text-xs text-red-300">La última solicitud fue rechazada. Puedes iniciar una nueva cuando tengas un comprobante válido.</p>}
         </motion.div>
 
         <motion.button
