@@ -28,6 +28,7 @@ import AccountPage from './pages/account/AccountPage';
 import PassCrewLandingPage from './pages/PassCrewLandingPage';
 import PassCrewRequestPage from './pages/PassCrewRequestPage';
 import PassCrewStatusPage from './pages/PassCrewStatusPage';
+import FavoritesPage from './pages/FavoritesPage';
 import { useCustomerAuthStore } from './store/customerAuthStore';
 
 function App() {
@@ -87,6 +88,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+              <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/pass-crew" element={<PassCrewLandingPage />} />
               <Route path="/pass-crew/join" element={<ProtectedRoute><PassCrewRequestPage /></ProtectedRoute>} />
               <Route path="/pass-crew/status" element={<ProtectedRoute><PassCrewStatusPage /></ProtectedRoute>} />
