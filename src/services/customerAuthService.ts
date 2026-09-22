@@ -1,6 +1,8 @@
 import { supabase } from '../lib/supabase';
 import type { CustomerProfile } from '../types';
 
+const PENDING_PROFILE_KEY = 'pass_pending_web_profile';
+
 export type CustomerActivationResult = {
   status: 'linked' | 'pending';
   customer?: CustomerProfile;
@@ -9,22 +11,25 @@ export type CustomerActivationResult = {
 };
 
 export const customerAuthService = {
+  async ensureCustomerProfile(fullName?: string, phone?: string) {
+    const { data, error } = await supabase.rpc('ensure_customer_profile', {
+      p_full_name: fullName?.trim() || null,
+      p_phone: phone?.trim() || null,
+    });
+    if (error) throw error;
+    return data as CustomerProfile;
+  },
+
   async signUp(email: string, password: string, fullName: string, phone?: string, createProfile = true) {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
 
     if (data.user && createProfile) {
-      const { error: profileError } = await supabase
-        .from('customer_profiles')
-        .insert({
-          auth_user_id: data.user.id,
-          first_name: fullName.trim(),
-          full_name: fullName,
-          email,
-          phone: phone || null,
-        });
-
-      if (profileError) throw profileError;
+      if (data.session) {
+        await this.ensureCustomerProfile(fullName, phone);
+      } else {
+        window.localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify({ fullName, phone: phone || null }));
+      }
     }
 
     return data;
@@ -42,6 +47,12 @@ export const customerAuthService = {
   async signIn(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
+    const pending = window.localStorage.getItem(PENDING_PROFILE_KEY);
+    if (pending) {
+      const profile = JSON.parse(pending) as { fullName?: string; phone?: string };
+      await this.ensureCustomerProfile(profile.fullName, profile.phone);
+      window.localStorage.removeItem(PENDING_PROFILE_KEY);
+    }
     return data;
   },
 
