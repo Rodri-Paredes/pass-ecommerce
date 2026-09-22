@@ -44,6 +44,7 @@ export default function Header() {
             <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em]" to="/shop?category=Hoodies">Hoodies</Link>
             <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em]" to="/shop?category=Poleras">Poleras</Link>
             <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em]" to="/drops">Drops</Link>
+            <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em] text-champagne" to="/pass-crew">PASS Crew</Link>
           </nav>
           <button type="button" onClick={() => setMobileNavOpen(true)} className="justify-self-start p-2 lg:hidden" aria-label="Abrir menú"><Menu className="h-5 w-5" /></button>
           <Link to="/" className="text-[24px] font-black leading-none tracking-[-0.07em] sm:text-[28px]" aria-label="PASS Clothing, inicio">PASS</Link>
