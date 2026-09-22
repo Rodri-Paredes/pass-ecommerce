@@ -37,7 +37,7 @@ export default function AccountPage() {
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="max-w-3xl mx-auto px-4 sm:px-6"
+        className="mx-auto w-full max-w-3xl px-5 sm:px-6"
       >
         <motion.div variants={fadeUp}>
           <Link to="/" className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-gray-400 hover:text-pass-black transition-colors mb-8">
@@ -46,7 +46,7 @@ export default function AccountPage() {
           </Link>
         </motion.div>
 
-        <motion.h1 variants={fadeUp} className="text-5xl sm:text-7xl font-black uppercase tracking-[-0.06em] text-black mb-10">
+        <motion.h1 variants={fadeUp} className="mb-8 text-4xl font-black uppercase leading-[.9] tracking-[-0.06em] text-black sm:mb-10 sm:text-7xl">
           Mi cuenta
         </motion.h1>
 
@@ -60,7 +60,7 @@ export default function AccountPage() {
           </div>
         </motion.div>
 
-        <motion.div variants={fadeUp} className="relative bg-black text-white p-8 mb-8 overflow-hidden">
+        <motion.div variants={fadeUp} className="relative mb-8 overflow-hidden bg-black p-5 text-white sm:p-8">
 
           <div className="relative flex items-center gap-2 mb-4">
             <Crown className="w-5 h-5 text-champagne" />
