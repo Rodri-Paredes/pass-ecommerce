@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Heart, MapPin, Menu, ShoppingBag, UserRound } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useBranchStore } from '../../store/branchStore';
@@ -11,6 +11,8 @@ import MobileNav from './MobileNav';
 import SearchBar from './SearchBar';
 
 export default function Header() {
+  const location = useLocation();
+  const dark = location.pathname.startsWith('/pass-crew') || location.pathname === '/account';
   const [branches, setBranches] = useState<Branch[]>([]);
   const [branchMenuOpen, setBranchMenuOpen] = useState(false);
   const [branchModalOpen, setBranchModalOpen] = useState(false);
@@ -35,15 +37,15 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-black/10 bg-white">
+      <header className={`sticky top-0 z-40 border-b ${dark ? 'border-white/10 bg-[#0d0d0c] text-white' : 'border-black/10 bg-white'}`}>
         <AnnouncementBar />
         <div className="pass-container grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3 lg:h-[72px]">
           <nav className="hidden items-center gap-5 lg:flex xl:gap-7" aria-label="Navegación principal">
-            <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em]" to="/shop">Shop</Link>
-            <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em]" to="/shop?sort=newest">New</Link>
+            <Link className={`pass-link text-[11px] font-semibold uppercase tracking-[0.15em] ${dark ? 'border-white/30 text-white/75' : ''}`} to="/shop">Shop</Link>
+            <Link className={`pass-link text-[11px] font-semibold uppercase tracking-[0.15em] ${dark ? 'border-white/30 text-white/75' : ''}`} to="/shop?sort=newest">New</Link>
             <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em]" to="/shop?category=Hoodies">Hoodies</Link>
             <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em]" to="/shop?category=Poleras">Poleras</Link>
-            <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em]" to="/drops">Drops</Link>
+            <Link className={`pass-link text-[11px] font-semibold uppercase tracking-[0.15em] ${dark ? 'border-white/30 text-white/75' : ''}`} to="/drops">Drops</Link>
             <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em] text-champagne" to="/pass-crew">PASS Crew</Link>
           </nav>
           <button type="button" onClick={() => setMobileNavOpen(true)} className="justify-self-start p-2 lg:hidden" aria-label="Abrir menú"><Menu className="h-5 w-5" /></button>
@@ -54,8 +56,8 @@ export default function Header() {
               {branchMenuOpen && <><button type="button" aria-label="Cerrar selector" className="fixed inset-0 z-40 cursor-default" onClick={() => setBranchMenuOpen(false)} /><div className="absolute right-0 top-full z-50 w-56 border border-black/10 bg-white py-2 shadow-xl"><button type="button" onClick={() => { setSelectedBranch(null); setBranchMenuOpen(false); }} className="w-full px-4 py-3 text-left text-xs uppercase tracking-wider hover:bg-black hover:text-white">Todas las sucursales</button>{branches.map((branch) => <button key={branch.id} type="button" onClick={() => { setSelectedBranch(branch.id); setBranchMenuOpen(false); }} className="w-full px-4 py-3 text-left text-xs uppercase tracking-wider hover:bg-black hover:text-white">{branch.name}</button>)}</div></>}
             </div>
             <SearchBar />
-            <Link to="/favorites" className="hidden p-2 sm:block" aria-label="Favoritos"><Heart className="h-[19px] w-[19px] stroke-[1.6]" /></Link>
-            <Link to="/account" className="hidden p-2 sm:block" aria-label="Cuenta"><UserRound className="h-[19px] w-[19px] stroke-[1.6]" /></Link>
+            <Link to="/favorites" className={`hidden p-2 sm:block ${dark ? 'text-white' : ''}`} aria-label="Favoritos"><Heart className="h-[19px] w-[19px] stroke-[1.6]" /></Link>
+            <Link to="/account" className={`hidden p-2 sm:block ${dark ? 'text-white' : ''}`} aria-label="Cuenta"><UserRound className="h-[19px] w-[19px] stroke-[1.6]" /></Link>
             <button type="button" onClick={openCart} className="relative p-2" aria-label={`Carrito, ${itemCount} productos`}><ShoppingBag className="h-5 w-5 stroke-[1.6]" />{itemCount > 0 && <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[9px] font-bold text-white">{itemCount}</span>}</button>
           </div>
         </div>
