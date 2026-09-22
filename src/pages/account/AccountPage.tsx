@@ -8,11 +8,13 @@ import { CREW_MEMBERSHIP_LABELS, CREW_REQUEST_LABELS } from '../../lib/crewLabel
 import { fadeUp, staggerContainer } from '../../lib/motion';
 import { passCrewService } from '../../services/passCrewService';
 import type { CrewBenefit } from '../../types';
+import type { LoyaltySummary } from '../../types';
 
 export default function AccountPage() {
   const { customer, signOut } = useCustomerAuthStore();
   const { membership, scheduledMembership, activeRequest, requests, isLoading, loadMyStatus } = usePassCrewStore();
   const [crewBenefits, setCrewBenefits] = useState<CrewBenefit[]>([]);
+  const [loyalty, setLoyalty] = useState<LoyaltySummary | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +27,10 @@ export default function AccountPage() {
     if (membership?.plan_id) passCrewService.getCrewBenefits(membership.plan_id).then(setCrewBenefits).catch(() => setCrewBenefits([]));
     else setCrewBenefits([]);
   }, [membership?.plan_id]);
+
+  useEffect(() => {
+    if (customer) passCrewService.getMyLoyaltySummary(customer.id).then(setLoyalty).catch(() => setLoyalty(null));
+  }, [customer]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -53,6 +59,8 @@ export default function AccountPage() {
             </div>
             <motion.button variants={fadeUp} onClick={handleSignOut} className="mt-10 inline-flex w-fit items-center gap-2 border-b border-black/20 pb-1 text-[10px] font-bold uppercase tracking-[.18em] text-black/45 transition-colors hover:border-black hover:text-black"><LogOut className="h-3.5 w-3.5" /> Cerrar sesión</motion.button>
           </motion.section>
+
+          {loyalty?.enabled && <motion.section variants={fadeUp} className="bg-white p-6 shadow-[0_18px_50px_rgba(20,18,14,.06)] sm:p-8 lg:col-span-2"><div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-start"><div><p className="text-[10px] font-bold uppercase tracking-[.25em] text-black/40">Fidelidad PASS</p><h2 className="mt-2 text-3xl font-black uppercase tracking-[-.06em]">Mis puntos</h2><p className="mt-2 max-w-md text-sm leading-6 text-black/50">Acumulas puntos sobre el total final pagado después de promociones y beneficios Crew.</p></div><div className="text-left sm:text-right"><p className="font-mono text-5xl font-bold tracking-[-.08em]">{loyalty.points_balance}</p><p className="text-[10px] font-bold uppercase tracking-[.2em] text-black/40">puntos disponibles</p></div></div><div className="mt-7 grid gap-3 border-t border-black/10 pt-5 sm:grid-cols-2"><div><p className="text-[10px] uppercase tracking-[.18em] text-black/40">Histórico ganado</p><p className="mt-1 text-lg font-bold">{loyalty.lifetime_points_earned} pts</p></div><div><p className="text-[10px] uppercase tracking-[.18em] text-black/40">Última actividad</p><p className="mt-1 text-sm font-medium">{loyalty.transactions[0] ? new Date(loyalty.transactions[0].created_at).toLocaleDateString('es-BO') : 'Sin movimientos'}</p></div></div>{loyalty.transactions.length > 0 && <div className="mt-5 divide-y border-t border-black/10">{loyalty.transactions.slice(0, 3).map(item => <div key={item.id} className="flex items-center justify-between gap-4 py-3 text-sm"><span className="text-black/55">{item.reason}</span><strong className={item.points > 0 ? 'text-emerald-700' : 'text-red-700'}>{item.points > 0 ? '+' : ''}{item.points} pts</strong></div>)}</div>}</motion.section>}
 
           <motion.section variants={fadeUp} className="relative min-h-[390px] overflow-hidden bg-[#11110f] p-6 text-white shadow-[0_18px_50px_rgba(20,18,14,.12)] sm:p-8">
             <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-champagne/15 blur-3xl" /><div className="absolute -bottom-28 -left-16 h-64 w-64 rounded-full bg-champagne/10 blur-3xl" />

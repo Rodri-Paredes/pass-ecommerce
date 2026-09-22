@@ -115,6 +115,14 @@ export interface CustomerProfile {
   updated_at: string;
 }
 
+export interface LoyaltyTransaction {
+  id: string; sale_id?: string | null; type: string; points: number; balance_after: number; reason: string; created_at: string;
+}
+
+export interface LoyaltySummary {
+  customer_id: string; enabled: boolean; points_balance: number; lifetime_points_earned: number; lifetime_points_redeemed: number; transactions: LoyaltyTransaction[];
+}
+
 export interface CrewPlan {
   id: string;
   code: string;

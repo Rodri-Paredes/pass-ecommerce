@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { CrewBenefit, CrewMembership, CrewMembershipRequest, CrewPlan, CrewPlanBenefit, CrewSaleQuote, CrewSettings } from '../types';
+import type { CrewBenefit, CrewMembership, CrewMembershipRequest, CrewPlan, CrewPlanBenefit, CrewSaleQuote, CrewSettings, LoyaltySummary } from '../types';
 
 const fail = (error: { message: string } | null) => { if (error) throw error; };
 
@@ -30,5 +30,10 @@ export const passCrewService = {
   async quoteCart(customerId: string, items: Array<{ variantId: string; quantity: number; unitPrice: number }>): Promise<CrewSaleQuote> {
     const { data, error } = await supabase.rpc('crew_calculate_sale_quote', { p_customer_id: customerId, p_items: items, p_manual_discount: 0 }); fail(error);
     return data as CrewSaleQuote;
+  },
+  async getMyLoyaltySummary(customerId: string): Promise<LoyaltySummary | null> {
+    const { data, error } = await supabase.rpc('get_customer_loyalty_summary', { p_customer_id: customerId });
+    if (error) throw error;
+    return data as LoyaltySummary;
   },
 };
