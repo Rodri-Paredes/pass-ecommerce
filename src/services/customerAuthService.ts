@@ -1,12 +1,19 @@
 import { supabase } from '../lib/supabase';
 import type { CustomerProfile } from '../types';
 
+export type CustomerActivationResult = {
+  status: 'linked' | 'pending';
+  customer?: CustomerProfile;
+  request_id?: string;
+  customer_id?: string;
+};
+
 export const customerAuthService = {
-  async signUp(email: string, password: string, fullName: string, phone?: string) {
+  async signUp(email: string, password: string, fullName: string, phone?: string, createProfile = true) {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
 
-    if (data.user) {
+    if (data.user && createProfile) {
       const { error: profileError } = await supabase
         .from('customer_profiles')
         .insert({
@@ -21,6 +28,15 @@ export const customerAuthService = {
     }
 
     return data;
+  },
+
+  async activateCustomerAccount(customerCode: string, phone: string): Promise<CustomerActivationResult> {
+    const { data, error } = await supabase.rpc('request_customer_account_link', {
+      p_customer_code: customerCode,
+      p_phone: phone,
+    });
+    if (error) throw error;
+    return data as CustomerActivationResult;
   },
 
   async signIn(email: string, password: string) {

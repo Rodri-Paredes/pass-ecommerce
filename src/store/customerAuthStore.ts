@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { CustomerProfile } from '../types';
-import { customerAuthService } from '../services/customerAuthService';
+import { customerAuthService, type CustomerActivationResult } from '../services/customerAuthService';
 import { supabase } from '../lib/supabase';
 
 interface CustomerAuthState {
@@ -9,7 +9,8 @@ interface CustomerAuthState {
   isAuthenticated: boolean;
 
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string, phone?: string) => Promise<void>;
+  signUp: (email: string, password: string, fullName: string, phone?: string, createProfile?: boolean) => Promise<void>;
+  activateCustomerAccount: (customerCode: string, phone: string) => Promise<CustomerActivationResult>;
   signOut: () => Promise<void>;
   loadCustomer: () => Promise<void>;
 }
@@ -24,9 +25,15 @@ export const useCustomerAuthStore = create<CustomerAuthState>((set, get) => ({
     await get().loadCustomer();
   },
 
-  signUp: async (email, password, fullName, phone) => {
-    await customerAuthService.signUp(email, password, fullName, phone);
+  signUp: async (email, password, fullName, phone, createProfile = true) => {
+    await customerAuthService.signUp(email, password, fullName, phone, createProfile);
     await get().loadCustomer();
+  },
+
+  activateCustomerAccount: async (customerCode, phone) => {
+    const result = await customerAuthService.activateCustomerAccount(customerCode, phone);
+    if (result.status === 'linked' && result.customer) set({ customer: result.customer, isAuthenticated: true, isLoading: false });
+    return result;
   },
 
   signOut: async () => {

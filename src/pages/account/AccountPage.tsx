@@ -53,6 +53,7 @@ export default function AccountPage() {
         <motion.div variants={fadeUp} className="border-y border-black/10 py-8 mb-8">
           <h2 className="text-xs tracking-[0.25em] uppercase text-gray-400 mb-4">Datos personales</h2>
           <div className="space-y-2 text-sm text-pass-black">
+            <p><span className="font-medium">Mi código PASS:</span> <span className="font-mono">{customer?.customer_code}</span></p>
             <p><span className="font-medium">Nombre:</span> {customer?.full_name}</p>
             <p><span className="font-medium">Email:</span> {customer?.email}</p>
             {customer?.phone && <p><span className="font-medium">Teléfono:</span> {customer.phone}</p>}

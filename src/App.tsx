@@ -23,6 +23,7 @@ import ContactPage from './pages/ContactPage';
 import SharedOrderPage from './pages/SharedOrderPage';
 import PassOffPage from './pages/PassOffPage';
 import LoginPage from './pages/account/LoginPage';
+import ActivateAccountPage from './pages/account/ActivateAccountPage';
 import SignupPage from './pages/account/SignupPage';
 import AccountPage from './pages/account/AccountPage';
 import PassCrewLandingPage from './pages/PassCrewLandingPage';
@@ -86,6 +87,7 @@ function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/pedido/:orderCode" element={<SharedOrderPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/activate" element={<ActivateAccountPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
               <Route path="/favorites" element={<FavoritesPage />} />

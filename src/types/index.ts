@@ -105,6 +105,7 @@ export interface DiscountDrop {
 export interface CustomerProfile {
   id: string;
   auth_user_id?: string | null;
+  customer_code: string;
   first_name?: string | null;
   last_name?: string | null;
   full_name: string;
