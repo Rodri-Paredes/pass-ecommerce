@@ -23,7 +23,7 @@ export default function MembershipCardPreview({
       viewport={viewportOnce}
       className="flex justify-center"
     >
-      <div className="relative aspect-[1.586/1] w-full max-w-[430px] overflow-hidden border border-[#d7bc78]/80 bg-[linear-gradient(135deg,#f1d995_0%,#b9954d_48%,#e6ca86_100%)] p-6 text-[#1b1710] shadow-[0_24px_70px_-25px_rgba(214,177,92,.6)] sm:p-8">
+      <div className="relative aspect-[1.586/1] w-full max-w-[520px] overflow-hidden border border-[#d7bc78]/80 bg-[linear-gradient(135deg,#f1d995_0%,#b9954d_48%,#e6ca86_100%)] p-6 text-[#1b1710] shadow-[0_24px_70px_-25px_rgba(214,177,92,.6)] sm:p-8 lg:max-w-[560px]">
         <div className="absolute -right-20 -top-24 h-56 w-56 rounded-full bg-white/25 blur-3xl" />
         <div className="absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-black/10 blur-3xl" />
 
