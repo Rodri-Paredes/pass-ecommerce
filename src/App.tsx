@@ -71,6 +71,7 @@ function App() {
           onClose={() => setShowDiscountModal(false)}
         />
         {/* Track SPA route changes and send pageviews to analytics */}
+        <ScrollToTop />
         <RouteChangeTracker />
         <main className="overflow-x-hidden">
           <PageTransition>
@@ -102,6 +103,16 @@ function App() {
       </div>
     </Router>
   );
+}
+
+function ScrollToTop() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.pathname, location.search]);
+
+  return null;
 }
 
 function RouteChangeTracker() {
