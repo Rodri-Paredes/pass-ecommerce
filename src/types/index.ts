@@ -123,6 +123,18 @@ export interface LoyaltySummary {
   customer_id: string; enabled: boolean; points_balance: number; lifetime_points_earned: number; lifetime_points_redeemed: number; transactions: LoyaltyTransaction[];
 }
 
+export interface LoyaltyReward {
+  id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  reward_type: string;
+  points_cost: number;
+  is_active: boolean;
+  is_public: boolean;
+  display_order: number;
+}
+
 export interface CrewPlan {
   id: string;
   code: string;
