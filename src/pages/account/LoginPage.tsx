@@ -21,7 +21,12 @@ export default function LoginPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await signIn(email, password);
+      const status = await signIn(email, password);
+      if (status === 'needs_link') {
+        addToast('Tu sesión es válida. Vincula tu perfil de tienda con tu CI y teléfono.', 'success');
+        navigate('/activate', { replace: true });
+        return;
+      }
       navigate(redirectTo, { replace: true });
     } catch (error: unknown) {
       addToast(error instanceof Error ? error.message : 'No se pudo iniciar sesión', 'error');

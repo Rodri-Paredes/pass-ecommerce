@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { CrewBenefit, CrewMembership, CrewMembershipRequest, CrewPlan, CrewPlanBenefit, CrewSaleQuote, CrewSettings, LoyaltyReward, LoyaltySummary } from '../types';
+import type { CrewBenefit, CrewMembership, CrewMembershipRequest, CrewPlan, CrewPlanBenefit, CrewSaleQuote, CrewSettings, LoyaltyCampaignNotice, LoyaltyReward, LoyaltySummary } from '../types';
 
 const fail = (error: { message: string } | null) => { if (error) throw error; };
 
@@ -35,6 +35,12 @@ export const passCrewService = {
     const { data, error } = await supabase.rpc('get_customer_loyalty_summary', { p_customer_id: customerId });
     if (error) throw error;
     return data as LoyaltySummary;
+  },
+  async getLoyaltyCampaignNotice(customerId: string): Promise<LoyaltyCampaignNotice | null> {
+    const { data, error } = await supabase.rpc('get_customer_loyalty_campaign', { p_customer_id: customerId });
+    if (error) throw error;
+    const notice = data as LoyaltyCampaignNotice;
+    return notice?.audience && notice.audience !== 'base' && Number(notice.multiplier) > 1 ? notice : null;
   },
   async getPublicRewards(): Promise<LoyaltyReward[]> {
     const { data, error } = await supabase.from('loyalty_rewards').select('*').eq('is_active', true).eq('is_public', true).order('display_order');

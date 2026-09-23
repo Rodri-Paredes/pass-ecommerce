@@ -125,6 +125,13 @@ export interface LoyaltySummary {
   customer_id: string; enabled: boolean; points_balance: number; lifetime_points_earned: number; lifetime_points_redeemed: number; transactions: LoyaltyTransaction[];
 }
 
+export interface LoyaltyCampaignNotice {
+  campaign_id?: string;
+  campaign_name?: string;
+  multiplier: number;
+  audience: 'all_customers' | 'crew_only' | 'base';
+}
+
 export interface LoyaltyReward {
   id: string;
   code: string;
