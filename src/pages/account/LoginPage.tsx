@@ -74,7 +74,7 @@ export default function LoginPage() {
           {isSubmitting ? 'Ingresando...' : 'Ingresar'}
         </motion.button>
         <p className="text-center text-xs text-gray-500">
-          ¿Ya eres cliente de tienda? <Link to="/activate" className="font-medium text-black underline">Activa tu cuenta con tu código PASS</Link>
+          ¿Ya eres cliente de tienda? <Link to="/activate" className="font-medium text-black underline">Vincula tu cuenta con CI y teléfono</Link>
         </p>
       </form>
     </AuthLayout>

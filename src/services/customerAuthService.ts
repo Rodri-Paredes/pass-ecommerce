@@ -2,55 +2,56 @@ import { supabase } from '../lib/supabase';
 import type { CustomerProfile } from '../types';
 
 const PENDING_PROFILE_KEY = 'pass_pending_web_profile';
+const GENERIC_LINK_ERROR = 'No pudimos vincular tu perfil de tienda con estos datos.';
 
 export type CustomerActivationResult = {
-  status: 'linked' | 'pending';
+  status: 'linked';
   customer?: CustomerProfile;
   request_id?: string;
   customer_id?: string;
 };
 
 export const customerAuthService = {
-  async ensureCustomerProfile(fullName?: string, phone?: string) {
-    const { data, error } = await supabase.rpc('ensure_customer_profile', {
-      p_full_name: fullName?.trim() || null,
-      p_phone: phone?.trim() || null,
+  async linkByCiPhone(ci: string, phone: string): Promise<CustomerProfile> {
+    const { data, error } = await supabase.rpc('link_customer_profile_by_ci_phone', {
+      p_ci: ci.trim(),
+      p_phone: phone.trim(),
     });
     if (error) throw error;
     return data as CustomerProfile;
   },
 
-  async signUp(email: string, password: string, fullName: string, phone?: string, createProfile = true) {
+  async signUp(email: string, password: string, ci: string, phone: string) {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
 
-    if (data.user && createProfile) {
-      if (data.session) {
-        await this.ensureCustomerProfile(fullName, phone);
-      } else {
-        window.localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify({ fullName, phone: phone || null }));
+    if (data.user) {
+      window.localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify({ ci: ci.trim(), phone: phone.trim() }));
+      if (data.session && data.user.email_confirmed_at) {
+        await this.linkByCiPhone(ci, phone);
+        window.localStorage.removeItem(PENDING_PROFILE_KEY);
       }
     }
 
     return data;
   },
 
-  async activateCustomerAccount(customerCode: string, phone: string): Promise<CustomerActivationResult> {
-    const { data, error } = await supabase.rpc('request_customer_account_link', {
-      p_customer_code: customerCode,
-      p_phone: phone,
-    });
-    if (error) throw error;
-    return data as CustomerActivationResult;
+  async activateCustomerAccount(ci: string, phone: string): Promise<CustomerActivationResult> {
+    const customer = await this.linkByCiPhone(ci, phone);
+    return { status: 'linked', customer };
   },
 
   async signIn(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
+    if (!data.user.email_confirmed_at) {
+      throw new Error('Debes verificar tu email antes de vincular tu perfil de tienda.');
+    }
     const pending = window.localStorage.getItem(PENDING_PROFILE_KEY);
     if (pending) {
-      const profile = JSON.parse(pending) as { fullName?: string; phone?: string };
-      await this.ensureCustomerProfile(profile.fullName, profile.phone);
+      const profile = JSON.parse(pending) as { ci?: string; phone?: string };
+      if (!profile.ci || !profile.phone) throw new Error(GENERIC_LINK_ERROR);
+      await this.linkByCiPhone(profile.ci, profile.phone);
       window.localStorage.removeItem(PENDING_PROFILE_KEY);
     }
     return data;

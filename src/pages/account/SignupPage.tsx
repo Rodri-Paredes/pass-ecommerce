@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import AuthLayout from '../../components/auth/AuthLayout';
 import AuthInput from '../../components/auth/AuthInput';
@@ -7,7 +7,7 @@ import { useCustomerAuthStore } from '../../store/customerAuthStore';
 import { useToastStore } from '../../store/toastStore';
 
 export default function SignupPage() {
-  const [fullName, setFullName] = useState('');
+  const [ci, setCi] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -17,8 +17,6 @@ export default function SignupPage() {
   const signUp = useCustomerAuthStore((s) => s.signUp);
   const addToast = useToastStore((s) => s.addToast);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/account';
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -34,8 +32,9 @@ export default function SignupPage() {
 
     setIsSubmitting(true);
     try {
-      await signUp(email, password, fullName, phone || undefined);
-      navigate(redirectTo, { replace: true });
+      await signUp(email, password, ci, phone);
+      addToast('Cuenta creada. Revisa tu email y luego inicia sesión para vincular tu perfil.', 'success');
+      navigate('/login', { replace: true });
     } catch (error: unknown) {
       addToast(error instanceof Error ? error.message : 'No se pudo crear la cuenta', 'error');
     } finally {
@@ -58,13 +57,13 @@ export default function SignupPage() {
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <AuthInput
-          id="fullName"
-          label="Nombre completo"
+          id="ci"
+          label="CI"
           type="text"
           required
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Tu nombre completo"
+          value={ci}
+          onChange={(e) => setCi(e.target.value)}
+          placeholder="Tu número de carnet"
         />
 
         <AuthInput
@@ -79,11 +78,12 @@ export default function SignupPage() {
 
         <AuthInput
           id="phone"
-          label="Teléfono (opcional)"
+          label="Teléfono"
           type="tel"
+          required
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="+591 XXXXXXXX"
+          placeholder="70707070"
         />
 
         <AuthInput

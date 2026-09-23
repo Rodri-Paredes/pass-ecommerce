@@ -9,8 +9,8 @@ interface CustomerAuthState {
   isAuthenticated: boolean;
 
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string, phone?: string, createProfile?: boolean) => Promise<void>;
-  activateCustomerAccount: (customerCode: string, phone: string) => Promise<CustomerActivationResult>;
+  signUp: (email: string, password: string, ci: string, phone: string) => Promise<void>;
+  activateCustomerAccount: (ci: string, phone: string) => Promise<CustomerActivationResult>;
   signOut: () => Promise<void>;
   loadCustomer: () => Promise<void>;
 }
@@ -25,13 +25,13 @@ export const useCustomerAuthStore = create<CustomerAuthState>((set, get) => ({
     await get().loadCustomer();
   },
 
-  signUp: async (email, password, fullName, phone, createProfile = true) => {
-    await customerAuthService.signUp(email, password, fullName, phone, createProfile);
+  signUp: async (email, password, ci, phone) => {
+    await customerAuthService.signUp(email, password, ci, phone);
     await get().loadCustomer();
   },
 
-  activateCustomerAccount: async (customerCode, phone) => {
-    const result = await customerAuthService.activateCustomerAccount(customerCode, phone);
+  activateCustomerAccount: async (ci, phone) => {
+    const result = await customerAuthService.activateCustomerAccount(ci, phone);
     if (result.status === 'linked' && result.customer) set({ customer: result.customer, isAuthenticated: true, isLoading: false });
     return result;
   },
