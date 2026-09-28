@@ -4,6 +4,15 @@ import type { CustomerProfile } from '../types';
 const PENDING_PROFILE_KEY = 'pass_pending_web_profile';
 const GENERIC_LINK_ERROR = 'No pudimos vincular tu perfil de tienda con estos datos.';
 
+const normalizeSiteUrl = (url: string) => url.trim().replace(/\/+$/, '');
+
+const getEmailRedirectTo = () => {
+  const configuredSiteUrl = import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined;
+  const browserOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+  const siteUrl = normalizeSiteUrl(configuredSiteUrl || browserOrigin);
+  return `${siteUrl}/login`;
+};
+
 export type CustomerActivationResult = {
   status: 'linked';
   customer?: CustomerProfile;
@@ -22,7 +31,13 @@ export const customerAuthService = {
   },
 
   async signUp(email: string, password: string, ci: string, phone: string) {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: getEmailRedirectTo(),
+      },
+    });
     if (error) throw error;
 
     if (data.user) {
