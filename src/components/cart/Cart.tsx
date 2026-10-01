@@ -151,6 +151,18 @@ Código de pedido: *${orderCode}*`;
     setIsProcessing(true);
 
     try {
+      const productIds = [...new Set(items.map(item => item.product.id))];
+      const { data: publishedProducts, error: visibilityError } = await supabase
+        .from('products')
+        .select('id')
+        .in('id', productIds)
+        .eq('is_visible', true);
+
+      if (visibilityError || publishedProducts?.length !== productIds.length) {
+        alert('No se puede enviar el pedido: hay productos que ya no están publicados. Revisa el carrito.');
+        return;
+      }
+
       // Generar código de pedido
       const orderCode = generateOrderCode();
       

@@ -16,7 +16,7 @@ export const useDiscountedProducts = () => {
         setIsLoading(true);
 
         // Try localStorage cache first
-        const cached = CacheManager.get<Product[]>('discount_products');
+        const cached = CacheManager.get<Product[]>('published_discount_products_v1');
         if (cached) {
           setProducts(cached);
           setIsLoading(false);
@@ -28,11 +28,12 @@ export const useDiscountedProducts = () => {
         const { data, error } = await supabase
           .from('products')
           .select('*')
+          .eq('is_visible', true)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
         setProducts(data || []);
-        CacheManager.set('discount_products', data || [], 30); // Cache 30 min
+        CacheManager.set('published_discount_products_v1', data || [], 30); // Cache 30 min
 
         // Cargar mapa de descuentos
         await loadActiveDiscountsMap();

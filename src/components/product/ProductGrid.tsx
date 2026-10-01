@@ -27,7 +27,7 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
 
   // Crear clave de caché única basada en los filtros
   const cacheKey = useMemo(() => {
-    const parts = ['products'];
+    const parts = ['published-products-v1'];
     if (category) parts.push(`cat:${category}`);
     if (dropId) parts.push(`drop:${dropId}`);
     if (searchQuery) parts.push(`q:${searchQuery}`);
@@ -50,7 +50,8 @@ const ProductGrid = memo(function ProductGrid({ category, dropId, searchQuery, p
           )
         ),
         drop:drops(*)
-      `);
+      `)
+      .eq('is_visible', true);
 
     if (category) query = query.eq('category', category);
     if (dropId) query = query.eq('drop_id', dropId);

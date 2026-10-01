@@ -51,6 +51,7 @@ export default function ProductPage() {
           ),
           drop:drops(*)
         `)
+        .eq('is_visible', true)
         .eq('id', id)
         .single();
 
@@ -83,6 +84,7 @@ export default function ProductPage() {
       let query = supabase
         .from('products')
         .select(recommendedSelect)
+        .eq('is_visible', true)
         .neq('id', currentProduct.id)
         .limit(4);
 
