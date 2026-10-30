@@ -58,6 +58,12 @@
   color: var(--bone) !important;
 }
 
+/* A saved product must visibly change state against the dark seasonal panel. */
+.halloween-theme .fill-black {
+  fill: var(--ember) !important;
+  color: var(--ember) !important;
+}
+
 .halloween-theme [class*="border-black"],
 .halloween-theme [class*="border-white"] {
   border-color: rgba(243, 229, 207, .18) !important;
