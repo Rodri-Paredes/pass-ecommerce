@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { pageview } from './lib/analytics';
@@ -27,14 +27,15 @@ import ActivateAccountPage from './pages/account/ActivateAccountPage';
 import SignupPage from './pages/account/SignupPage';
 import AccountPage from './pages/account/AccountPage';
 import PassCrewLandingPage from './pages/PassCrewLandingPage';
-import PassCrewRequestPage from './pages/PassCrewRequestPage';
-import PassCrewStatusPage from './pages/PassCrewStatusPage';
-import RewardsCatalogPage from './pages/RewardsCatalogPage';
 import FavoritesPage from './pages/FavoritesPage';
 import { useCustomerAuthStore } from './store/customerAuthStore';
+import HalloweenToggle, { HalloweenTransition } from './components/layout/HalloweenToggle';
 
 function App() {
   const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [halloweenMode, setHalloweenMode] = useState(() => localStorage.getItem('pass-halloween-mode') === 'on');
+  const [themeSwitching, setThemeSwitching] = useState(false);
+  const [nextHalloweenMode, setNextHalloweenMode] = useState(false);
   const loadCustomer = useCustomerAuthStore((s) => s.loadCustomer);
 
   useEffect(() => {
@@ -59,9 +60,22 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem('pass-halloween-mode', halloweenMode ? 'on' : 'off');
+  }, [halloweenMode]);
+
+  const toggleHalloweenMode = () => {
+    if (themeSwitching) return;
+    const next = !halloweenMode;
+    setNextHalloweenMode(next);
+    setThemeSwitching(true);
+    window.setTimeout(() => setHalloweenMode(next), 480);
+    window.setTimeout(() => setThemeSwitching(false), 980);
+  };
+
   return (
     <Router>
-      <div className="min-h-screen bg-white overflow-x-hidden">
+      <div className={`${halloweenMode ? 'halloween-theme ' : ''}min-h-screen bg-white overflow-x-hidden`}>
         <Header />
         <Cart />
         <Toast />
@@ -94,13 +108,15 @@ function App() {
               <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/pass-crew" element={<PassCrewLandingPage />} />
-              <Route path="/pass-crew/recompensas" element={<RewardsCatalogPage />} />
-              <Route path="/pass-crew/join" element={<ProtectedRoute><PassCrewRequestPage /></ProtectedRoute>} />
-              <Route path="/pass-crew/status" element={<ProtectedRoute><PassCrewStatusPage /></ProtectedRoute>} />
+              <Route path="/pass-crew/recompensas" element={<PassCrewLandingPage />} />
+              <Route path="/pass-crew/join" element={<PassCrewLandingPage />} />
+              <Route path="/pass-crew/status" element={<PassCrewLandingPage />} />
             </Routes>
           </PageTransition>
         </main>
         <Footer />
+        <HalloweenToggle active={halloweenMode} onToggle={toggleHalloweenMode} disabled={themeSwitching} />
+        {themeSwitching && <HalloweenTransition activating={nextHalloweenMode} />}
         <Analytics />
       </div>
     </Router>
@@ -109,10 +125,50 @@ function App() {
 
 function ScrollToTop() {
   const location = useLocation();
+  const navigationType = useNavigationType();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-  }, [location.pathname, location.search]);
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+    const storageKey = `pass-scroll:${location.pathname}${location.search}`;
+    const routePath = `${location.pathname}${location.search}`;
+    const savedPosition = navigationType === 'POP' ? Number(sessionStorage.getItem(storageKey) || 0) : 0;
+    let attempts = 0;
+    let timer = 0;
+    let animationFrame = 0;
+
+    const savePosition = () => {
+      if (`${window.location.pathname}${window.location.search}` !== routePath) return;
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(() => sessionStorage.setItem(storageKey, String(window.scrollY)));
+    };
+
+    const saveBeforeNavigation = (event: MouseEvent) => {
+      if ((event.target as Element | null)?.closest('a[href]')) savePosition();
+    };
+
+    const restore = () => {
+      const pageIsTallEnough = document.documentElement.scrollHeight >= savedPosition + window.innerHeight;
+      if (pageIsTallEnough || attempts >= 30) {
+        window.scrollTo({ top: savedPosition, left: 0, behavior: 'auto' });
+        return;
+      }
+      attempts += 1;
+      timer = window.setTimeout(restore, 100);
+    };
+
+    if (savedPosition > 0) timer = window.setTimeout(restore, 450);
+    else window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+    window.addEventListener('scroll', savePosition, { passive: true });
+    document.addEventListener('click', saveBeforeNavigation, true);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener('scroll', savePosition);
+      document.removeEventListener('click', saveBeforeNavigation, true);
+    };
+  }, [location.key, location.pathname, location.search, navigationType]);
 
   return null;
 }

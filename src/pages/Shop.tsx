@@ -16,9 +16,9 @@ export default function Shop() {
   const search = searchParams.get('search') || '';
 
   useEffect(() => {
-    Promise.all([supabase.from('products').select('color, fit, product_style'), supabase.from('product_variants').select('size')]).then(([products, variants]) => {
+    Promise.all([supabase.from('products').select('color, fit, product_style').eq('is_visible', true), supabase.from('product_variants').select('size, product:products!inner(is_visible)').eq('product.is_visible', true)]).then(([products, variants]) => {
       const unique = (values: (string | null | undefined)[]) => [...new Set(values.filter(Boolean) as string[])].sort();
-      setFacets({ colors: unique((products.data || []).map((item) => item.color)), fits: unique((products.data || []).map((item) => item.fit)), styles: unique((products.data || []).map((item) => item.product_style)), sizes: unique((variants.data || []).map((item) => item.size)) });
+      setFacets({ colors: unique((products.data || []).map((item) => item.color)), fits: unique((products.data || []).map((item) => item.fit)), styles: unique((products.data || []).map((item) => item.product_style)), sizes: unique((variants.data || []).map((item) => item.size?.trim().toUpperCase())) });
     });
   }, []);
 

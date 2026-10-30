@@ -41,12 +41,16 @@ export default function Cart() {
       const key = branch.name.replace(/^Sucursal\s+/i, '').trim().toLowerCase();
       const available = WHATSAPP_BY_BRANCH[key] || [];
       setStores(available);
-      if (available.length && !selectedStore) setSelectedStore(available[0].number);
+      if (available.length && !available.some((store) => store.number === selectedStore)) {
+        setSelectedStore(available[0].number);
+      }
       if (BRANCH_TO_CITY[key] && !selectedCity) setCity(BRANCH_TO_CITY[key]);
     } else {
       const available = Object.values(WHATSAPP_BY_BRANCH).flat();
       setStores(available);
-      if (available.length && !selectedStore) setSelectedStore(available[0].number);
+      if (available.length && !available.some((store) => store.number === selectedStore)) {
+        setSelectedStore(available[0].number);
+      }
     }
   }, [selectedBranch, branches, selectedStore, selectedCity, setSelectedStore, setCity]);
   useEffect(() => { if (!isOpen) return; const previous = document.body.style.overflow; document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = previous; }; }, [isOpen]);
@@ -74,6 +78,12 @@ export default function Cart() {
     if (!items.length || !selectedStore) return;
     setProcessing(true);
     try {
+      const ids = [...new Set(items.map(item => item.product.id))];
+      const { data: published, error: visibilityError } = await supabase.from('products').select('id').in('id', ids).eq('is_visible', true);
+      if (visibilityError || published?.length !== ids.length) {
+        alert('No se puede enviar el pedido: hay productos que ya no están publicados. Revisa el carrito.');
+        return;
+      }
       const code = orderCode();
       void supabase.from('shared_orders').insert({ order_code: code, items, total, selected_city: selectedCity, selected_store: selectedStore, comments }).then(({ error }) => { if (error) console.warn('No se pudo guardar en BD:', error.message); });
       window.open(`https://wa.me/${selectedStore}?text=${encodeURIComponent(message(code))}`, '_blank');

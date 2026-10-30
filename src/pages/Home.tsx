@@ -4,12 +4,18 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../components/product/ProductCard';
 import { optimizeImageUrl } from '../lib/imageOptimizer';
 import { supabase } from '../lib/supabase';
-import type { Drop, ProductWithVariants } from '../types';
+import { CATEGORIES, type Drop, type ProductWithVariants } from '../types';
 
 const HERO = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/drops-banners/IMG_9579.HEIC';
-const HOODIES = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/1760802011775-Photoroom_20251018_110704.jpeg';
-const POLERAS = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/1754948116239-Photoroom_20250417_140556.jpeg';
 const EDITORIAL = 'https://nvkoustxdmrxhdrcozqz.supabase.co/storage/v1/object/public/products/home.jpeg';
+const CATEGORY_STYLES = [
+  'col-span-2 bg-black text-white sm:col-span-1',
+  'bg-[#e9e7e0] text-black',
+  'bg-[#c9a961] text-black',
+  'bg-[#d8d8d5] text-black',
+  'bg-black text-white',
+  'col-span-2 bg-[#e9e7e0] text-black sm:col-span-1',
+];
 
 export default function Home() {
   const [latestDrop, setLatestDrop] = useState<Drop | null>(null);
@@ -18,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     Promise.all([
       supabase.from('drops').select('*').eq('status', 'ACTIVO').order('is_featured', { ascending: false }).order('launch_date', { ascending: false }).limit(1),
-      supabase.from('products').select('*, variants:product_variants(*, stock(*, branch:branches(*))), drop:drops(*)').order('created_at', { ascending: false }).limit(4),
+      supabase.from('products').select('*, variants:product_variants(*, stock(*, branch:branches(*))), drop:drops(*)').eq('is_visible', true).order('created_at', { ascending: false }).limit(4),
     ]).then(([dropResult, productsResult]) => {
       if (dropResult.data?.[0]) setLatestDrop(dropResult.data[0]);
       if (productsResult.data) setNewArrivals(productsResult.data);
@@ -47,9 +53,33 @@ export default function Home() {
         <Link to="/shop?sort=newest" className="mt-10 block border border-black py-4 text-center text-[10px] font-bold uppercase tracking-[0.18em] sm:hidden">Ver todo</Link>
       </section>
 
-      <section className="grid md:grid-cols-2">
-        <CategoryBlock image={HOODIES} title="Hoodies" to="/shop?category=Hoodies" />
-        <CategoryBlock image={POLERAS} title="Poleras" to="/shop?category=Poleras" />
+      <section id="categories" className="overflow-hidden bg-white py-14 text-black sm:py-24">
+        <div className="pass-container">
+          <div className="mb-7 flex items-end justify-between border-b border-black pb-5 sm:mb-10 sm:pb-7">
+            <div>
+              <p className="pass-kicker">Colecciones</p>
+              <h2 className="mt-2 text-5xl font-black uppercase leading-none tracking-[-0.065em] sm:text-7xl">Shop.</h2>
+            </div>
+            <Link to="/shop" className="group mb-1 inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.18em]">Ver todo <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+            {CATEGORIES.map((category, index) => (
+              <Link
+                key={category}
+                to={`/shop?category=${encodeURIComponent(category)}`}
+                className={`group relative flex min-h-[150px] flex-col justify-between overflow-hidden p-5 transition-transform duration-300 hover:-translate-y-1 sm:min-h-[220px] sm:p-7 ${CATEGORY_STYLES[index]}`}
+              >
+                <span className="absolute -right-2 -top-7 text-[6rem] font-black leading-none tracking-[-0.08em] opacity-[0.07] sm:text-[8rem]">0{index + 1}</span>
+                <div className="relative flex items-start justify-between">
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.22em] opacity-55">PASS / 0{index + 1}</span>
+                  <span className="grid h-8 w-8 place-items-center rounded-full border border-current/30 transition-transform duration-300 group-hover:rotate-[-45deg] sm:h-10 sm:w-10"><ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" /></span>
+                </div>
+                <p className="relative max-w-[12ch] text-2xl font-black uppercase leading-[0.88] tracking-[-0.05em] sm:text-4xl">{category}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="pass-container py-16 sm:py-28">
@@ -62,8 +92,4 @@ export default function Home() {
       <section className="relative min-h-[70vh] overflow-hidden bg-neutral-900"><img src={optimizeImageUrl(EDITORIAL, { width: 1800, quality: 82 })} alt="PASS streetwear" loading="lazy" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-black/35" /><div className="pass-container relative flex min-h-[70vh] items-end pb-12 text-white sm:pb-20"><div><p className="pass-kicker text-white/70">PASS / Bolivia</p><p className="mt-3 max-w-3xl text-4xl font-black uppercase leading-[0.92] tracking-[-0.055em] sm:text-7xl">Diseñado para moverte a tu manera.</p></div></div></section>
     </div>
   );
-}
-
-function CategoryBlock({ image, title, to }: { image: string; title: string; to: string }) {
-  return <Link to={to} className="group relative min-h-[62vh] overflow-hidden bg-neutral-100"><img src={optimizeImageUrl(image, { width: 1000, quality: 80 })} alt={title} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.035]" /><div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" /><div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-6 text-white sm:p-10"><h2 className="text-4xl font-black uppercase tracking-[-0.055em] sm:text-6xl">{title}</h2><span className="mb-1 text-2xl transition-transform group-hover:translate-x-1">→</span></div></Link>;
 }

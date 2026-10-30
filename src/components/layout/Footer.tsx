@@ -1,4 +1,4 @@
-import { Facebook, Instagram } from 'lucide-react';
+import { ChevronDown, Facebook, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CATEGORIES } from '../../types';
 
@@ -6,19 +6,57 @@ const TikTokIcon = ({ className }: { className?: string }) => <svg viewBox="0 0 
 
 export default function Footer() {
   return (
-    <footer className="mt-20 bg-black text-white sm:mt-28">
-      <div className="pass-container py-12 sm:py-16">
-        <div className="grid gap-12 border-b border-white/15 pb-12 md:grid-cols-[2fr_1fr_1fr_1fr] md:gap-8">
+    <footer className="bg-[#080808] text-white">
+      <div className="pass-container py-10 md:hidden">
+        <div className="flex items-start justify-between gap-5">
           <div>
-            <p className="text-5xl font-black tracking-[-0.075em] sm:text-7xl">PASS</p>
-            <p className="mt-4 max-w-xs text-sm leading-6 text-white/55">Streetwear boliviano. Prendas diseñadas para llevar la calle con identidad propia.</p>
+            <p className="text-4xl font-black leading-none tracking-[-0.075em]">PASS</p>
+            <p className="mt-3 max-w-[250px] text-xs leading-5 text-white/50">Streetwear boliviano con identidad propia.</p>
           </div>
+          <div className="flex gap-2">
+            <SocialLink href="https://instagram.com/pass.clothing" label="Instagram"><Instagram className="h-4 w-4" /></SocialLink>
+            <SocialLink href="https://www.tiktok.com/@pass.clothing" label="TikTok"><TikTokIcon className="h-4 w-4" /></SocialLink>
+            <SocialLink href="https://www.facebook.com/pass.clothing" label="Facebook"><Facebook className="h-4 w-4" /></SocialLink>
+          </div>
+        </div>
+
+        <div className="mt-9 border-t border-white/15">
+          <FooterAccordion title="Shop">
+            <div className="grid grid-cols-2 gap-x-5 gap-y-3 pb-6 text-sm text-white/65">
+              {CATEGORIES.map((category) => <Link key={category} to={`/shop?category=${encodeURIComponent(category)}`} className="hover:text-white">{category}</Link>)}
+              <Link to="/drops" className="hover:text-white">Drops</Link>
+            </div>
+          </FooterAccordion>
+          <FooterAccordion title="Ayuda">
+            <div className="grid grid-cols-2 gap-x-5 gap-y-3 pb-6 text-sm text-white/65">
+              <Link to="/shipping" className="hover:text-white">Envíos</Link>
+              <Link to="/returns" className="hover:text-white">Cambios</Link>
+              <Link to="/size-guide" className="hover:text-white">Guía de tallas</Link>
+              <Link to="/contact" className="hover:text-white">Contacto</Link>
+            </div>
+          </FooterAccordion>
+        </div>
+
+        <div className="flex items-center justify-between border-t border-white/15 pt-5 text-[9px] uppercase tracking-[0.16em] text-white/35"><p>© {new Date().getFullYear()} PASS</p><p>Bolivia</p></div>
+      </div>
+
+      <div className="pass-container hidden py-16 md:block">
+        <div className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-8 border-b border-white/15 pb-14">
+          <div><p className="text-7xl font-black tracking-[-0.075em]">PASS</p><p className="mt-4 max-w-xs text-sm leading-6 text-white/55">Streetwear boliviano. Prendas diseñadas para llevar la calle con identidad propia.</p></div>
           <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Shop</p><ul className="space-y-3 text-sm">{CATEGORIES.slice(0, 5).map((category) => <li key={category}><Link className="hover:text-white/55" to={`/shop?category=${encodeURIComponent(category)}`}>{category}</Link></li>)}<li><Link className="hover:text-white/55" to="/drops">Drops</Link></li></ul></div>
           <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Ayuda</p><ul className="space-y-3 text-sm"><li><Link className="hover:text-white/55" to="/shipping">Envíos</Link></li><li><Link className="hover:text-white/55" to="/returns">Cambios y devoluciones</Link></li><li><Link className="hover:text-white/55" to="/size-guide">Guía de tallas</Link></li><li><Link className="hover:text-white/55" to="/contact">Contacto</Link></li></ul></div>
-          <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Social</p><div className="flex gap-4"><a href="https://instagram.com/pass.clothing" target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram className="h-5 w-5" /></a><a href="https://www.tiktok.com/@pass.clothing" target="_blank" rel="noreferrer" aria-label="TikTok"><TikTokIcon className="h-5 w-5" /></a><a href="https://www.facebook.com/pass.clothing" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook className="h-5 w-5" /></a></div></div>
+          <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Social</p><div className="flex gap-3"><SocialLink href="https://instagram.com/pass.clothing" label="Instagram"><Instagram className="h-5 w-5" /></SocialLink><SocialLink href="https://www.tiktok.com/@pass.clothing" label="TikTok"><TikTokIcon className="h-5 w-5" /></SocialLink><SocialLink href="https://www.facebook.com/pass.clothing" label="Facebook"><Facebook className="h-5 w-5" /></SocialLink></div></div>
         </div>
-        <div className="flex flex-col gap-3 pt-6 text-[10px] uppercase tracking-[0.18em] text-white/40 sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} PASS Clothing</p><p>Bolivia</p></div>
+        <div className="flex items-center justify-between pt-6 text-[10px] uppercase tracking-[0.18em] text-white/40"><p>© {new Date().getFullYear()} PASS Clothing</p><p>Bolivia</p></div>
       </div>
     </footer>
   );
+}
+
+function FooterAccordion({ title, children }: { title: string; children: React.ReactNode }) {
+  return <details className="group border-b border-white/15"><summary className="flex cursor-pointer list-none items-center justify-between py-5 text-xs font-semibold uppercase tracking-[0.2em] [&::-webkit-details-marker]:hidden">{title}<ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" /></summary>{children}</details>;
+}
+
+function SocialLink({ href, label, children }: { href: string; label: string; children: React.ReactNode }) {
+  return <a href={href} target="_blank" rel="noreferrer" aria-label={label} className="grid h-9 w-9 place-items-center rounded-full border border-white/20 transition-colors hover:bg-white hover:text-black">{children}</a>;
 }
