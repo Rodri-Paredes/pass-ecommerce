@@ -42,6 +42,14 @@
   background-color: var(--panel) !important;
 }
 
+/* Tailwind opacity variants are separate classes: without these, a white
+   control bar inherits the light text color from the seasonal theme. */
+.halloween-theme .bg-white\/95,
+.halloween-theme .bg-white\/90 {
+  background-color: var(--panel-raised) !important;
+  color: var(--bone) !important;
+}
+
 .halloween-theme [class*="text-black"] {
   color: var(--bone) !important;
 }
