@@ -13,6 +13,9 @@
 - Se retiró la línea diagonal del hero en móvil para que no invada el titular.
 - Se rediseñó la vista previa de prendas: cuadrícula compacta, copias sin fecha repetida y fotos ocultas con tratamiento rojo/negro.
 - Se sustituyó el titular provisional de la vista previa por el texto directo “Aún oculto”.
+- Se reemplazó el espacio relativo del titular por un margen explícito entre PASS y FRIDAY para asegurar su separación en móvil.
+- Se simplificó el hero de PASS Friday: título en una sola línea y sin elementos decorativos que compitan con él.
+- Se ajustó el espaciado interno de “FRIDAY” y se diferenció en blanco para que las letras no se junten.
 
 ## 2026-11-04
 

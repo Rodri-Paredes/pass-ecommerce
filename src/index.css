@@ -96,27 +96,6 @@
     animation: slideDown 0.2s ease-out;
   }
 
-  .pass-friday-stamp {
-    animation: passFridayStamp 560ms cubic-bezier(.16, 1, .3, 1) both;
-  }
-
-  @keyframes passFridayStamp {
-    from {
-      opacity: 0;
-      transform: translate3d(-1.2rem, .7rem, 0) rotate(-2deg);
-    }
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0) rotate(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .pass-friday-stamp {
-      animation: none;
-    }
-  }
-
   .scroll-snap-x {
     scroll-snap-type: x mandatory;
   }

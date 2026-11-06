@@ -44,15 +44,13 @@ export default function PassFridayPage() {
 
   return (
     <main className="min-h-screen bg-[#0a0b08] text-white">
-      <section className="relative isolate overflow-hidden bg-[#f0442f] text-black">
-        <span className="pointer-events-none absolute -right-[.18em] top-[.18em] -z-10 select-none text-[clamp(10rem,36vw,34rem)] font-black uppercase leading-none tracking-[-.13em] text-black/[.075]" aria-hidden="true">DROP</span>
-        <div className="pointer-events-none absolute inset-x-0 top-[57%] hidden h-[2px] -rotate-[5deg] bg-black/80 sm:block" aria-hidden="true" />
+      <section className="bg-[#f0442f] text-black">
         <div className="pass-container py-7 sm:py-10">
           <Link to="/" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.17em] text-black/65 transition hover:text-black"><ArrowLeft className="h-4 w-4" /> Volver a PASS</Link>
           <div className="relative grid gap-12 pb-12 pt-16 sm:pb-16 sm:pt-24 md:grid-cols-[1.15fr_.85fr] md:gap-x-12 lg:gap-x-16">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[.24em] text-black/65">Viernes 27 de noviembre</p>
-              <h1 className="pass-friday-stamp mt-5 flex max-w-4xl flex-col gap-[0.65em] text-[clamp(3.8rem,10.8vw,9.4rem)] font-black uppercase leading-[.76] tracking-[-.1em] sm:gap-[0.45em]"><span>PASS</span><span>FRIDAY</span></h1>
+              <h1 className="mt-5 whitespace-nowrap text-[clamp(2.75rem,7.5vw,7rem)] font-black uppercase leading-[.86] tracking-[-.035em]">PASS <span className="tracking-[-.005em] text-white">FRIDAY</span></h1>
               <p className="mt-9 max-w-md text-sm font-medium leading-6 text-black/70 sm:text-base">Una selección especial está por desbloquearse. Los detalles aparecen el día del lanzamiento.</p>
             </div>
             <div className="self-end md:pb-3">

@@ -11,8 +11,7 @@
 
 - La interfaz de Halloween fue retirada y sustituida por un contador flotante que lleva a `/pass-friday`.
 - El teaser cuenta hasta el 27 de noviembre de 2026 a las 00:00, hora de Bolivia, y muestra productos desenfocados sin nombres, precios ni compra. El acceso flotante muestra únicamente el contador completo en una línea horizontal sin fondo, fecha ni nombre repetido de campaña. Antes de publicar la campaña, definir productos, fechas y reglas de elegibilidad para aplicar descuentos reales.
-- La apertura de `/pass-friday` usa un hero rojo de alto contraste con contador integrado, título PASS/FRIDAY con separación amplia en móvil y no muestra el contador flotante por segunda vez.
-- La línea decorativa del hero solo se muestra desde pantallas pequeñas en adelante; en móvil se oculta para dejar el titular limpio.
+- La apertura de `/pass-friday` usa un hero rojo de alto contraste con contador integrado y título “PASS FRIDAY” en una sola línea adaptable; “FRIDAY” va en blanco con espaciado propio para mantener las letras legibles. No muestra el contador flotante por segunda vez.
 - La vista previa usa cuatro piezas compactas; si existen fotos de productos, se muestran desenfocadas en rojo/negro, no en gris.
 
 ## Cuentas y salida a producción
