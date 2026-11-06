@@ -22,8 +22,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       const status = await signIn(email, password);
-      if (status === 'needs_link') {
-        addToast('Tu sesión es válida. Vincula tu perfil de tienda con tu CI y teléfono.', 'success');
+      if (status === 'needs_profile') {
+        addToast('Tu sesión es válida. Completa tu perfil para continuar.', 'success');
         navigate('/activate', { replace: true });
         return;
       }
@@ -79,7 +79,7 @@ export default function LoginPage() {
           {isSubmitting ? 'Ingresando...' : 'Ingresar'}
         </motion.button>
         <p className="text-center text-xs text-gray-500">
-          ¿Ya eres cliente de tienda? <Link to="/activate" className="font-medium text-black underline">Vincula tu cuenta con CI y teléfono</Link>
+          ¿Aún no completaste tu perfil? <Link to="/activate" className="font-medium text-black underline">Completar perfil</Link>
         </p>
       </form>
     </AuthLayout>

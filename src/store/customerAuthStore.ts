@@ -1,16 +1,15 @@
 import { create } from 'zustand';
 import type { CustomerProfile } from '../types';
-import { customerAuthService, type CustomerActivationResult } from '../services/customerAuthService';
+import { customerAuthService } from '../services/customerAuthService';
 import { supabase } from '../lib/supabase';
 
 interface CustomerAuthState {
   customer: CustomerProfile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-
-  signIn: (email: string, password: string) => Promise<'linked' | 'needs_link'>;
-  signUp: (email: string, password: string, ci: string, phone: string) => Promise<void>;
-  activateCustomerAccount: (ci: string, phone: string) => Promise<CustomerActivationResult>;
+  signIn: (email: string, password: string) => Promise<'linked' | 'needs_profile'>;
+  signUp: (email: string, password: string, fullName: string, phone: string, ci: string) => Promise<{ requiresEmailConfirmation: boolean }>;
+  completeProfile: (fullName: string, phone: string, ci: string) => Promise<CustomerProfile>;
   signOut: () => Promise<void>;
   loadCustomer: () => Promise<void>;
 }
@@ -24,18 +23,19 @@ export const useCustomerAuthStore = create<CustomerAuthState>((set, get) => ({
     await customerAuthService.signIn(email, password);
     const customer = await customerAuthService.getCurrentCustomer();
     set({ customer, isAuthenticated: !!customer, isLoading: false });
-    return customer ? 'linked' : 'needs_link';
+    return customer ? 'linked' : 'needs_profile';
   },
 
-  signUp: async (email, password, ci, phone) => {
-    await customerAuthService.signUp(email, password, ci, phone);
+  signUp: async (email, password, fullName, phone, ci) => {
+    const result = await customerAuthService.signUp(email, password, fullName, phone, ci);
     await get().loadCustomer();
+    return result;
   },
 
-  activateCustomerAccount: async (ci, phone) => {
-    const result = await customerAuthService.activateCustomerAccount(ci, phone);
-    if (result.status === 'linked' && result.customer) set({ customer: result.customer, isAuthenticated: true, isLoading: false });
-    return result;
+  completeProfile: async (fullName, phone, ci) => {
+    const customer = await customerAuthService.createOwnProfile(fullName, phone, ci);
+    set({ customer, isAuthenticated: true, isLoading: false });
+    return customer;
   },
 
   signOut: async () => {

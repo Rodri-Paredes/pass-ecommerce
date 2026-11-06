@@ -19,303 +19,6 @@
   }
 }
 
-/* Seasonal skin: the store stays legible first, with a nocturnal Halloween palette. */
-.halloween-theme {
-  --night: #120b14;
-  --panel: #1d1420;
-  --panel-raised: #281a2b;
-  --bone: #f3e5cf;
-  --muted-bone: #bfae9b;
-  --ember: #ee6729;
-  --ember-bright: #ff8a42;
-  background:
-    radial-gradient(circle at 90% -10%, rgba(132, 36, 73, .28), transparent 30rem),
-    radial-gradient(circle at 8% 32rem, rgba(238, 103, 41, .10), transparent 26rem),
-    var(--night);
-  color: var(--bone);
-}
-
-.halloween-theme .bg-white,
-.halloween-theme [class*="bg-[#f1f1f1]"],
-.halloween-theme [class*="bg-[#f2f2f2]"],
-.halloween-theme .bg-neutral-100 {
-  background-color: var(--panel) !important;
-}
-
-/* Tailwind opacity variants are separate classes: without these, a white
-   control bar inherits the light text color from the seasonal theme. */
-.halloween-theme .bg-white\/95,
-.halloween-theme .bg-white\/90 {
-  background-color: var(--panel-raised) !important;
-  color: var(--bone) !important;
-}
-
-.halloween-theme [class*="text-black"] {
-  color: var(--bone) !important;
-}
-
-.halloween-theme [class*="text-white"] {
-  color: var(--bone) !important;
-}
-
-/* A saved product must visibly change state against the dark seasonal panel. */
-.halloween-theme .fill-black {
-  fill: var(--ember) !important;
-  color: var(--ember) !important;
-}
-
-.halloween-theme [class*="border-black"],
-.halloween-theme [class*="border-white"] {
-  border-color: rgba(243, 229, 207, .18) !important;
-}
-
-.halloween-theme .bg-black,
-.halloween-theme [class*="bg-[#080808]"],
-.halloween-theme .bg-neutral-900 {
-  background-color: var(--night) !important;
-}
-
-.halloween-theme button.bg-black,
-.halloween-theme a.bg-black,
-.halloween-theme .btn-primary {
-  background-color: var(--ember) !important;
-  color: var(--night) !important;
-}
-
-.halloween-theme button.bg-black:hover,
-.halloween-theme a.bg-black:hover,
-.halloween-theme .btn-primary:hover {
-  background-color: var(--ember-bright) !important;
-}
-
-.halloween-theme input,
-.halloween-theme select,
-.halloween-theme textarea {
-  background-color: var(--panel-raised) !important;
-  border-color: rgba(243, 229, 207, .22) !important;
-  color: var(--bone) !important;
-}
-
-.halloween-theme ::selection {
-  background: var(--ember);
-  color: var(--night);
-}
-
-.halloween-theme .pass-kicker {
-  color: var(--ember) !important;
-}
-
-.halloween-theme .pass-link {
-  border-color: var(--ember);
-}
-
-.halloween-theme .product-card {
-  background: transparent;
-}
-
-.halloween-theme .halloween-announcement {
-  background: linear-gradient(90deg, #42142a, #8c2b25 50%, #42142a) !important;
-  color: var(--bone) !important;
-}
-
-.halloween-theme .halloween-hero > img {
-  filter: saturate(.62) contrast(1.12) sepia(.24) hue-rotate(322deg);
-}
-
-.halloween-theme .halloween-hero > .hero-shade {
-  background: linear-gradient(0deg, rgba(18, 7, 16, .94) 0%, rgba(18, 7, 16, .14) 58%, rgba(66, 20, 42, .46) 100%);
-}
-
-.halloween-theme .halloween-title {
-  text-shadow: 0 0 .6em rgba(238, 103, 41, .24);
-}
-
-.halloween-toggle {
-  position: fixed;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  z-index: 60;
-  display: grid;
-  width: 4.5rem;
-  height: 4.5rem;
-  place-items: center;
-  border: 0;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(25, 11, 19, .9), rgba(25, 11, 19, .32) 68%, transparent 70%);
-  cursor: pointer;
-  filter: drop-shadow(0 .5rem 1rem rgba(0, 0, 0, .25));
-  transition: transform .25s ease, filter .25s ease;
-}
-
-.halloween-toggle:hover { transform: translateY(-.25rem) rotate(-4deg) scale(1.05); }
-.halloween-toggle:focus-visible { outline: 2px solid #f26a2c; outline-offset: 4px; }
-.halloween-toggle img { width: 4.6rem; height: 4.6rem; object-fit: contain; }
-.halloween-toggle span { position: absolute; right: .15rem; bottom: -.35rem; width: max-content; border-radius: 999px; background: #151515; padding: .28rem .45rem; color: white; font-size: .52rem; font-weight: 800; letter-spacing: .1em; opacity: 0; text-transform: uppercase; transform: translateY(.35rem); transition: opacity .2s ease, transform .2s ease; }
-.halloween-toggle:hover span,
-.halloween-toggle:focus-visible span,
-.halloween-toggle--active span { opacity: 1; transform: translateY(0); }
-.halloween-toggle--active { animation: pumpkin-pulse 2.2s ease-in-out infinite; }
-.halloween-toggle:disabled { cursor: wait; opacity: .2; }
-
-@keyframes pumpkin-pulse {
-  50% { filter: drop-shadow(0 0 1rem rgba(239, 97, 35, .85)); }
-}
-
-.halloween-transition {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.halloween-transition::before {
-  position: absolute;
-  inset: 0;
-  content: '';
-  opacity: 0;
-  animation: halloween-flash .98s ease-in-out both;
-}
-
-.halloween-transition--night::before { background: #180c1c; }
-.halloween-transition--day::before { background: #fff8eb; }
-
-.halloween-transition__pumpkin {
-  position: absolute;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  width: 4.6rem;
-  height: 4.6rem;
-  object-fit: contain;
-  filter: drop-shadow(0 0 .8rem rgba(255, 115, 37, .85));
-  animation: pumpkin-to-center .98s cubic-bezier(.2, .8, .15, 1) both;
-}
-
-.halloween-transition__ring {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1rem;
-  aspect-ratio: 1;
-  border: .14rem solid #ff9d4a;
-  border-radius: 999px;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-}
-
-.halloween-transition__ring--one { animation: pumpkin-ring .55s .43s cubic-bezier(.1, .7, .2, 1) both; }
-.halloween-transition__ring--two { border-color: #f3e5cf; animation: pumpkin-ring .62s .5s cubic-bezier(.1, .7, .2, 1) both; }
-
-@keyframes pumpkin-to-center {
-  0% { right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom)); transform: translate(0, 0) rotate(0) scale(1); }
-  48% { right: 50%; bottom: 50%; transform: translate(50%, 50%) rotate(-12deg) scale(1.55); }
-  60% { right: 50%; bottom: 50%; transform: translate(50%, 50%) rotate(8deg) scale(2.3); opacity: 1; }
-  100% { right: 50%; bottom: 50%; transform: translate(50%, 50%) rotate(18deg) scale(18); opacity: 0; }
-}
-
-@keyframes halloween-flash {
-  0%, 43% { opacity: 0; }
-  55% { opacity: .94; }
-  100% { opacity: 0; }
-}
-
-@keyframes pumpkin-ring {
-  0% { opacity: .9; transform: translate(-50%, -50%) scale(.1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(85); }
-}
-
-.halloween-theme .halloween-night-sky {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.halloween-theme .halloween-moon {
-  position: absolute;
-  top: 13%;
-  right: 11%;
-  display: grid;
-  width: clamp(5.5rem, 12vw, 10.5rem);
-  aspect-ratio: 1;
-  place-content: center;
-  border: 1px solid rgba(255, 208, 144, .55);
-  border-radius: 999px;
-  background: radial-gradient(circle at 35% 30%, #ffe3a4 0 4%, #f6a542 5% 12%, #d45429 44%, #832538 70%, rgba(65, 19, 42, .15) 71%);
-  box-shadow: 0 0 3.5rem rgba(238, 103, 41, .23);
-  color: #260f1b;
-  text-align: center;
-  opacity: .88;
-}
-
-.halloween-theme .halloween-moon::before,
-.halloween-theme .halloween-moon::after {
-  position: absolute;
-  content: '';
-  border: 1px solid rgba(61, 17, 33, .34);
-  border-radius: 999px;
-}
-
-.halloween-theme .halloween-moon::before { inset: 15% 27% 58% 35%; }
-.halloween-theme .halloween-moon::after { inset: 58% 18% 16% 57%; }
-.halloween-theme .halloween-moon span { font-size: clamp(1.3rem, 3vw, 2.7rem); font-weight: 900; line-height: .8; letter-spacing: -.08em; }
-.halloween-theme .halloween-moon small { margin-top: .35rem; font-size: .5rem; font-weight: 800; letter-spacing: .25em; text-transform: uppercase; }
-
-.halloween-theme .halloween-bats {
-  position: absolute;
-  top: 10%;
-  right: 3%;
-  width: min(30vw, 15rem);
-  fill: #190c19;
-  opacity: .82;
-  animation: bat-drift 9s ease-in-out infinite;
-}
-
-@keyframes bat-drift {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
-  50% { transform: translate3d(-.7rem, .35rem, 0) rotate(2deg); }
-}
-
-.halloween-theme .hanging-pumpkins {
-  position: absolute;
-  left: 50%;
-  top: calc(100% - 1px);
-  z-index: 10;
-  width: 88px;
-  height: 54px;
-  transform: translateX(-50%);
-  pointer-events: none;
-  overflow: visible;
-  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, .34));
-}
-
-.halloween-theme .pumpkin-cord {
-  stroke: rgba(243, 229, 207, .62);
-  stroke-width: 1;
-  stroke-dasharray: 1.5 1.5;
-}
-
-.halloween-theme .hanging-pumpkin {
-  transform-box: fill-box;
-  transform-origin: 50% 0;
-  animation: pumpkin-sway 4.8s ease-in-out infinite;
-}
-
-.halloween-theme .pumpkin-left { animation-delay: -.8s; }
-.halloween-theme .pumpkin-center { animation-duration: 5.5s; animation-delay: -2.1s; }
-.halloween-theme .pumpkin-right { animation-duration: 4.3s; animation-delay: -1.5s; }
-
-@keyframes pumpkin-sway {
-  0%, 100% { transform: rotate(-5deg); }
-  50% { transform: rotate(5deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .halloween-theme .hanging-pumpkin,
-  .halloween-theme .halloween-bats { animation: none; }
-}
-
 @layer components {
   .btn-primary {
     @apply bg-black text-white px-6 py-3 rounded-none hover:bg-gray-800 transition-colors duration-300 font-medium tracking-wide uppercase text-sm;
@@ -378,7 +81,6 @@
     animation-delay: 700ms;
   }
 
-  /* Animación para dropdowns PASS OFF */
   @keyframes slideDown {
     from {
       opacity: 0;
@@ -392,6 +94,27 @@
 
   .animate-slideDown {
     animation: slideDown 0.2s ease-out;
+  }
+
+  .pass-friday-stamp {
+    animation: passFridayStamp 560ms cubic-bezier(.16, 1, .3, 1) both;
+  }
+
+  @keyframes passFridayStamp {
+    from {
+      opacity: 0;
+      transform: translate3d(-1.2rem, .7rem, 0) rotate(-2deg);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) rotate(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pass-friday-stamp {
+      animation: none;
+    }
   }
 
   .scroll-snap-x {

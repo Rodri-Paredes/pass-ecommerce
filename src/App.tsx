@@ -27,15 +27,16 @@ import ActivateAccountPage from './pages/account/ActivateAccountPage';
 import SignupPage from './pages/account/SignupPage';
 import AccountPage from './pages/account/AccountPage';
 import PassCrewLandingPage from './pages/PassCrewLandingPage';
+import PassCrewRequestPage from './pages/PassCrewRequestPage';
+import PassCrewStatusPage from './pages/PassCrewStatusPage';
+import RewardsCatalogPage from './pages/RewardsCatalogPage';
 import FavoritesPage from './pages/FavoritesPage';
+import PassFridayPage from './pages/PassFridayPage';
 import { useCustomerAuthStore } from './store/customerAuthStore';
-import HalloweenToggle, { HalloweenTransition } from './components/layout/HalloweenToggle';
+import PassFridayCountdown from './components/pass-friday/PassFridayCountdown';
 
 function App() {
   const [showDiscountModal, setShowDiscountModal] = useState(false);
-  const [halloweenMode, setHalloweenMode] = useState(() => localStorage.getItem('pass-halloween-mode') === 'on');
-  const [themeSwitching, setThemeSwitching] = useState(false);
-  const [nextHalloweenMode, setNextHalloweenMode] = useState(false);
   const loadCustomer = useCustomerAuthStore((s) => s.loadCustomer);
 
   useEffect(() => {
@@ -60,22 +61,9 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('pass-halloween-mode', halloweenMode ? 'on' : 'off');
-  }, [halloweenMode]);
-
-  const toggleHalloweenMode = () => {
-    if (themeSwitching) return;
-    const next = !halloweenMode;
-    setNextHalloweenMode(next);
-    setThemeSwitching(true);
-    window.setTimeout(() => setHalloweenMode(next), 480);
-    window.setTimeout(() => setThemeSwitching(false), 980);
-  };
-
   return (
     <Router>
-      <div className={`${halloweenMode ? 'halloween-theme ' : ''}min-h-screen bg-white overflow-x-hidden`}>
+      <div className="min-h-screen overflow-x-hidden bg-white">
         <Header />
         <Cart />
         <Toast />
@@ -107,16 +95,16 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
               <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/pass-friday" element={<PassFridayPage />} />
               <Route path="/pass-crew" element={<PassCrewLandingPage />} />
-              <Route path="/pass-crew/recompensas" element={<PassCrewLandingPage />} />
-              <Route path="/pass-crew/join" element={<PassCrewLandingPage />} />
-              <Route path="/pass-crew/status" element={<PassCrewLandingPage />} />
+              <Route path="/pass-crew/recompensas" element={<RewardsCatalogPage />} />
+              <Route path="/pass-crew/join" element={<ProtectedRoute><PassCrewRequestPage /></ProtectedRoute>} />
+              <Route path="/pass-crew/status" element={<ProtectedRoute><PassCrewStatusPage /></ProtectedRoute>} />
             </Routes>
           </PageTransition>
         </main>
         <Footer />
-        <HalloweenToggle active={halloweenMode} onToggle={toggleHalloweenMode} disabled={themeSwitching} />
-        {themeSwitching && <HalloweenTransition activating={nextHalloweenMode} />}
+        <PassFridayCountdown />
         <Analytics />
       </div>
     </Router>

@@ -2,71 +2,98 @@ import { supabase } from '../lib/supabase';
 import type { CustomerProfile } from '../types';
 
 const PENDING_PROFILE_KEY = 'pass_pending_web_profile';
-const GENERIC_LINK_ERROR = 'No pudimos vincular tu perfil de tienda con estos datos.';
+
+type PendingProfile = {
+  fullName: string;
+  phone: string;
+  ci: string;
+};
 
 const normalizeSiteUrl = (url: string) => url.trim().replace(/\/+$/, '');
 
 const getEmailRedirectTo = () => {
   const configuredSiteUrl = import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined;
   const browserOrigin = typeof window !== 'undefined' ? window.location.origin : '';
-  const siteUrl = normalizeSiteUrl(configuredSiteUrl || browserOrigin);
-  return `${siteUrl}/login`;
+  return `${normalizeSiteUrl(configuredSiteUrl || browserOrigin)}/login`;
 };
 
-export type CustomerActivationResult = {
-  status: 'linked';
-  customer?: CustomerProfile;
-  request_id?: string;
-  customer_id?: string;
+const savePendingProfile = (profile: PendingProfile) => {
+  window.localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify(profile));
+};
+
+const getPendingProfile = (): PendingProfile | null => {
+  const value = window.localStorage.getItem(PENDING_PROFILE_KEY);
+  if (!value) return null;
+
+  try {
+    const profile = JSON.parse(value) as Partial<PendingProfile>;
+    return profile.fullName && profile.phone
+      ? { fullName: profile.fullName, phone: profile.phone, ci: profile.ci || '' }
+      : null;
+  } catch {
+    return null;
+  }
 };
 
 export const customerAuthService = {
-  async linkByCiPhone(ci: string, phone: string): Promise<CustomerProfile> {
-    const { data, error } = await supabase.rpc('link_customer_profile_by_ci_phone', {
-      p_ci: ci.trim(),
-      p_phone: phone.trim(),
-    });
+  async createOwnProfile(fullName: string, phone: string, ci = ''): Promise<CustomerProfile> {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError) throw userError;
+    if (!user) throw new Error('Inicia sesión para completar tu perfil.');
+
+    const { data: existing, error: existingError } = await supabase
+      .from('customer_profiles')
+      .select('*')
+      .eq('auth_user_id', user.id)
+      .maybeSingle();
+    if (existingError) throw existingError;
+    if (existing) return existing as CustomerProfile;
+
+    const { data, error } = await supabase
+      .from('customer_profiles')
+      .insert({
+        auth_user_id: user.id,
+        full_name: fullName.trim(),
+        email: user.email || '',
+        phone: phone.trim(),
+        ci: ci.trim() || null,
+      })
+      .select()
+      .single();
     if (error) throw error;
     return data as CustomerProfile;
   },
 
-  async signUp(email: string, password: string, ci: string, phone: string) {
+  async signUp(email: string, password: string, fullName: string, phone: string, ci = '') {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: getEmailRedirectTo(),
+        data: { full_name: fullName.trim(), phone: phone.trim(), ci: ci.trim() },
       },
     });
     if (error) throw error;
+    if (!data.user) throw new Error('No se pudo crear la cuenta.');
 
-    if (data.user) {
-      window.localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify({ ci: ci.trim(), phone: phone.trim() }));
-      if (data.session && data.user.email_confirmed_at) {
-        await this.linkByCiPhone(ci, phone);
-        window.localStorage.removeItem(PENDING_PROFILE_KEY);
-      }
+    const pendingProfile = { fullName: fullName.trim(), phone: phone.trim(), ci: ci.trim() };
+    if (data.session) {
+      await this.createOwnProfile(pendingProfile.fullName, pendingProfile.phone, pendingProfile.ci);
+      window.localStorage.removeItem(PENDING_PROFILE_KEY);
+      return { requiresEmailConfirmation: false };
     }
 
-    return data;
-  },
-
-  async activateCustomerAccount(ci: string, phone: string): Promise<CustomerActivationResult> {
-    const customer = await this.linkByCiPhone(ci, phone);
-    return { status: 'linked', customer };
+    savePendingProfile(pendingProfile);
+    return { requiresEmailConfirmation: true };
   },
 
   async signIn(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    if (!data.user.email_confirmed_at) {
-      throw new Error('Debes verificar tu email antes de vincular tu perfil de tienda.');
-    }
-    const pending = window.localStorage.getItem(PENDING_PROFILE_KEY);
-    if (pending) {
-      const profile = JSON.parse(pending) as { ci?: string; phone?: string };
-      if (!profile.ci || !profile.phone) throw new Error(GENERIC_LINK_ERROR);
-      await this.linkByCiPhone(profile.ci, profile.phone);
+
+    const pendingProfile = getPendingProfile();
+    if (pendingProfile) {
+      await this.createOwnProfile(pendingProfile.fullName, pendingProfile.phone, pendingProfile.ci);
       window.localStorage.removeItem(PENDING_PROFILE_KEY);
     }
     return data;
@@ -86,19 +113,17 @@ export const customerAuthService = {
       .select('*')
       .eq('auth_user_id', user.id)
       .maybeSingle();
-
     if (error) throw error;
-    return profile;
+    return profile as CustomerProfile | null;
   },
 
-  async updateProfile(customerId: string, updates: Partial<Pick<CustomerProfile, 'full_name' | 'phone'>>) {
+  async updateProfile(customerId: string, updates: Partial<Pick<CustomerProfile, 'full_name' | 'phone' | 'ci'>>) {
     const { data, error } = await supabase
       .from('customer_profiles')
       .update(updates)
       .eq('id', customerId)
       .select()
       .single();
-
     if (error) throw error;
     return data as CustomerProfile;
   },
