@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350" role="img" aria-labelledby="title desc">
+  <title id="title">PASS Friday: cómo acceder y qué suma PASS Crew</title>
+  <desc id="desc">Arte vertical para clientes. Una cuenta PASS gratis acumula puntos y con 300 puntos habilita PASS Friday. PASS Crew es una membresía pagada con beneficios adicionales.</desc>
+  <defs>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence baseFrequency=".65" numOctaves="3" seed="10" type="fractalNoise" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0" result="mono"/>
+      <feComponentTransfer in="mono" result="grain"><feFuncA type="table" tableValues="0 .13"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="grain" mode="multiply"/>
+    </filter>
+    <linearGradient id="redShade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fa4c36"/>
+      <stop offset="1" stop-color="#bd291f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1350" fill="#0a0a0a"/>
+  <rect x="36" y="36" width="1008" height="1278" fill="none" stroke="#f5f0e8" stroke-opacity=".28" stroke-width="2"/>
+  <rect x="36" y="36" width="14" height="1278" fill="#ef4430"/>
+
+  <g fill="#f5f0e8" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif">
+    <text x="82" y="108" font-size="22" font-weight="700" letter-spacing="4">PASS / CLIENTES</text>
+    <text x="997" y="108" font-size="22" text-anchor="end" font-weight="700" letter-spacing="2">BLACK FRIDAY</text>
+    <line x1="82" y1="138" x2="997" y2="138" stroke="#f5f0e8" stroke-opacity=".38" stroke-width="2"/>
+    <text x="82" y="214" font-size="59" font-weight="800" letter-spacing="-2">TU ACCESO</text>
+    <text x="82" y="278" font-size="59" font-weight="800" letter-spacing="-2">SE ACUMULA.</text>
+    <text x="84" y="324" font-size="22" letter-spacing=".5" fill="#f5f0e8" fill-opacity=".66">Cada compra te acerca a PASS Friday.</text>
+  </g>
+
+  <g filter="url(#paper)" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif">
+    <text x="74" y="585" font-size="372" font-weight="900" letter-spacing="-25" fill="url(#redShade)">300</text>
+    <text x="812" y="584" font-size="44" font-weight="800" letter-spacing="1" fill="#f5f0e8">PTS</text>
+    <line x1="82" y1="626" x2="997" y2="626" stroke="#ef4430" stroke-width="8"/>
+  </g>
+
+  <g font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif" fill="#f5f0e8">
+    <text x="83" y="683" font-size="24" font-weight="700" letter-spacing="3" fill="#ef4430">¿CÓMO LLEGAS?</text>
+    <text x="83" y="752" font-size="28" font-weight="800">01</text>
+    <text x="155" y="752" font-size="28" font-weight="700">CREA TU CUENTA PASS</text>
+    <text x="155" y="784" font-size="20" fill="#f5f0e8" fill-opacity=".58">Es gratis y tienes tu código PASS.</text>
+    <line x1="83" y1="816" x2="997" y2="816" stroke="#f5f0e8" stroke-opacity=".2" stroke-width="2"/>
+    <text x="83" y="872" font-size="28" font-weight="800">02</text>
+    <text x="155" y="872" font-size="28" font-weight="700">COMPRA Y SUMA PUNTOS</text>
+    <text x="155" y="904" font-size="20" fill="#f5f0e8" fill-opacity=".58">Di tu código, celular o CI en caja.</text>
+    <line x1="83" y1="936" x2="997" y2="936" stroke="#f5f0e8" stroke-opacity=".2" stroke-width="2"/>
+    <text x="83" y="992" font-size="28" font-weight="800">03</text>
+    <text x="155" y="992" font-size="28" font-weight="700">LLEGA A 300 Y ENTRA</text>
+    <text x="155" y="1024" font-size="20" fill="#f5f0e8" fill-opacity=".58">Con 300 puntos tienes acceso a PASS Friday.</text>
+  </g>
+
+  <g transform="translate(82 1080)">
+    <rect width="915" height="175" fill="#f5f0e8"/>
+    <rect width="10" height="175" fill="#ef4430"/>
+    <text x="39" y="48" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing="3" fill="#0a0a0a">¿QUIERES IR UN PASO MÁS?</text>
+    <text x="38" y="107" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif" font-size="55" font-weight="900" letter-spacing="-2" fill="#ef4430">PASS CREW</text>
+    <text x="357" y="105" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing="1.5" fill="#0a0a0a">MEMBRESÍA PAGADA</text>
+    <line x1="38" y1="128" x2="874" y2="128" stroke="#0a0a0a" stroke-opacity=".2" stroke-width="2"/>
+    <text x="38" y="157" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif" font-size="19" font-weight="700" letter-spacing=".4" fill="#0a0a0a">ACCESO ANTICIPADO  /  PUNTOS x2  /  PRIORIDAD DE STOCK</text>
+  </g>
+  <text x="997" y="1291" text-anchor="end" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="2" fill="#f5f0e8" fill-opacity=".52">PASS BOLIVIA</text>
+</svg>

@@ -43,9 +43,10 @@ export default function Header() {
           <nav className="hidden items-center gap-5 lg:flex xl:gap-7" aria-label="Navegación principal">
             <Link className={`pass-link text-[11px] font-semibold uppercase tracking-[0.15em] ${dark ? 'border-white/30 text-white/75' : ''}`} to="/shop">Shop</Link>
             <Link className={`pass-link text-[11px] font-semibold uppercase tracking-[0.15em] ${dark ? 'border-white/30 text-white/75' : ''}`} to="/shop?sort=newest">New</Link>
-            <Link className={`pass-link text-[11px] font-semibold uppercase tracking-[0.15em] ${dark ? 'border-white/30 text-white/75' : ''}`} to="/shop?category=Hoodies">Hoodies</Link>
-            <Link className={`pass-link text-[11px] font-semibold uppercase tracking-[0.15em] ${dark ? 'border-white/30 text-white/75' : ''}`} to="/shop?category=Poleras">Poleras</Link>
+            <Link className={`pass-link hidden text-[11px] font-semibold uppercase tracking-[0.15em] xl:block ${dark ? 'border-white/30 text-white/75' : ''}`} to="/shop?category=Hoodies">Hoodies</Link>
+            <Link className={`pass-link hidden text-[11px] font-semibold uppercase tracking-[0.15em] xl:block ${dark ? 'border-white/30 text-white/75' : ''}`} to="/shop?category=Poleras">Poleras</Link>
             <Link className={`pass-link text-[11px] font-semibold uppercase tracking-[0.15em] ${dark ? 'border-white/30 text-white/75' : ''}`} to="/drops">Drops</Link>
+            <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em] text-[#e63d2e]" to="/pass-friday">PASS Friday</Link>
             <Link className="pass-link text-[11px] font-semibold uppercase tracking-[0.15em] text-champagne" to="/pass-crew">PASS Crew</Link>
           </nav>
           <button type="button" onClick={() => setMobileNavOpen(true)} className="justify-self-start p-2 lg:hidden" aria-label="Abrir menú"><Menu className="h-5 w-5" /></button>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { pageview } from './lib/analytics';
@@ -17,7 +17,6 @@ import ProductPage from './pages/ProductPage';
 import DropsPage from './pages/DropsPage';
 import DropDetailPage from './pages/DropDetailPage';
 import ShippingPage from './pages/ShippingPage';
-import ReturnsPage from './pages/ReturnsPage';
 import SizeGuidePage from './pages/SizeGuidePage';
 import ContactPage from './pages/ContactPage';
 import SharedOrderPage from './pages/SharedOrderPage';
@@ -34,6 +33,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import PassFridayPage from './pages/PassFridayPage';
 import { useCustomerAuthStore } from './store/customerAuthStore';
 import PassFridayCountdown from './components/pass-friday/PassFridayCountdown';
+import PassFridayWelcomeModal from './components/pass-friday/PassFridayWelcomeModal';
 
 function App() {
   const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -69,6 +69,7 @@ function App() {
         <Toast />
         <BranchSelectorModal />
         <PassCrewOverlay />
+        <PassFridayWelcomeModal />
         <DiscountModal
           isOpen={showDiscountModal}
           onClose={() => setShowDiscountModal(false)}
@@ -86,7 +87,7 @@ function App() {
               <Route path="/drops/:id" element={<DropDetailPage />} />
               <Route path="/pass-off" element={<PassOffPage />} />
               <Route path="/shipping" element={<ShippingPage />} />
-              <Route path="/returns" element={<ReturnsPage />} />
+              <Route path="/returns" element={<Navigate replace to="/shipping" />} />
               <Route path="/size-guide" element={<SizeGuidePage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/pedido/:orderCode" element={<SharedOrderPage />} />

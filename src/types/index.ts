@@ -125,6 +125,18 @@ export interface LoyaltySummary {
   customer_id: string; enabled: boolean; points_balance: number; lifetime_points_earned: number; lifetime_points_redeemed: number; transactions: LoyaltyTransaction[];
 }
 
+export interface PurchaseHistoryItem {
+  sale_id: string;
+  sale_date: string;
+  product_id: string;
+  product_name: string;
+  product_image_url: string | null;
+  size: string | null;
+  quantity: number;
+  unit_price: number;
+  subtotal: number;
+}
+
 export interface LoyaltyCampaignNotice {
   campaign_id?: string;
   campaign_name?: string;

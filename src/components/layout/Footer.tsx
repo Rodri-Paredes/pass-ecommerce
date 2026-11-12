@@ -25,12 +25,12 @@ export default function Footer() {
             <div className="grid grid-cols-2 gap-x-5 gap-y-3 pb-6 text-sm text-white/65">
               {CATEGORIES.map((category) => <Link key={category} to={`/shop?category=${encodeURIComponent(category)}`} className="hover:text-white">{category}</Link>)}
               <Link to="/drops" className="hover:text-white">Drops</Link>
+              <Link to="/pass-friday" className="text-[#ff5a49] hover:text-[#ff7668]">PASS Friday</Link>
             </div>
           </FooterAccordion>
           <FooterAccordion title="Ayuda">
             <div className="grid grid-cols-2 gap-x-5 gap-y-3 pb-6 text-sm text-white/65">
               <Link to="/shipping" className="hover:text-white">Envíos</Link>
-              <Link to="/returns" className="hover:text-white">Cambios</Link>
               <Link to="/size-guide" className="hover:text-white">Guía de tallas</Link>
               <Link to="/contact" className="hover:text-white">Contacto</Link>
             </div>
@@ -43,8 +43,8 @@ export default function Footer() {
       <div className="pass-container hidden py-16 md:block">
         <div className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-8 border-b border-white/15 pb-14">
           <div><p className="text-7xl font-black tracking-[-0.075em]">PASS</p><p className="mt-4 max-w-xs text-sm leading-6 text-white/55">Streetwear boliviano. Prendas diseñadas para llevar la calle con identidad propia.</p></div>
-          <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Shop</p><ul className="space-y-3 text-sm">{CATEGORIES.slice(0, 5).map((category) => <li key={category}><Link className="hover:text-white/55" to={`/shop?category=${encodeURIComponent(category)}`}>{category}</Link></li>)}<li><Link className="hover:text-white/55" to="/drops">Drops</Link></li></ul></div>
-          <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Ayuda</p><ul className="space-y-3 text-sm"><li><Link className="hover:text-white/55" to="/shipping">Envíos</Link></li><li><Link className="hover:text-white/55" to="/returns">Cambios y devoluciones</Link></li><li><Link className="hover:text-white/55" to="/size-guide">Guía de tallas</Link></li><li><Link className="hover:text-white/55" to="/contact">Contacto</Link></li></ul></div>
+          <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Shop</p><ul className="space-y-3 text-sm">{CATEGORIES.slice(0, 5).map((category) => <li key={category}><Link className="hover:text-white/55" to={`/shop?category=${encodeURIComponent(category)}`}>{category}</Link></li>)}<li><Link className="hover:text-white/55" to="/drops">Drops</Link></li><li><Link className="text-[#ff5a49] hover:text-[#ff7668]" to="/pass-friday">PASS Friday</Link></li></ul></div>
+          <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Ayuda</p><ul className="space-y-3 text-sm"><li><Link className="hover:text-white/55" to="/shipping">Envíos</Link></li><li><Link className="hover:text-white/55" to="/size-guide">Guía de tallas</Link></li><li><Link className="hover:text-white/55" to="/contact">Contacto</Link></li></ul></div>
           <div><p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Social</p><div className="flex gap-3"><SocialLink href="https://instagram.com/pass.clothing" label="Instagram"><Instagram className="h-5 w-5" /></SocialLink><SocialLink href="https://www.tiktok.com/@pass.clothing" label="TikTok"><TikTokIcon className="h-5 w-5" /></SocialLink><SocialLink href="https://www.facebook.com/pass.clothing" label="Facebook"><Facebook className="h-5 w-5" /></SocialLink></div></div>
         </div>
         <div className="flex items-center justify-between pt-6 text-[10px] uppercase tracking-[0.18em] text-white/40"><p>© {new Date().getFullYear()} PASS Clothing</p><p>Bolivia</p></div>

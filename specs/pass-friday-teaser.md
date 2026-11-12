@@ -1,13 +1,12 @@
-# Teaser PASS Friday
+# Acceso PASS Friday
 
-La página pública `/pass-friday` anticipa la campaña antes de que se definan o activen los descuentos. Reemplaza el acceso flotante de Halloween por un contador enlazado a esta página.
+La ruta pública `/pass-friday` permite que una persona cree su cuenta PASS, entienda cómo acumula puntos y consulte su acceso a la campaña. Reemplaza el teaser pasivo de la campaña por una experiencia de fidelidad operativa.
 
 ## Criterios de aceptación
 
 - No existe un selector ni tema visual de Halloween en la tienda.
-- El acceso flotante muestra la cuenta regresiva a las 00:00 del 27 de noviembre de 2026, hora de Bolivia, y abre `/pass-friday`.
-- La página muestra la misma cuenta, la fecha de lanzamiento y productos visualmente desenfocados sin nombres, precios ni enlaces de compra.
-- Si aún no hay productos publicados, se muestran cuatro siluetas de prendas desenfocadas en vez de bloques vacíos o una pantalla vacía. Las fotos disponibles conservan el misterio mediante un tratamiento rojo/negro y desenfocado, no gris.
-- La página se adapta a móvil y permite registrarse para tener el código PASS listo antes de la campaña.
-- El titular es una sola línea adaptable, “PASS FRIDAY”, para evitar rupturas o problemas de separación en móvil. “FRIDAY” se muestra en blanco y con espaciado de letras propio para mantener legible cada carácter. El acceso flotante muestra únicamente el contador completo (días, horas, minutos y segundos) en una línea horizontal sin fondo, tarjeta, fecha ni nombre repetido de campaña.
-- Al abrir la ruta, el hero debe sentirse como una pieza de lanzamiento: alto contraste, fondo vibrante y composición deliberadamente simple. El contador flotante no se repite dentro de la propia ruta.
+- Una persona sin sesión ve cómo funciona el programa, puede crear su cuenta PASS sin costo o iniciar sesión.
+- Una cuenta autenticada ve una tarjeta exclusiva de PASS Friday —distinta de la tarjeta PASS Crew— con su código PASS, saldo real de puntos y progreso hasta los 300 puntos.
+- El acceso a PASS Friday se habilita a partir de 300 puntos. La equivalencia de compra a puntos se configura en el ERP y no se publica en la interfaz.
+- La web consulta el saldo desde `get_customer_loyalty_summary`; la acreditación de puntos en ventas sigue siendo responsabilidad del ERP/caja y no se simula desde el cliente web.
+- PASS Crew es una membresía pagada adicional, no requisito para llegar a los 300 puntos. Sus beneficios publicados son puntos x2, acceso anticipado a drops, más días de PASS Friday y envío gratis dentro de Bolivia.

@@ -9,15 +9,18 @@
 
 ## PASS Friday
 
-- La interfaz de Halloween fue retirada y sustituida por un contador flotante que lleva a `/pass-friday`.
-- El teaser cuenta hasta el 27 de noviembre de 2026 a las 00:00, hora de Bolivia, y muestra productos desenfocados sin nombres, precios ni compra. El acceso flotante muestra únicamente el contador completo en una línea horizontal sin fondo, fecha ni nombre repetido de campaña. Antes de publicar la campaña, definir productos, fechas y reglas de elegibilidad para aplicar descuentos reales.
-- La apertura de `/pass-friday` usa un hero rojo de alto contraste con contador integrado y título “PASS FRIDAY” en una sola línea adaptable; “FRIDAY” va en blanco con espaciado propio para mantener las letras legibles. No muestra el contador flotante por segunda vez.
-- La vista previa usa cuatro piezas compactas; si existen fotos de productos, se muestran desenfocadas en rojo/negro, no en gris.
+- La interfaz de Halloween fue retirada y el acceso flotante lleva a `/pass-friday`.
+- `/pass-friday` ya no es solo un teaser: sin sesión explica el programa y permite crear cuenta o iniciar sesión; con sesión muestra una tarjeta PASS Friday separada de Crew con código PASS, puntos reales del RPC `get_customer_loyalty_summary` y progreso a los 300 puntos.
+- El registro iniciado desde `/pass-friday` adapta título, explicación y CTA a la creación del código PASS Friday; al terminar vuelve a esa ruta.
+- Regla publicada: una cuenta PASS gratuita con 300 puntos o más habilita el acceso general. La equivalencia de compra a puntos se configura internamente en el ERP y no se publica en la web. La suma de puntos se debe aplicar desde el ERP/caja al registrar una venta; no se simula en el cliente web.
+- Las cuentas nuevas de PASS Friday reciben 20 puntos de bienvenida solo después de aplicar la migración del ERP `20261112_pass_friday_welcome_points.sql`; no se deben anunciar como acreditados antes de ejecutarla.
+- PASS Crew es una suscripción pagada y agrega puntos x2, acceso anticipado a drops, más días de PASS Friday y envíos gratis dentro de Bolivia.
+- El arte vertical para clientes está en `/pass-friday-clientes.svg`. Comunica: crear cuenta gratis, acumular puntos con código/celular/CI, llegar a 300 puntos y, opcionalmente, sumar PASS Crew como membresía pagada con extras.
 
 ## Cuentas y salida a producción
 
-- Supabase Auth tiene registro por email activo y exige confirmación de correo.
+- Supabase Auth tiene registro por email activo y la confirmación de correo está desactivada.
 - El registro de PASS Crew crea un perfil propio con nombre, email y teléfono; no depende de una ficha de tienda. El CI es opcional y solo sirve para que caja encuentre al cliente.
-- La migración canónica de PASS Crew está en el ERP (`clothingStore`), no en este repositorio. Confirmar que fue aplicada al proyecto Supabase objetivo antes de publicar.
-- Verificado localmente: compilación, tipos, validación de contraseñas y redirección desde una ruta privada sin sesión.
-- **Confirm email** fue desactivado en Supabase Auth. Se verificó con una cuenta QA sintética el registro, la sesión inmediata, la creación del perfil con código PASS, el inicio de sesión y el cierre de sesión. El lint sigue fallando por seis errores preexistentes fuera de cuentas/PASS Crew.
+- La migración canónica de PASS Crew está en el ERP (`clothingStore`), no en este repositorio. Para el lanzamiento de PASS Friday se deben aplicar además `20261110_customer_purchase_history.sql` y `20261112_pass_friday_welcome_points.sql` antes de anunciar el historial o el bono de bienvenida.
+- Verificado localmente: compilación, tipos, validación de contraseñas y redirección desde una ruta privada sin sesión. Falta una prueba controlada en Supabase de registro, bono, venta asociada e historial.
+- El lint sigue fallando por seis errores preexistentes fuera de cuentas/PASS Crew.

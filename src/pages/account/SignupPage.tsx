@@ -19,6 +19,7 @@ export default function SignupPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirectTo = new URLSearchParams(location.search).get('redirect') || '/account';
+  const isPassFridaySignup = redirectTo === '/pass-friday';
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -48,7 +49,7 @@ export default function SignupPage() {
     }
   };
 
-  return <AuthLayout title="Crear cuenta" subtitle="Crea tu acceso a PASS y forma parte del Crew." footer={<p>¿Ya tienes cuenta? <Link to="/login" className="font-medium text-pass-black hover:underline">Iniciar sesión</Link></p>}>
+  return <AuthLayout title={isPassFridaySignup ? 'Crea tu PASS Friday' : 'Crear cuenta'} subtitle={isPassFridaySignup ? 'Obtén tu código PASS y 20 puntos de bienvenida.' : 'Crea tu acceso a PASS.'} footer={<p>¿Ya tienes cuenta? <Link to="/login" state={isPassFridaySignup ? { from: '/pass-friday' } : undefined} className="font-medium text-pass-black hover:underline">Iniciar sesión</Link></p>}>
     <form onSubmit={handleSubmit} className="space-y-6">
       <AuthInput id="full-name" label="Nombre completo" type="text" required value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Tu nombre" />
       <AuthInput id="email" label="Email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="tu@email.com" />
@@ -56,7 +57,7 @@ export default function SignupPage() {
       <AuthInput id="ci" label="CI (opcional)" type="text" value={ci} onChange={(event) => setCi(event.target.value)} placeholder="1234567 LP" />
       <AuthInput id="password" label="Contraseña" type="password" required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="••••••••" />
       <AuthInput id="confirm-password" label="Confirmar contraseña" type="password" required value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="••••••••" />
-      <motion.button type="submit" disabled={isSubmitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-black py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-gray-900 disabled:cursor-not-allowed disabled:bg-gray-300">{isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'}</motion.button>
+      <motion.button type="submit" disabled={isSubmitting} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-black py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-gray-900 disabled:cursor-not-allowed disabled:bg-gray-300">{isSubmitting ? 'Creando cuenta...' : isPassFridaySignup ? 'Crear mi PASS Friday' : 'Crear cuenta'}</motion.button>
     </form>
   </AuthLayout>;
 }

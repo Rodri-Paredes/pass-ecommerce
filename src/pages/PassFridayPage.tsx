@@ -1,86 +1,209 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, BellRing } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Copy,
+  LockKeyhole,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PassFridayTime } from '../components/pass-friday/PassFridayCountdown';
-import { supabase } from '../lib/supabase';
+import { passCrewService } from '../services/passCrewService';
+import { useCustomerAuthStore } from '../store/customerAuthStore';
+import type { CustomerProfile, LoyaltySummary } from '../types';
 
-type TeaserProduct = { id: string; image_url: string };
+const ACCESS_POINTS = 300;
+const WELCOME_POINTS = 20;
 
-const FALLBACK_TILES = [
-  { id: 'reserve-01', background: 'linear-gradient(145deg, #341b17 0%, #11110f 58%, #f0442f 165%)', ink: '#090909', angle: -14 },
-  { id: 'reserve-02', background: 'linear-gradient(160deg, #121312 0%, #49211b 53%, #11110f 100%)', ink: '#f0442f', angle: 9 },
-  { id: 'reserve-03', background: 'linear-gradient(145deg, #271b18 0%, #121312 61%, #7a2920 145%)', ink: '#141414', angle: -7 },
-  { id: 'reserve-04', background: 'linear-gradient(155deg, #11110f 0%, #5e251e 56%, #161714 100%)', ink: '#e4dfd5', angle: 15 },
-];
+function PassFridayCard({ customer, points }: { customer: CustomerProfile; points: number }) {
+  const [copied, setCopied] = useState(false);
+  const remaining = Math.max(ACCESS_POINTS - points, 0);
+  const unlocked = remaining === 0;
+  const progress = Math.min((points / ACCESS_POINTS) * 100, 100);
 
-function HiddenGarment({ index }: { index: number }) {
-  const tile = FALLBACK_TILES[index % FALLBACK_TILES.length];
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(customer.customer_code);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   return (
-    <div className="absolute inset-0 overflow-hidden" style={{ background: tile.background }} aria-hidden="true">
-      <div className="absolute -right-[30%] top-[-12%] h-[68%] w-[86%] rounded-full bg-white/10 blur-3xl" />
-      <div className="absolute left-1/2 top-[23%] h-[57%] w-[45%] -translate-x-1/2 rounded-[42%_42%_18%_18%] blur-lg" style={{ backgroundColor: tile.ink, transform: `translateX(-50%) rotate(${tile.angle}deg)` }} />
-      <div className="absolute left-1/2 top-[33%] h-[25%] w-[70%] -translate-x-1/2 rounded-[35%] bg-black/70 blur-lg" style={{ transform: `translateX(-50%) rotate(${tile.angle}deg)` }} />
-      <div className="absolute bottom-[-14%] left-[7%] h-[50%] w-[86%] rounded-full bg-black/70 blur-2xl" />
-      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,.08),transparent_35%,rgba(0,0,0,.5))]" />
-    </div>
+    <section className="relative overflow-hidden border border-[#f0442f]/80 bg-[#f0442f] p-6 text-black shadow-[0_28px_60px_-35px_rgba(240,68,47,.8)] sm:p-8">
+      <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full border-[28px] border-black/10" aria-hidden="true" />
+      <div className="relative">
+        <div className="flex items-start justify-between gap-5">
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[.3em] text-black/55">Tu tarjeta</p>
+            <p className="mt-1 text-2xl font-black uppercase tracking-[-.06em]">PASS Friday</p>
+          </div>
+          <span className={`inline-flex items-center gap-2 border px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.14em] ${unlocked ? 'border-black bg-black text-white' : 'border-black/30 text-black/70'}`}>
+            {unlocked ? <Check className="h-3.5 w-3.5" /> : <LockKeyhole className="h-3.5 w-3.5" />}
+            {unlocked ? 'Acceso habilitado' : 'En progreso'}
+          </span>
+        </div>
+
+        <div className="mt-12">
+          <p className="truncate text-xl font-bold tracking-[-.03em]">{customer.full_name}</p>
+          <p className="mt-1 text-[9px] font-bold uppercase tracking-[.22em] text-black/55">Titular de la cuenta</p>
+        </div>
+
+        <div className="mt-8 flex items-end justify-between gap-4 border-t border-black/25 pt-4">
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[.22em] text-black/55">Código PASS</p>
+            <p className="mt-1 font-mono text-lg font-bold tracking-[.16em]">{customer.customer_code}</p>
+          </div>
+          <button
+            type="button"
+            onClick={copyCode}
+            className="inline-flex items-center gap-2 border-b border-black pb-1 text-[9px] font-bold uppercase tracking-[.16em]"
+          >
+            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? 'Copiado' : 'Copiar'}
+          </button>
+        </div>
+
+        <div className="mt-8 border-t border-black/25 pt-5">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[.22em] text-black/55">Puntos acumulados</p>
+              <p className="mt-1 font-mono text-5xl font-bold tracking-[-.1em]">{points.toLocaleString('es-BO')}</p>
+            </div>
+            <p className="pb-1 text-right text-xs font-bold">de {ACCESS_POINTS} pts</p>
+          </div>
+          <div className="mt-4 h-2 bg-black/15" aria-label={`${points} de ${ACCESS_POINTS} puntos`}>
+            <div className="h-full bg-black transition-[width] duration-500" style={{ width: `${progress}%` }} />
+          </div>
+          <p className="mt-3 text-xs leading-5 text-black/70">
+            {unlocked
+              ? 'Ya puedes comprar con los beneficios de PASS Friday.'
+              : `Te faltan ${remaining.toLocaleString('es-BO')} puntos para habilitar tu acceso.`}
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }
 
 export default function PassFridayPage() {
-  const [products, setProducts] = useState<TeaserProduct[]>([]);
+  const { customer, isAuthenticated, isLoading } = useCustomerAuthStore();
+  const [loyalty, setLoyalty] = useState<LoyaltySummary | null>(null);
+  const [loadingPoints, setLoadingPoints] = useState(false);
 
   useEffect(() => {
-    supabase
-      .from('products')
-      .select('id, image_url')
-      .eq('is_visible', true)
-      .order('created_at', { ascending: false })
-      .limit(4)
-      .then(({ data }) => setProducts((data || []).filter((product): product is TeaserProduct => Boolean(product.image_url))));
-  }, []);
+    if (!customer) {
+      setLoyalty(null);
+      return;
+    }
 
-  const tiles = products.length ? products : FALLBACK_TILES.map((tile) => ({ id: tile.id, image_url: '' }));
+    setLoadingPoints(true);
+    passCrewService
+      .getMyLoyaltySummary(customer.id)
+      .then(setLoyalty)
+      .catch(() => setLoyalty(null))
+      .finally(() => setLoadingPoints(false));
+  }, [customer]);
 
+  const points = loyalty?.points_balance ?? 0;
   return (
-    <main className="min-h-screen bg-[#0a0b08] text-white">
-      <section className="bg-[#f0442f] text-black">
-        <div className="pass-container py-7 sm:py-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.17em] text-black/65 transition hover:text-black"><ArrowLeft className="h-4 w-4" /> Volver a PASS</Link>
-          <div className="relative grid gap-12 pb-12 pt-16 sm:pb-16 sm:pt-24 md:grid-cols-[1.15fr_.85fr] md:gap-x-12 lg:gap-x-16">
+    <main className="min-h-screen bg-[#0a0a09] text-white">
+      <section className="border-b border-white/10 bg-[#f0442f] text-black">
+        <div className="pass-container py-6 sm:py-9">
+          <Link to="/" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.17em] text-black/65 transition hover:text-black">
+            <ArrowLeft className="h-4 w-4" /> Volver a PASS
+          </Link>
+          <div className="grid gap-10 pb-10 pt-14 sm:pb-14 sm:pt-20 lg:grid-cols-[1.18fr_.82fr] lg:items-end">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[.24em] text-black/65">Viernes 27 de noviembre</p>
-              <h1 className="mt-5 whitespace-nowrap text-[clamp(2.75rem,7.5vw,7rem)] font-black uppercase leading-[.86] tracking-[-.035em]">PASS <span className="tracking-[-.005em] text-white">FRIDAY</span></h1>
-              <p className="mt-9 max-w-md text-sm font-medium leading-6 text-black/70 sm:text-base">Una selección especial está por desbloquearse. Los detalles aparecen el día del lanzamiento.</p>
+              <p className="text-[10px] font-bold uppercase tracking-[.24em] text-black/60">PASS Friday / Tu acceso</p>
+              <h1 className="mt-5 max-w-3xl text-[clamp(3.8rem,9vw,8.5rem)] font-black uppercase leading-[.78] tracking-[-.08em]">
+                Suma.<br />
+                <span className="text-white">Entra.</span>
+              </h1>
             </div>
-            <div className="self-end md:pb-3">
-              <p className="text-[9px] font-bold uppercase tracking-[.21em] text-black/55">La cuenta ya corre</p>
-              <div className="mt-4 border-y-2 border-black py-5 sm:py-6"><PassFridayTime tone="dark" /></div>
-            </div>
+            <p className="max-w-md text-sm font-medium leading-6 text-black/70 sm:text-base">
+              Crea tu cuenta PASS, recibe {WELCOME_POINTS} puntos de bienvenida y acumula en cada compra. Al llegar a {ACCESS_POINTS} puntos, tu acceso a PASS Friday queda habilitado.
+            </p>
           </div>
         </div>
       </section>
 
-      <section className="pass-container py-14 sm:py-20">
-        <div className="mb-7 border-b border-white/15 pb-5 sm:mb-10">
-          <p className="text-[9px] font-bold uppercase tracking-[.2em] text-[#f0442f]">Vista previa</p>
-          <h2 className="mt-2 text-3xl font-black uppercase leading-none tracking-[-.06em] sm:text-5xl">Aún oculto.</h2>
+      <section className="pass-container grid gap-12 py-14 sm:py-20 lg:grid-cols-[.9fr_1.1fr] lg:gap-20">
+        <div className="order-2 lg:order-1">
+          <p className="text-[10px] font-bold uppercase tracking-[.28em] text-[#f0442f]">La regla de puntos</p>
+          <h2 className="mt-4 text-4xl font-black uppercase leading-[.84] tracking-[-.065em] sm:text-6xl">
+            Tu compra<br />
+            <span className="text-white/35">te acerca.</span>
+          </h2>
+
+          <div className="mt-9 divide-y divide-white/10 border-y border-white/10">
+            <div className="grid grid-cols-[58px_1fr] gap-4 py-5">
+              <span className="font-mono text-sm font-bold text-[#f0442f]">01</span>
+              <div>
+                <p className="text-lg font-semibold">Crea tu cuenta y recibe {WELCOME_POINTS} puntos</p>
+                <p className="mt-1 text-sm leading-6 text-white/50">Es tu bono de bienvenida para empezar a sumar.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-[58px_1fr] gap-4 py-5">
+              <span className="font-mono text-sm font-bold text-[#f0442f]">02</span>
+              <div>
+                <p className="text-lg font-semibold">Compra y suma puntos</p>
+                <p className="mt-1 text-sm leading-6 text-white/50">Cada compra registrada te acerca a tu acceso.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-[58px_1fr] gap-4 py-5">
+              <span className="font-mono text-sm font-bold text-[#f0442f]">03</span>
+              <div>
+                <p className="text-lg font-semibold">Di tu código, celular o CI</p>
+                <p className="mt-1 text-sm leading-6 text-white/50">En caja asociamos tu compra a tu cuenta PASS.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-[58px_1fr] gap-4 py-5">
+              <span className="font-mono text-sm font-bold text-[#f0442f]">04</span>
+              <div>
+                <p className="text-lg font-semibold">{ACCESS_POINTS} puntos activan PASS Friday</p>
+                <p className="mt-1 text-sm leading-6 text-white/50">Suma hasta desbloquear tu acceso a la campaña.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 border-l-2 border-[#f0442f] pl-5">
+            <p className="text-[10px] font-bold uppercase tracking-[.22em] text-[#f0442f]">PASS Crew / Membresía pagada</p>
+            <p className="mt-3 max-w-lg text-sm leading-6 text-white/65">
+              Si quieres más, PASS Crew suma puntos x2, acceso anticipado a drops, más días de PASS Friday y envíos gratis.
+            </p>
+            <Link to="/pass-crew" className="mt-5 inline-flex items-center gap-2 border-b border-white/35 pb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/80 transition hover:border-[#f0442f] hover:text-[#f0442f]">
+              Conocer PASS Crew <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 lg:gap-5">
-          {tiles.map((product, index) => (
-            <article key={product.id} className="group relative aspect-[4/5] overflow-hidden border border-white/15 bg-[#151512]">
-              {product.image_url ? <img src={product.image_url} alt="" className="h-full w-full scale-110 object-cover grayscale blur-lg brightness-[.55] contrast-150 opacity-95 transition duration-700 group-hover:scale-105 group-hover:blur-md" /> : <HiddenGarment index={index} />}
-              <div className="pointer-events-none absolute inset-0 bg-[#f0442f]/60 mix-blend-screen" aria-hidden="true" />
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(0,0,0,.15),rgba(0,0,0,.72))]" aria-hidden="true" />
-              <div className="absolute inset-x-3 bottom-3 flex items-center justify-between border-t border-white/50 pt-2 text-[8px] font-bold uppercase tracking-[.13em] text-white/80 sm:inset-x-4 sm:bottom-4"><span>PASS / {String(index + 1).padStart(2, '0')}</span><span>Sin revelar</span></div>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-12 flex flex-col justify-between gap-5 border-t border-white/15 pt-6 sm:mt-16 sm:flex-row sm:items-center">
-          <p className="max-w-xl text-sm leading-6 text-white/55">Regístrate o inicia sesión para tener tu código PASS listo cuando se active la campaña.</p>
-          <Link to="/signup?redirect=/pass-friday" className="inline-flex w-fit items-center gap-3 bg-[#f0442f] px-5 py-4 text-[10px] font-bold uppercase tracking-[.16em] text-black transition hover:bg-white"><BellRing className="h-4 w-4" /> Preparar mi PASS</Link>
+        <div className="order-1 lg:order-2">
+          {isLoading || loadingPoints ? (
+            <div className="min-h-[420px] animate-pulse border border-white/10 bg-white/[.03]" aria-label="Cargando tu PASS Friday" />
+          ) : isAuthenticated && customer ? (
+            <PassFridayCard customer={customer} points={points} />
+          ) : (
+            <div className="border border-white/15 bg-white/[.035] p-7 sm:p-10">
+              <p className="text-[10px] font-bold uppercase tracking-[.28em] text-[#f0442f]">Tu PASS Friday empieza aquí</p>
+              <h2 className="mt-5 max-w-lg text-4xl font-black uppercase leading-[.86] tracking-[-.065em] sm:text-6xl">
+                Crea tu cuenta.<br />
+                <span className="text-white/35">Suma desde hoy.</span>
+              </h2>
+              <p className="mt-7 max-w-md text-sm leading-6 text-white/55">
+                Tu cuenta te da un código PASS único, {WELCOME_POINTS} puntos de bienvenida y un lugar donde ver tus puntos acumulados antes de Black Friday.
+              </p>
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+                <Link to="/signup?redirect=/pass-friday" className="inline-flex items-center justify-center gap-3 bg-[#f0442f] px-6 py-4 text-[10px] font-bold uppercase tracking-[.18em] text-black transition hover:bg-white">
+                  Crear mi PASS <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link to="/login" state={{ from: '/pass-friday' }} className="inline-flex items-center justify-center border border-white/25 px-6 py-4 text-[10px] font-bold uppercase tracking-[.18em] text-white/75 transition hover:border-white hover:text-white">
+                  Ya tengo cuenta
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </main>

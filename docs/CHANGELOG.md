@@ -1,5 +1,15 @@
 # Cambios
 
+## 2026-11-10
+
+- Se renovó el catálogo de recompensas de PASS Crew con beneficios de PASS Friday: acceso para clientes con puntos, puntos dobles, acceso anticipado para Crew y recompensa limitada para cuentas habilitadas.
+- La conversión de dinero a puntos sigue pendiente de definición comercial; la regla de habilitación ya se comunica en la interfaz.
+- Se definió la regla de acceso: una cuenta PASS gratuita con 300 puntos o más puede comprar en PASS Friday. PASS Crew queda claramente separado como suscripción pagada con entrada anticipada, puntos x2 y prioridad de stock.
+- Se añadió el arte vertical controlado `public/pass-friday-clientes.svg` para explicar a clientes el acceso de 300 puntos y los beneficios adicionales de PASS Crew.
+- Se convirtió `/pass-friday` en el acceso de clientes: permite crear cuenta o iniciar sesión y, ya autenticado, muestra una tarjeta propia con código PASS, puntos acumulados y progreso a los 300 puntos.
+- Se publicaron los beneficios actuales de PASS Crew: puntos x2, acceso anticipado a drops, más días de PASS Friday y envío gratis.
+- El formulario de alta se adapta cuando la persona llega desde PASS Friday para explicar que recibirá su código y empezará a sumar puntos, sin confundirlo con Crew.
+
 ## 2026-11-06
 
 - Se retiró el interruptor y tema de Halloween de la interfaz.
