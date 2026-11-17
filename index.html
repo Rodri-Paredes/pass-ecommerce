@@ -4,6 +4,28 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="https://jbdiidhseumjqdfxyzop.supabase.co/storage/v1/object/public/drops/logo/LOGO%20NEG.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      html.pass-emergency-whiteout,
+      html.pass-emergency-whiteout body {
+        background: #fff !important;
+      }
+
+      html.pass-emergency-whiteout #root {
+        visibility: hidden !important;
+      }
+    </style>
+    <script>
+      (function () {
+        // Hora Bolivia (UTC-4): pantalla blanca temporal desde las 00:00 del 18/11.
+        var whiteoutAt = Date.parse('2026-11-18T00:00:00-04:00');
+        var activate = function () {
+          document.documentElement.classList.add('pass-emergency-whiteout');
+        };
+        var wait = whiteoutAt - Date.now();
+        if (wait <= 0) activate();
+        else window.setTimeout(activate, wait);
+      }());
+    </script>
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="PASS CLOTHING - Tienda de ropa urbana premium en Bolivia. Descubre nuestra colección de hoodies, camisas, pantalones y más. Envíos a todo el país." />
